@@ -1,0 +1,103 @@
+li {
+  list-style: none;
+  background-color: rgb(62, 62, 62);
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 10px;
+  height: 45px;
+  min-width: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.LI {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.text {
+  flex: 1;
+  margin-right: 16px;
+  background-color: inherit;
+  color: rgb(255, 255, 255);
+
+  font-size: 17px;
+}
+
+.timer {
+  justify-content: center;
+  background-color: red;
+  gap: 20px;
+}
+
+.taskInfo {
+  display: flex;
+  gap: 80px;
+  margin-left: 21px;
+  background-color: inherit;
+  font-size: 10px;
+}
+
+.timer {
+  border-radius: 4px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  background-color: inherit;
+}
+
+.countdown {
+  font-size: 16px;
+
+  text-align: center;
+  color: rgb(255, 255, 255);
+  display: flex;
+  align-items: center;
+  background-color: inherit;
+}
+
+.completed {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: #28a745;
+}
+
+.timerControls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  background-color: inherit;
+  align-items: center;
+}
+
+.goButton {
+  background-color: inherit;
+  width: 26px;
+  cursor: pointer;
+}
+
+.pauseButton {
+  background: inherit;
+  width: 28px;
+  cursor: pointer;
+}
+
+.resetButton {
+  background: #6c757d;
+  width: 26px;
+  cursor: pointer;
+  background-color: inherit;
+}
+
+.delete {
+  background-color: inherit;
+  width: 25px;
+  cursor: pointer;
+}
+
+.delete:hover {
+  scale: 1.03;
+}

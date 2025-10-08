@@ -1,0 +1,17 @@
+* {
+  font-family: monospace;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: rgb(23, 23, 23);
+}
+
+.app {
+  max-width: 1800px;
+  display: flex;
+  flex-direction: column;
+
+  margin: 0 auto;
+  min-height: 100vh;
+  justify-content: center;
+}

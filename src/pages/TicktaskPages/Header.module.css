@@ -1,0 +1,47 @@
+.headerContainer {
+  margin-top: 20px;
+}
+.headerLogoutButton {
+  font-size: 15px;
+  background-color: transparent;
+  border: 2px solid rgb(213, 255, 5);
+  border-radius: 20px;
+  padding: 7px 15px;
+  cursor: pointer;
+  color: rgb(213, 255, 5);
+}
+
+.headerAboutButton {
+  font-size: 15px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgb(213, 255, 5);
+}
+.fireIcon {
+  width: 30px;
+}
+
+.streak {
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttonsRight {
+  display: flex;
+  gap: 30px;
+  margin-right: 30px;
+  color: rgb(213, 255, 5);
+}
+
+.counter {
+  font-size: 30px;
+  color: rgb(213, 255, 5);
+  margin-right: 5px;
+}
