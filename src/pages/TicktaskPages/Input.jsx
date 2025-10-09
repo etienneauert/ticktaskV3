@@ -41,7 +41,12 @@ export default function Input({ onAdd, task }) {
           <img src="./src/assets/right-arrow-2.png" alt="" />
         </button>
       </form>
-      <Popup open={open} onConfirm={confirmAdd} onCancel={cancelAdd} />
+      <Popup
+        open={open}
+        onConfirm={confirmAdd}
+        onCancel={cancelAdd}
+        taskText={value}
+      />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import styles from "./popup.module.css";
 import { useState, useEffect } from "react";
 
-export default function Popup({ open, onConfirm, onCancel }) {
+export default function Popup({ open, onConfirm, onCancel, taskText }) {
   const [urgent, setUrgent] = useState(false);
   const [taskDuration, setTaskDuration] = useState(0);
 
@@ -19,7 +19,7 @@ export default function Popup({ open, onConfirm, onCancel }) {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.modalcloseandinfo}>
-          <p>info</p>
+          <p></p>
           <img
             onClick={onCancel}
             className={styles.close}
@@ -30,20 +30,32 @@ export default function Popup({ open, onConfirm, onCancel }) {
         <div className={styles.modalHeader}>
           <h1>Customize your task!</h1>
         </div>
-        <div className={styles.Priority}>
-          <h2>Add Priority</h2>
-          <label className={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              checked={urgent}
-              onChange={(e) => setUrgent(e.target.checked)}
-            />
-            <span>important</span>
-          </label>
+
+        {/* Demo Task Preview */}
+        <div className={styles.demoPreview}>
+          <div className={styles.demoTask}>
+            <div className={styles.demoText}>
+              {taskText || "Enter task name..."}
+              {urgent ? " (dringend)" : ""}
+            </div>
+            {taskDuration > 0 && (
+              <div className={styles.demoTimer}>
+                <div className={styles.demoCountdown}>{taskDuration}:00</div>
+              </div>
+            )}
+            <div className={styles.playdelete}>
+              <div className={styles.demoDelete}>
+                <img src="./src/assets/play.png" alt="" />
+              </div>
+              <div className={styles.demoDelete}>
+                <img src="./src/assets/trash-bin.png" alt="" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className={styles.Duration}>
-          <h2>Estimated Duration</h2>
+          <h2>Add time</h2>
           <div className={styles.durationButtons}>
             <button
               type="button"
@@ -82,15 +94,17 @@ export default function Popup({ open, onConfirm, onCancel }) {
               1h
             </button>
           </div>
-          <label className={styles.durationRow}>
-            <span>Custom (min):</span>
+        </div>
+
+        <div className={styles.Priority}>
+          <h2>Add Priority</h2>
+          <label className={styles.checkboxRow}>
             <input
-              type="number"
-              min="0"
-              value={taskDuration}
-              onChange={(e) => setTaskDuration(parseInt(e.target.value) || 0)}
-              placeholder="0"
+              type="checkbox"
+              checked={urgent}
+              onChange={(e) => setUrgent(e.target.checked)}
             />
+            <span>important</span>
           </label>
         </div>
 

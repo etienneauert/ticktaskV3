@@ -1,6 +1,6 @@
 .MorningRoutine {
   background-color: rgb(67, 67, 67);
-  min-width: 500px;
+  min-width: 400px;
   min-height: 200px;
   display: flex;
   flex-direction: column;

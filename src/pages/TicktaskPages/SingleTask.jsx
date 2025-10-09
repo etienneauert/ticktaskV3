@@ -12,6 +12,7 @@ export default function SingleTask({ task, index, onDelete }) {
   const [timeLeft, setTimeLeft] = useState(() => taskDuration * 60);
   const [isRunning, setIsRunning] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef(null);
   const isMountedRef = useRef(true);
 
@@ -34,15 +35,16 @@ export default function SingleTask({ task, index, onDelete }) {
     };
   }, [taskId]);
 
-  // Timer-Logik - nur wenn diese Task läuft
+  // Timer-Logik - nur wenn diese Task läuft und nicht pausiert
   useEffect(() => {
-    if (isRunning && timeLeft > 0 && isMountedRef.current) {
+    if (isRunning && !isPaused && timeLeft > 0 && isMountedRef.current) {
       intervalRef.current = setInterval(() => {
         if (isMountedRef.current) {
           setTimeLeft((prevTime) => {
             if (prevTime <= 1) {
               setIsRunning(false);
               setIsCompleted(true);
+              setIsPaused(false);
               return 0;
             }
             return prevTime - 1;
@@ -62,7 +64,7 @@ export default function SingleTask({ task, index, onDelete }) {
         intervalRef.current = null;
       }
     };
-  }, [isRunning, timeLeft, taskId]);
+  }, [isRunning, isPaused, taskId]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -71,15 +73,22 @@ export default function SingleTask({ task, index, onDelete }) {
   };
 
   const handleStart = useCallback(() => {
-    if (taskDuration > 0 && !isRunning && isMountedRef.current) {
+    if (taskDuration > 0 && isMountedRef.current) {
       setIsRunning(true);
       setIsCompleted(false);
+      setIsPaused(false);
     }
-  }, [taskDuration, isRunning]);
+  }, [taskDuration]);
 
   const handlePause = useCallback(() => {
     if (isMountedRef.current) {
-      setIsRunning(false);
+      setIsPaused(true);
+    }
+  }, []);
+
+  const handleResume = useCallback(() => {
+    if (isMountedRef.current) {
+      setIsPaused(false);
     }
   }, []);
 
@@ -87,6 +96,7 @@ export default function SingleTask({ task, index, onDelete }) {
     if (isMountedRef.current) {
       setIsRunning(false);
       setIsCompleted(false);
+      setIsPaused(false);
       setTimeLeft(taskDuration * 60);
       // Timer explizit stoppen
       if (intervalRef.current) {
@@ -98,7 +108,7 @@ export default function SingleTask({ task, index, onDelete }) {
 
   return (
     <div className={styles.LI}>
-      <li key={index}>
+      <li key={index} className={isRunning ? styles.running : ""}>
         <div className={styles.text}>
           {text}
           {urgent ? " (dringend)" : ""}
@@ -120,15 +130,23 @@ export default function SingleTask({ task, index, onDelete }) {
                   alt=""
                 />
               )}
-              {isRunning && (
+              {isRunning && !isPaused && (
                 <img
                   onClick={handlePause}
                   className={styles.pauseButton}
-                  src="./src/assets/pause.png"
+                  src="./src/assets/pause-black.png"
                   alt=""
                 />
               )}
-              {(isRunning || isCompleted) && (
+              {isRunning && isPaused && (
+                <img
+                  onClick={handleResume}
+                  className={styles.goButton}
+                  src="./src/assets/play-black.png"
+                  alt=""
+                />
+              )}
+              {isCompleted && (
                 <img
                   button
                   onClick={handleReset}
@@ -147,6 +165,14 @@ export default function SingleTask({ task, index, onDelete }) {
               className={styles.delete}
               onClick={() => onDelete?.(task)}
               src="./src/assets/trash-bin.png"
+              alt=""
+            />
+          )}
+          {isRunning && (
+            <img
+              className={styles.resetButton}
+              onClick={handleReset}
+              src="./src/assets/reset-black.png"
               alt=""
             />
           )}

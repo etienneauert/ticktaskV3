@@ -12,11 +12,32 @@
 }
 
 .headerAboutButton {
-  font-size: 15px;
-  background-color: transparent;
   border: none;
+  transition: 0.2s ease;
+}
+
+.headerAboutButton:hover {
+  scale: 1.04;
+}
+.headerSettingsButton {
+  border: none;
+  transition: 0.2s ease;
+}
+
+.headerSettingsButton:hover {
+  scale: 1.04;
+}
+
+.headerAboutButton img {
+  background-color: transparent;
+  cursor: pointer;
+  width: 25px;
+}
+.headerSettingsButton img {
   cursor: pointer;
   color: rgb(213, 255, 5);
+  width: 25px;
+  cursor: pointer;
 }
 .fireIcon {
   width: 30px;

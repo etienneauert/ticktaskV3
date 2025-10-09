@@ -9,7 +9,12 @@ export default function Header({ user, onLogout }) {
         <img className={styles.fireIcon} src={fire} alt="" />
       </div>
       <div className={styles.buttonsRight}>
-        <button className={styles.headerAboutButton}>About</button>
+        <button className={styles.headerSettingsButton}>
+          <img src="./src/assets/setting.png" alt="" />
+        </button>
+        <button className={styles.headerAboutButton}>
+          <img src="./src/assets/info.png" alt="" />
+        </button>
         <button className={styles.headerLogoutButton} onClick={onLogout}>
           Logout
         </button>
