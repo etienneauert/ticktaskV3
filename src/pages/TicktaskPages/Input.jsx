@@ -20,6 +20,7 @@ export default function Input({ onAdd, task }) {
       text: trimmed,
       urgent: data.urgent,
       taskDuration: data.taskDuration,
+      frequent: data.frequent,
     });
     setValue("");
     setOpen(false);

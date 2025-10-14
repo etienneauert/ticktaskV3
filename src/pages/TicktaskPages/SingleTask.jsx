@@ -1,7 +1,16 @@
 import styles from "./SingleTask.module.css";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-export default function SingleTask({ task, index, onDelete }) {
+export default function SingleTask({
+  task,
+  index,
+  onDelete,
+  onTaskDone,
+  onEdit,
+  onCopyTask,
+  isDoneList = false,
+  isFrequentList = false,
+}) {
   const text = typeof task === "string" ? task : task?.text;
   const urgent = typeof task !== "string" && task?.urgent;
   const taskDuration =
@@ -9,12 +18,109 @@ export default function SingleTask({ task, index, onDelete }) {
 
   // Timer-State mit eindeutiger Task-ID
   const taskId = task?.id || `task-${index}`;
-  const [timeLeft, setTimeLeft] = useState(() => taskDuration * 60);
-  const [isRunning, setIsRunning] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+
+  // Edit-State
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(text);
+
+  // Edit-Funktionen
+  const handleEditStart = () => {
+    if (isFrequentList) {
+      setIsEditing(true);
+      setEditText(text);
+    }
+  };
+
+  const handleEditSave = () => {
+    if (editText.trim() && onEdit) {
+      onEdit(task, editText.trim());
+    }
+    setIsEditing(false);
+  };
+
+  const handleEditCancel = () => {
+    setEditText(text);
+    setIsEditing(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleEditSave();
+    } else if (e.key === "Escape") {
+      handleEditCancel();
+    }
+  };
+
+  // Sichere Funktion zum Laden der Timer-States
+  const loadTimerState = () => {
+    try {
+      const stored = localStorage.getItem(`timer_${taskId}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        const now = Date.now();
+        const startTime = parsed.startTime;
+
+        // Wenn Timer läuft und nicht pausiert, berechne verbleibende Zeit
+        if (parsed.isRunning && !parsed.isPaused && startTime) {
+          const elapsed = Math.floor((now - startTime) / 1000);
+          const remaining = Math.max(0, parsed.timeLeft - elapsed);
+
+          return {
+            timeLeft: remaining,
+            isRunning: remaining > 0,
+            isCompleted: remaining === 0,
+            isPaused: false,
+          };
+        }
+
+        // Für pausierte oder gestoppte Timer
+        return {
+          timeLeft: parsed.timeLeft || taskDuration * 60,
+          isRunning: false,
+          isCompleted: parsed.isCompleted || false,
+          isPaused: parsed.isPaused || false,
+        };
+      }
+    } catch (error) {
+      console.warn("Failed to load timer state:", error);
+    }
+
+    // Fallback zu Standardwerten
+    return {
+      timeLeft: taskDuration * 60,
+      isRunning: false,
+      isCompleted: false,
+      isPaused: false,
+    };
+  };
+
+  const initialState = loadTimerState();
+  const [timeLeft, setTimeLeft] = useState(initialState.timeLeft);
+  const [isRunning, setIsRunning] = useState(initialState.isRunning);
+  const [isCompleted, setIsCompleted] = useState(initialState.isCompleted);
+  const [isPaused, setIsPaused] = useState(initialState.isPaused);
   const intervalRef = useRef(null);
   const isMountedRef = useRef(true);
+
+  // Sichere Funktion zum Speichern der Timer-States
+  const saveTimerState = useCallback(
+    (state) => {
+      try {
+        const stateToSave = {
+          timeLeft: state.timeLeft,
+          isRunning: state.isRunning,
+          isCompleted: state.isCompleted,
+          isPaused: state.isPaused,
+          startTime: state.isRunning && !state.isPaused ? Date.now() : null,
+          lastSaved: Date.now(),
+        };
+        localStorage.setItem(`timer_${taskId}`, JSON.stringify(stateToSave));
+      } catch (error) {
+        console.warn("Failed to save timer state:", error);
+      }
+    },
+    [taskId]
+  );
 
   // Update timeLeft when taskDuration changes (only for new tasks)
   useEffect(() => {
@@ -22,6 +128,14 @@ export default function SingleTask({ task, index, onDelete }) {
       setTimeLeft(taskDuration * 60);
     }
   }, [taskDuration, isRunning, isCompleted]);
+
+  // Timer-State speichern wenn sich etwas ändert (aber nicht beim ersten Laden)
+  useEffect(() => {
+    // Nur speichern wenn die Komponente bereits gemountet ist
+    if (isMountedRef.current) {
+      saveTimerState({ timeLeft, isRunning, isCompleted, isPaused });
+    }
+  }, [timeLeft, isRunning, isCompleted, isPaused, saveTimerState]);
 
   // Timer nur für diese spezifische Task-ID
   useEffect(() => {
@@ -103,18 +217,120 @@ export default function SingleTask({ task, index, onDelete }) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      // Gespeicherten State löschen
+      try {
+        localStorage.removeItem(`timer_${taskId}`);
+      } catch (error) {
+        console.warn("Failed to clear timer state:", error);
+      }
     }
-  }, [taskDuration]);
+  }, [taskDuration, taskId]);
+
+  // Wenn Task abgeschlossen ist, zeige eine vereinfachte Version
+  if (task.done || isDoneList) {
+    const actualTime = task.actualTimeUsed || 0;
+    const plannedTime = task.plannedTime || task.taskDuration || 0;
+
+    return (
+      <div className={styles.LI}>
+        <li className={styles.doneTask}>
+          {!urgent && (
+            <img
+              src="./src/assets/dot-3.png"
+              alt=""
+              className={styles.regularIcon}
+            />
+          )}
+          {urgent && (
+            <img
+              src="./src/assets/star-white.png"
+              alt=""
+              className={styles.urgentIcon}
+            />
+          )}
+          <div className={styles.text}>{text}</div>
+          {plannedTime > 0 && (
+            <div
+              className={`${styles.timeInfo} ${
+                isFrequentList ? styles.frequentTimeInfo : ""
+              }`}
+            >
+              {isFrequentList
+                ? `${plannedTime}:00`
+                : `${actualTime}:00 / ${plannedTime}:00`}
+            </div>
+          )}
+          <div className={styles.taskInfo}>
+            {isFrequentList && (
+              <img
+                className={styles.neonplus}
+                onClick={() => onCopyTask?.(task)}
+                src="./src/assets/neonplus.png"
+                alt="Copy Task"
+                title="Task kopieren"
+              />
+            )}
+            <img
+              className={styles.delete}
+              onClick={() => onDelete?.(task)}
+              src="./src/assets/trash-bin.png"
+              alt=""
+            />
+          </div>
+        </li>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.LI}>
-      <li key={index} className={isRunning ? styles.running : ""}>
-        <div className={styles.text}>
-          {text}
-          {urgent ? " (dringend)" : ""}
-        </div>
+      <li
+        key={index}
+        className={`${isRunning ? styles.running : ""} ${
+          isFrequentList ? styles.frequent : ""
+        }`}
+      >
+        {!urgent && (
+          <img
+            src={
+              isRunning ? "./src/assets/dot-4.png" : "./src/assets/dot-3.png"
+            }
+            alt=""
+            className={styles.regularIcon}
+          />
+        )}
+        {urgent && (
+          <img
+            src={
+              isRunning
+                ? "./src/assets/star-black.png"
+                : "./src/assets/star-white.png"
+            }
+            alt=""
+            className={styles.urgentIcon}
+          />
+        )}
+        {isEditing ? (
+          <input
+            type="text"
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            onBlur={handleEditSave}
+            onKeyDown={handleKeyPress}
+            className={styles.editInput}
+            autoFocus
+          />
+        ) : (
+          <div
+            className={styles.text}
+            onClick={handleEditStart}
+            style={{ cursor: isFrequentList ? "pointer" : "default" }}
+          >
+            {text}
+          </div>
+        )}
 
-        {taskDuration > 0 && (
+        {taskDuration > 0 && !isFrequentList && (
           <div className={styles.timer}>
             {isCompleted ? (
               <div className={styles.completed}>✅ Completed!</div>
@@ -130,6 +346,20 @@ export default function SingleTask({ task, index, onDelete }) {
                   alt=""
                 />
               )}
+              {isRunning && (
+                <button
+                  className={styles.FinishButton}
+                  onClick={() => {
+                    // Berechne tatsächlich verbrauchte Zeit
+                    const taskDuration = parseInt(task.taskDuration) || 0;
+                    const actualTimeUsed =
+                      taskDuration - Math.floor(timeLeft / 60);
+                    onTaskDone?.(task, actualTimeUsed);
+                  }}
+                >
+                  Done
+                </button>
+              )}
               {isRunning && !isPaused && (
                 <img
                   onClick={handlePause}
@@ -138,6 +368,7 @@ export default function SingleTask({ task, index, onDelete }) {
                   alt=""
                 />
               )}
+
               {isRunning && isPaused && (
                 <img
                   onClick={handleResume}
@@ -146,6 +377,7 @@ export default function SingleTask({ task, index, onDelete }) {
                   alt=""
                 />
               )}
+
               {isCompleted && (
                 <img
                   button

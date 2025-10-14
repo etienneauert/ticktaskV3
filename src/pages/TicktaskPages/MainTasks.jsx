@@ -1,9 +1,33 @@
 import { Task } from "./Task";
 import styles from "./MainTasks.module.css";
+import { useState } from "react";
 
-export default function MainTasks({ tasks = [], onDelete }) {
-  // Sortiere Tasks: Dringende zuerst, dann normale Tasks nach Erstellungsdatum
-  const sortedTasks = [...tasks].sort((a, b) => {
+export default function MainTasks({
+  tasks = [],
+  frequentTemplates = [],
+  onDelete,
+  onTaskDone,
+  onEdit,
+  onFrequentDelete,
+  onCopyTask,
+}) {
+  const [showDoneTasks, setShowDoneTasks] = useState(false);
+  const [showFrequentTasks, setShowFrequentTasks] = useState(false);
+  // Filtere Tasks: nicht abgeschlossene Tasks für die normale Liste
+  const activeTasks = tasks.filter((task) => !task.done);
+  const doneTasks = tasks.filter((task) => task.done);
+  // Kombiniere frequent tasks aus tasks und frequentTemplates
+  const frequentTasks = [
+    ...tasks.filter((task) => task.frequent),
+    ...frequentTemplates,
+  ];
+
+  // Debug: Log frequent tasks
+  console.log("All tasks:", tasks);
+  console.log("Frequent tasks:", frequentTasks);
+
+  // Sortiere aktive Tasks: Dringende zuerst, dann normale Tasks nach Erstellungsdatum
+  const sortedActiveTasks = [...activeTasks].sort((a, b) => {
     // Dringende Tasks zuerst
     if (a.urgent && !b.urgent) return -1;
     if (!a.urgent && b.urgent) return 1;
@@ -25,10 +49,90 @@ export default function MainTasks({ tasks = [], onDelete }) {
     return 0;
   });
 
+  // Sortiere abgeschlossene Tasks nach Abschlussdatum (neueste zuerst)
+  const sortedDoneTasks = [...doneTasks].sort((a, b) => {
+    const aTime = a.completedAt?.seconds || 0;
+    const bTime = b.completedAt?.seconds || 0;
+    return bTime - aTime;
+  });
+
+  // Sortiere frequent Tasks nach Abschlussdatum (neueste zuerst)
+  const sortedFrequentTasks = [...frequentTasks].sort((a, b) => {
+    const aTime = a.completedAt?.seconds || 0;
+    const bTime = b.completedAt?.seconds || 0;
+    return bTime - aTime;
+  });
+
   return (
     <div>
-      <div className={styles.taskCounter}>{tasks.length} Tasks to go</div>
-      <Task tasks={sortedTasks} onDelete={onDelete}></Task>
+      {/* <div className={styles.taskCounter}>{activeTasks.length} Tasks to go</div> */}
+      <Task
+        tasks={sortedActiveTasks}
+        onDelete={onDelete}
+        onTaskDone={onTaskDone}
+      ></Task>
+      {doneTasks.length > 0 && (
+        <div className={styles.DoneTasks}>
+          <div
+            className={styles.DoneTasksHeader}
+            onClick={() => setShowDoneTasks(!showDoneTasks)}
+          >
+            <h3>
+              Done Tasks
+              <span className={styles.length}>{doneTasks.length}</span>
+            </h3>
+            <img
+              src="./src/assets/arrow-down.png"
+              alt=""
+              className={`${styles.arrow} ${
+                showDoneTasks ? styles.arrowUp : styles.arrowDown
+              }`}
+            />
+          </div>
+
+          {showDoneTasks && doneTasks.length > 0 && (
+            <Task
+              tasks={sortedDoneTasks}
+              onDelete={onDelete}
+              onTaskDone={onTaskDone}
+              isDoneList={true}
+            ></Task>
+          )}
+        </div>
+      )}
+
+      {frequentTasks.length > 0 && (
+        <div className={styles.FrequentTasks}>
+          <div
+            className={styles.FrequentTasksHeader}
+            onClick={() => setShowFrequentTasks(!showFrequentTasks)}
+          >
+            <h3>
+              Frequent Tasks
+              <span className={styles.length}>{frequentTasks.length}</span>
+            </h3>
+            <img
+              src="./src/assets/arrow-down.png"
+              alt=""
+              className={`${styles.arrow} ${
+                showFrequentTasks ? styles.arrowUp : styles.arrowDown
+              }`}
+            />
+          </div>
+
+          {showFrequentTasks && frequentTasks.length > 0 && (
+            <Task
+              tasks={sortedFrequentTasks}
+              onDelete={onFrequentDelete}
+              onTaskDone={onTaskDone}
+              onEdit={onEdit}
+              onCopyTask={onCopyTask}
+              isDoneList={true}
+              isFrequentList={true}
+            ></Task>
+          )}
+        </div>
+      )}
     </div>
   );
 }

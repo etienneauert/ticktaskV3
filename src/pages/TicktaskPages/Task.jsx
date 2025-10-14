@@ -1,12 +1,31 @@
 import SingleTask from "./SingleTask";
+import styles from "./Task.module.css";
 
-export function Task({ tasks, onDelete }) {
+export function Task({
+  tasks,
+  onDelete,
+  onTaskDone,
+  onEdit,
+  onCopyTask,
+  isDoneList = false,
+  isFrequentList = false,
+}) {
   return (
-    <div>
+    <div className={styles.takslist}>
       {
         <ul>
           {tasks.map((task, i) => (
-            <SingleTask key={i} task={task} index={i} onDelete={onDelete} />
+            <SingleTask
+              key={task.id || `task-${i}`}
+              task={task}
+              index={i}
+              onDelete={onDelete}
+              onTaskDone={onTaskDone}
+              onEdit={onEdit}
+              onCopyTask={onCopyTask}
+              isDoneList={isDoneList}
+              isFrequentList={isFrequentList}
+            />
           ))}
         </ul>
       }

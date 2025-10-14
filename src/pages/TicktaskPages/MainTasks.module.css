@@ -2,3 +2,121 @@
   color: white;
   margin-left: 20px;
 }
+
+.DoneTasks {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  margin-top: 50px;
+  border: 2px solid rgb(145, 145, 145);
+  border-radius: 10px;
+  align-items: center;
+  color: white;
+  cursor: default;
+  width: 650px;
+  background-color: transparent;
+  box-sizing: border-box;
+}
+.DoneTasks img {
+  width: 25px;
+  background-color: inherit;
+}
+
+.DoneTasks h3 {
+  background-color: inherit;
+  color: rgb(215, 215, 215);
+}
+
+.FrequentTasks {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 20px 2px 0 2px;
+  border-radius: 10px;
+  align-items: center;
+  color: white;
+  cursor: default;
+  width: 650px;
+  background-color: inherit;
+  box-sizing: border-box;
+  border: 2px solid rgb(145, 145, 145);
+}
+
+.FrequentTasks img {
+  width: 25px;
+  background-color: inherit;
+}
+
+.FrequentTasks h3 {
+  background-color: inherit;
+  color: rgb(215, 215, 215);
+}
+
+.FrequentTasksHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.FrequentTasksHeader:hover {
+  cursor: pointer;
+}
+
+.DoneTasksHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 650px;
+  background-color: inherit;
+
+  /* background-color: rgb(41, 40, 53); */
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  /* box-sizing: border-box; */
+}
+
+.DoneTasksHeader:hover {
+  cursor: pointer;
+}
+
+.arrow {
+  transition: transform 0.3s ease;
+  width: 20px;
+
+  background-color: inherit;
+}
+
+.arrowDown {
+  transform: rotateX(0deg);
+}
+
+.arrowUp {
+  transform: rotateX(180deg);
+}
+
+.DoneTasks * {
+  /* background-color: rgb(41, 40, 53) !important; */
+}
+
+.FrequentTasks * {
+  /* background-color: rgb(41, 40, 53) !important; */
+}
+
+.length {
+  background-color: rgb(98, 94, 116) !important;
+  color: rgb(207, 207, 207) !important;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-left: 8px;
+  margin-left: 10px;
+}

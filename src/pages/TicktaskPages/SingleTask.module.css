@@ -5,11 +5,11 @@ li {
   border-radius: 10px;
   padding: 10px;
   height: 45px;
-  min-width: 600px;
+  min-width: 650px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid rgb(129, 129, 129);
+  border: 2px solid rgb(129, 129, 129);
   /* transition: 0.15s ease; */
 }
 
@@ -29,10 +29,34 @@ li.running .text {
   font-weight: bold;
 }
 
+/* CSS-Klasse für frequent tasks - nur für Zeitangabe-Styling */
+li.frequent {
+  /* Keine speziellen Styles für den Container */
+}
+
+/* Edit Input für frequent tasks */
+.editInput {
+  flex: 1;
+  margin-right: 16px;
+  background-color: rgb(80, 70, 100);
+  color: rgb(255, 255, 255);
+  border: 2px solid rgb(200, 150, 255);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 17px;
+  outline: none;
+}
+
+.editInput:focus {
+  border-color: rgb(255, 200, 255);
+  box-shadow: 0 0 5px rgba(255, 200, 255, 0.5);
+}
+
 li.running .countdown {
   color: black;
   font-size: 20px;
   font-weight: bold;
+  margin-right: -10px;
 }
 
 .LI {
@@ -58,8 +82,7 @@ li.running .countdown {
 
 .taskInfo {
   display: flex;
-  gap: 80px;
-
+  gap: 10px;
   background-color: inherit;
   font-size: 10px;
 }
@@ -120,8 +143,99 @@ li.running .countdown {
   background-color: inherit;
   width: 25px;
   cursor: pointer;
+  transition: 0.3s ease;
 }
 
 .delete:hover {
-  scale: 1.03;
+  scale: 1.05;
 }
+
+.neonplus {
+  background-color: inherit;
+  width: 25px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.neonplus:hover {
+  scale: 1.05;
+}
+
+.regularIcon {
+  width: 20px;
+  margin-right: 7px;
+  background-color: transparent;
+}
+.urgentIcon {
+  width: 20px;
+  margin-right: 7px;
+  background-color: transparent;
+}
+
+.FinishButton {
+  background-color: inherit;
+  border: 2px solid black;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.FinishButton:hover {
+  background-color: black;
+  color: rgb(212, 255, 0);
+  scale: 1.05;
+}
+
+.FinishButton:active {
+  scale: 0.95;
+}
+
+.doneTask {
+  list-style: none;
+  background-color: inherit;
+  margin-top: 20px;
+  border-radius: 10px;
+  padding: 10px;
+  height: 45px;
+  min-width: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* background-color: rgb(41, 40, 53); */
+  cursor: default;
+}
+
+/* Done Tasks Hintergrund - wird von MainTasks überschrieben */
+/* .doneTask {
+  background-color: rgb(41, 40, 53) !important;
+} */
+
+.timeInfo {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  background-color: inherit;
+  margin-right: 20px;
+  font-weight: 500;
+}
+
+.neonplus {
+  background-color: inherit;
+  width: 25px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: transform 0.2s ease;
+}
+
+.neonplus:hover {
+  transform: scale(1.1);
+}
+
+/* Spezifisches Styling für frequent tasks Zeitangabe */
+.frequentTimeInfo {
+  color: rgb(255, 255, 255) !important;
+  font-weight: bold !important;
+}
+
+/* Spezifisches Styling für frequent tasks Zeitangabe - wie normale taskliste */

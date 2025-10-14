@@ -11,6 +11,18 @@
   color: rgb(213, 255, 5);
 }
 
+.headerLogoutButton:hover {
+  background-color: rgb(213, 255, 5);
+  color: black;
+  scale: 1.03;
+}
+
+.headerLogoutButton:active {
+  background-color: rgb(213, 255, 5);
+  color: black;
+  scale: 0.97;
+}
+
 .headerAboutButton {
   border: none;
   transition: 0.2s ease;

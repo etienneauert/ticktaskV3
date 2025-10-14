@@ -6,12 +6,30 @@
   background-color: rgb(26, 29, 36);
 }
 
+/* Scrollbalken ausblenden */
+html,
+body {
+  overflow-x: hidden; /* Horizontalen Scrollbalken ausblenden */
+  overflow-y: auto; /* Vertikalen Scrollbalken beibehalten */
+}
+
+/* Scrollbalken für Webkit-Browser (Chrome, Safari) ausblenden */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Scrollbalken für Firefox ausblenden */
+html {
+  scrollbar-width: none;
+}
+
 .app {
   max-width: 1800px;
   display: flex;
   flex-direction: column;
 
   margin: 0 auto;
-  min-height: 100vh;
+
   justify-content: center;
 }

@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 export default function Popup({ open, onConfirm, onCancel, taskText }) {
   const [urgent, setUrgent] = useState(false);
   const [taskDuration, setTaskDuration] = useState(0);
+  const [frequent, setFrequent] = useState(false);
 
   // Reset state when popup opens
   useEffect(() => {
     if (open) {
       setUrgent(false);
       setTaskDuration(0);
+      setFrequent(false);
     }
   }, [open]);
 
@@ -35,8 +37,21 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
         <div className={styles.demoPreview}>
           <div className={styles.demoTask}>
             <div className={styles.demoText}>
+              {!urgent && (
+                <img
+                  src="./src/assets/dot-3.png"
+                  alt=""
+                  className={styles.regularIcon}
+                />
+              )}
+              {urgent && (
+                <img
+                  src="./src/assets/star-white.png"
+                  alt=""
+                  className={styles.urgentIcon}
+                />
+              )}
               {taskText || "Enter task name..."}
-              {urgent ? " (dringend)" : ""}
             </div>
             {taskDuration > 0 && (
               <div className={styles.demoTimer}>
@@ -56,43 +71,49 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
 
         <div className={styles.Duration}>
           <h2>Add time</h2>
+
           <div className={styles.durationButtons}>
             <button
               type="button"
-              className={
-                taskDuration === 5 ? styles.active : styles.durationBtn
-              }
-              onClick={() => setTaskDuration(5)}
+              className={styles.durationBtn}
+              onClick={() => setTaskDuration((prev) => prev + 5)}
             >
-              5 min
+              <img src="./src/assets/plus-sign.png" alt="" />5 min
             </button>
             <button
               type="button"
-              className={
-                taskDuration === 15 ? styles.active : styles.durationBtn
-              }
-              onClick={() => setTaskDuration(15)}
+              className={styles.durationBtn}
+              onClick={() => setTaskDuration((prev) => prev + 15)}
             >
+              <img src="./src/assets/plus-sign.png" alt="" />
               15 min
             </button>
             <button
               type="button"
-              className={
-                taskDuration === 30 ? styles.active : styles.durationBtn
-              }
-              onClick={() => setTaskDuration(30)}
+              className={styles.durationBtn}
+              onClick={() => setTaskDuration((prev) => prev + 30)}
             >
+              <img src="./src/assets/plus-sign.png" alt="" />
               30 min
             </button>
             <button
               type="button"
-              className={
-                taskDuration === 60 ? styles.active : styles.durationBtn
-              }
-              onClick={() => setTaskDuration(60)}
+              className={styles.durationBtn}
+              onClick={() => setTaskDuration((prev) => prev + 60)}
             >
-              1h
+              <img src="./src/assets/plus-sign.png" alt="" />
+              60 min
             </button>
+
+            {taskDuration > 0 && (
+              <button
+                type="button"
+                className={styles.resetBtn}
+                onClick={() => setTaskDuration(0)}
+              >
+                Reset
+              </button>
+            )}
           </div>
         </div>
 
@@ -103,19 +124,35 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               type="checkbox"
               checked={urgent}
               onChange={(e) => setUrgent(e.target.checked)}
+              className={styles.checkboxInput}
             />
-            <span>important</span>
+            <span>Urgent</span>
           </label>
         </div>
 
-        <div className={styles.actions}>
-          <button
-            onClick={() => onConfirm({ urgent, taskDuration })}
-            className={styles.button}
-          >
-            Bestätigen
-          </button>
+        <div className={styles.Priority}>
+          <h2>Add to Frequent Tasks</h2>
+          <label className={styles.checkboxRow}>
+            <input
+              type="checkbox"
+              checked={frequent}
+              onChange={(e) => setFrequent(e.target.checked)}
+              className={styles.checkboxInput}
+            />
+            <span>Frequent</span>
+          </label>
         </div>
+
+        {taskDuration > 0 && (
+          <div className={styles.actions}>
+            <button
+              onClick={() => onConfirm({ urgent, taskDuration, frequent })}
+              className={styles.addButton}
+            >
+              Add Task
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
