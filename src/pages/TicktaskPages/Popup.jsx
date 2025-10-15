@@ -1,5 +1,13 @@
 import styles from "./popup.module.css";
 import { useState, useEffect } from "react";
+import close2 from "../../assets/close-2.png";
+import dot3 from "../../assets/dot-3.png";
+import starWhite from "../../assets/star-white.png";
+import play from "../../assets/play.png";
+import trashBin from "../../assets/trash-bin.png";
+import plusSign from "../../assets/plus-sign.png";
+import playgrey from "../../assets/play-grey.png";
+import trashgrey from "../../assets/trash-grey.png";
 
 export default function Popup({ open, onConfirm, onCancel, taskText }) {
   const [urgent, setUrgent] = useState(false);
@@ -25,7 +33,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
           <img
             onClick={onCancel}
             className={styles.close}
-            src="./src/assets/close-2.png"
+            src={close2}
             alt=""
           />
         </div>
@@ -38,18 +46,10 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
           <div className={styles.demoTask}>
             <div className={styles.demoText}>
               {!urgent && (
-                <img
-                  src="./src/assets/dot-3.png"
-                  alt=""
-                  className={styles.regularIcon}
-                />
+                <img src={dot3} alt="" className={styles.regularIcon} />
               )}
               {urgent && (
-                <img
-                  src="./src/assets/star-white.png"
-                  alt=""
-                  className={styles.urgentIcon}
-                />
+                <img src={starWhite} alt="" className={styles.urgentIcon} />
               )}
               {taskText || "Enter task name..."}
             </div>
@@ -60,10 +60,10 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
             )}
             <div className={styles.playdelete}>
               <div className={styles.demoDelete}>
-                <img src="./src/assets/play.png" alt="" />
+                <img src={playgrey} alt="" />
               </div>
               <div className={styles.demoDelete}>
-                <img src="./src/assets/trash-bin.png" alt="" />
+                <img src={trashgrey} alt="" />
               </div>
             </div>
           </div>
@@ -78,14 +78,14 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               className={styles.durationBtn}
               onClick={() => setTaskDuration((prev) => prev + 5)}
             >
-              <img src="./src/assets/plus-sign.png" alt="" />5 min
+              <img src={plusSign} alt="" />5 min
             </button>
             <button
               type="button"
               className={styles.durationBtn}
               onClick={() => setTaskDuration((prev) => prev + 15)}
             >
-              <img src="./src/assets/plus-sign.png" alt="" />
+              <img src={plusSign} alt="" />
               15 min
             </button>
             <button
@@ -93,7 +93,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               className={styles.durationBtn}
               onClick={() => setTaskDuration((prev) => prev + 30)}
             >
-              <img src="./src/assets/plus-sign.png" alt="" />
+              <img src={plusSign} alt="" />
               30 min
             </button>
             <button
@@ -101,7 +101,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               className={styles.durationBtn}
               onClick={() => setTaskDuration((prev) => prev + 60)}
             >
-              <img src="./src/assets/plus-sign.png" alt="" />
+              <img src={plusSign} alt="" />
               60 min
             </button>
 
@@ -131,7 +131,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
         </div>
 
         <div className={styles.Priority}>
-          <h2>Add to Frequent Tasks</h2>
+          <h2>Add to recurring Tasks</h2>
           <label className={styles.checkboxRow}>
             <input
               type="checkbox"
@@ -139,7 +139,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               onChange={(e) => setFrequent(e.target.checked)}
               className={styles.checkboxInput}
             />
-            <span>Frequent</span>
+            <span>Reccuring</span>
           </label>
         </div>
 
@@ -149,7 +149,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               onClick={() => onConfirm({ urgent, taskDuration, frequent })}
               className={styles.addButton}
             >
-              Add Task
+              Submit
             </button>
           </div>
         )}

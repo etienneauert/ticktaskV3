@@ -1,6 +1,7 @@
 import { Task } from "./Task";
 import styles from "./MainTasks.module.css";
 import { useState } from "react";
+import arrowDown from "../../assets/arrow-down.png";
 
 export default function MainTasks({
   tasks = [],
@@ -82,7 +83,7 @@ export default function MainTasks({
               <span className={styles.length}>{doneTasks.length}</span>
             </h3>
             <img
-              src="./src/assets/arrow-down.png"
+              src={arrowDown}
               alt=""
               className={`${styles.arrow} ${
                 showDoneTasks ? styles.arrowUp : styles.arrowDown
@@ -112,7 +113,7 @@ export default function MainTasks({
               <span className={styles.length}>{frequentTasks.length}</span>
             </h3>
             <img
-              src="./src/assets/arrow-down.png"
+              src={arrowDown}
               alt=""
               className={`${styles.arrow} ${
                 showFrequentTasks ? styles.arrowUp : styles.arrowDown

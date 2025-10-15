@@ -1,5 +1,7 @@
 import styles from "./Header.module.css";
 import fire from "../../assets/flame.png";
+import setting from "../../assets/setting.png";
+import info from "../../assets/info.png";
 
 export default function Header({ user, onLogout }) {
   return (
@@ -10,10 +12,10 @@ export default function Header({ user, onLogout }) {
       </div>
       <div className={styles.buttonsRight}>
         <button className={styles.headerSettingsButton}>
-          <img src="./src/assets/setting.png" alt="" />
+          <img src={setting} alt="" />
         </button>
         <button className={styles.headerAboutButton}>
-          <img src="./src/assets/info.png" alt="" />
+          <img src={info} alt="" />
         </button>
         <button className={styles.headerLogoutButton} onClick={onLogout}>
           Logout

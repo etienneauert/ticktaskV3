@@ -1,5 +1,15 @@
 import styles from "./SingleTask.module.css";
 import { useState, useEffect, useRef, useCallback } from "react";
+import dot3 from "../../assets/dot-3.png";
+import dot4 from "../../assets/dot-4.png";
+import starWhite from "../../assets/star-white.png";
+import starBlack from "../../assets/star-black.png";
+import neonPlus from "../../assets/neonplus.png";
+import trashBin from "../../assets/trash-bin.png";
+import play from "../../assets/play.png";
+import pauseBlack from "../../assets/pause-black.png";
+import playBlack from "../../assets/play-black.png";
+import resetBlack from "../../assets/reset-black.png";
 
 export default function SingleTask({
   task,
@@ -234,19 +244,9 @@ export default function SingleTask({
     return (
       <div className={styles.LI}>
         <li className={styles.doneTask}>
-          {!urgent && (
-            <img
-              src="./src/assets/dot-3.png"
-              alt=""
-              className={styles.regularIcon}
-            />
-          )}
+          {!urgent && <img src={dot3} alt="" className={styles.regularIcon} />}
           {urgent && (
-            <img
-              src="./src/assets/star-white.png"
-              alt=""
-              className={styles.urgentIcon}
-            />
+            <img src={starWhite} alt="" className={styles.urgentIcon} />
           )}
           <div className={styles.text}>{text}</div>
           {plannedTime > 0 && (
@@ -265,7 +265,7 @@ export default function SingleTask({
               <img
                 className={styles.neonplus}
                 onClick={() => onCopyTask?.(task)}
-                src="./src/assets/neonplus.png"
+                src={neonPlus}
                 alt="Copy Task"
                 title="Task kopieren"
               />
@@ -273,7 +273,7 @@ export default function SingleTask({
             <img
               className={styles.delete}
               onClick={() => onDelete?.(task)}
-              src="./src/assets/trash-bin.png"
+              src={trashBin}
               alt=""
             />
           </div>
@@ -292,20 +292,14 @@ export default function SingleTask({
       >
         {!urgent && (
           <img
-            src={
-              isRunning ? "./src/assets/dot-4.png" : "./src/assets/dot-3.png"
-            }
+            src={isRunning ? dot4 : dot3}
             alt=""
             className={styles.regularIcon}
           />
         )}
         {urgent && (
           <img
-            src={
-              isRunning
-                ? "./src/assets/star-black.png"
-                : "./src/assets/star-white.png"
-            }
+            src={isRunning ? starBlack : starWhite}
             alt=""
             className={styles.urgentIcon}
           />
@@ -342,7 +336,7 @@ export default function SingleTask({
                 <img
                   onClick={handleStart}
                   className={styles.goButton}
-                  src="./src/assets/play.png"
+                  src={play}
                   alt=""
                 />
               )}
@@ -364,7 +358,7 @@ export default function SingleTask({
                 <img
                   onClick={handlePause}
                   className={styles.pauseButton}
-                  src="./src/assets/pause-black.png"
+                  src={pauseBlack}
                   alt=""
                 />
               )}
@@ -373,7 +367,7 @@ export default function SingleTask({
                 <img
                   onClick={handleResume}
                   className={styles.goButton}
-                  src="./src/assets/play-black.png"
+                  src={playBlack}
                   alt=""
                 />
               )}
@@ -383,7 +377,7 @@ export default function SingleTask({
                   button
                   onClick={handleReset}
                   className={styles.resetButton}
-                  src="./src/assets/refresh.png"
+                  src={resetBlack}
                   alt=""
                 />
               )}
@@ -396,7 +390,7 @@ export default function SingleTask({
             <img
               className={styles.delete}
               onClick={() => onDelete?.(task)}
-              src="./src/assets/trash-bin.png"
+              src={trashBin}
               alt=""
             />
           )}
@@ -404,7 +398,7 @@ export default function SingleTask({
             <img
               className={styles.resetButton}
               onClick={handleReset}
-              src="./src/assets/reset-black.png"
+              src={resetBlack}
               alt=""
             />
           )}

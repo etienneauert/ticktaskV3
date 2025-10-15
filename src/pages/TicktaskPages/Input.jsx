@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Popup from "./Popup";
 import styles from "./Input.module.css";
+import rightArrow2 from "../../assets/right-arrow-2.png";
 
 export default function Input({ onAdd, task }) {
   const [value, setValue] = useState("");
@@ -39,7 +40,7 @@ export default function Input({ onAdd, task }) {
           placeholder="Enter new Task..."
         />
         <button type="submit" className={styles.submitButton}>
-          <img src="./src/assets/right-arrow-2.png" alt="" />
+          <img src={rightArrow2} alt="" />
         </button>
       </form>
       <Popup

@@ -174,7 +174,7 @@
 }
 
 .durationButtons button:not(.resetBtn):hover {
-  background-image: url("./src/assets/plus-black.png");
+  background-image: url("../../assets/plus-black.png");
   background-size: 13px 13px;
   background-repeat: no-repeat;
   background-position: 15px center;
@@ -227,7 +227,7 @@
 
 .checkboxInput:checked {
   background-color: rgb(213, 255, 5);
-  background-image: url("./src/assets/check.png");
+  background-image: url("../../assets/check.png");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
