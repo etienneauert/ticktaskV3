@@ -387,7 +387,7 @@ export function Ticktask({ user }) {
     return () => unsubscribe();
   }, [user?.uid]);
 
-  const [task, setTask] = useState({
+  const [task, _setTask] = useState({
     name: "",
     urgent: false,
     done: false,

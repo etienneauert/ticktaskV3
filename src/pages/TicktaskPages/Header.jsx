@@ -3,7 +3,7 @@ import fire from "../../assets/flame.png";
 import setting from "../../assets/setting.png";
 import info from "../../assets/info.png";
 
-export default function Header({ user, onLogout }) {
+export default function Header({ onLogout }) {
   return (
     <div className={styles.headerContainer}>
       <div className={styles.streak}>

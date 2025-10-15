@@ -3,7 +3,7 @@ import Popup from "./Popup";
 import styles from "./Input.module.css";
 import rightArrow2 from "../../assets/right-arrow-2.png";
 
-export default function Input({ onAdd, task }) {
+export default function Input({ onAdd }) {
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
   const handleSubmit = (e) => {

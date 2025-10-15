@@ -188,7 +188,7 @@ export default function SingleTask({
         intervalRef.current = null;
       }
     };
-  }, [isRunning, isPaused, taskId]);
+  }, [isRunning, isPaused, taskId, timeLeft]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
