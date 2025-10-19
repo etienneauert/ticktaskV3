@@ -1,7 +1,7 @@
 li {
   list-style: none;
   background-color: transparent;
-  margin-top: 20px;
+  margin-bottom: 20px;
   border-radius: 10px;
   padding: 10px;
   height: 45px;
@@ -9,17 +9,17 @@ li {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 2px solid rgb(129, 129, 129);
+  border: 1px solid #333;
   /* transition: 0.15s ease; */
 }
 
 li:hover {
-  border: 2px solid rgb(212, 255, 0);
+  border: 1px solid rgb(212, 255, 0);
 }
 
 li.running {
   background-color: rgb(212, 255, 0);
-  border: 2px solid rgb(212, 255, 0);
+  border: 1px solid rgb(212, 255, 0);
   box-shadow: 0 0 10px rgba(212, 255, 0, 0.9);
   color: black;
 }

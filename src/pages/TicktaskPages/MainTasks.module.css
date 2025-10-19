@@ -1,15 +1,10 @@
-.taskCounter {
-  color: white;
-  margin-left: 20px;
-}
-
 .DoneTasks {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 
   margin-top: 50px;
-  border: 2px solid rgb(145, 145, 145);
+  border: 1px solid #333;
   border-radius: 10px;
   align-items: center;
   color: white;
@@ -40,7 +35,7 @@
   width: 650px;
   background-color: inherit;
   box-sizing: border-box;
-  border: 2px solid rgb(145, 145, 145);
+  border: 1px solid #333;
 }
 
 .FrequentTasks img {

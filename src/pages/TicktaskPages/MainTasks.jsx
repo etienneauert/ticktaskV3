@@ -66,7 +66,6 @@ export default function MainTasks({
 
   return (
     <div>
-      {/* <div className={styles.taskCounter}>{activeTasks.length} Tasks to go</div> */}
       <Task
         tasks={sortedActiveTasks}
         onDelete={onDelete}

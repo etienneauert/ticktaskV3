@@ -3,4 +3,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 20px;
+}
+
+.spacing {
+  height: 20px;
+  background-color: transparent;
 }

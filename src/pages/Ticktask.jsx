@@ -3,7 +3,7 @@ import { auth, db } from "../firebase/firebase.js";
 import Header from "./TicktaskPages/Header.jsx";
 import Input from "./TicktaskPages/Input.jsx";
 import Main from "./TicktaskPages/Main.jsx";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   addDoc,
   collection,
@@ -12,9 +12,143 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  setDoc,
 } from "firebase/firestore";
 
 export function Ticktask({ user }) {
+  const isInitialLoad = useRef(true);
+
+  // Manage weekly tasks in the main component
+  const [weeklyTasks, setWeeklyTasks] = useState({
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
+    sunday: [],
+  });
+
+  // Manage routine tasks in the main component
+  const [morningTasks, setMorningTasks] = useState([]);
+  const [abendTasks, setAbendTasks] = useState([]);
+
+  // Manage daily tasks in the main component
+  const [dailyTasks, setDailyTasks] = useState([]);
+
+  // Manage completed states for all checklist components
+  const [morningCompleted, setMorningCompleted] = useState(new Set());
+  const [abendCompleted, setAbendCompleted] = useState(new Set());
+  const [weeklyCompleted, setWeeklyCompleted] = useState(new Set());
+  const [dailyCompleted, setDailyCompleted] = useState(new Set());
+
+  const updateWeeklyTasks = async (day, tasks) => {
+    console.log("updateWeeklyTasks called:", day, tasks);
+
+    setWeeklyTasks((prev) => {
+      const newTasks = {
+        ...prev,
+        [day]: tasks,
+      };
+
+      // Lokal speichern
+      try {
+        const weeklyKey = `ticktask_weekly_tasks_${user.uid}`;
+        localStorage.setItem(weeklyKey, JSON.stringify(newTasks));
+        console.log("Saved to localStorage:", newTasks);
+      } catch (e) {
+        console.error("Failed to save weekly tasks locally", e);
+      }
+
+      return newTasks;
+    });
+
+    // Zu Firebase speichern
+    try {
+      const weeklyCol = collection(db, "users", user.uid, "weeklyTasks");
+      const dayDoc = doc(weeklyCol, day);
+      await setDoc(dayDoc, {
+        day: day,
+        tasks: tasks,
+      });
+      console.log("Saved to Firebase:", day, tasks);
+    } catch (e) {
+      console.error("Failed to save weekly tasks to Firebase", e);
+    }
+  };
+
+  const updateMorningTasks = async (tasks) => {
+    setMorningTasks(tasks);
+
+    // Lokal speichern
+    try {
+      const morningKey = `ticktask_morning_tasks_${user.uid}`;
+      localStorage.setItem(morningKey, JSON.stringify(tasks));
+    } catch (e) {
+      console.error("Failed to save morning tasks locally", e);
+    }
+
+    // Zu Firebase speichern
+    try {
+      const morningCol = collection(db, "users", user.uid, "routineTasks");
+      const morningDoc = doc(morningCol, "morning");
+      await setDoc(morningDoc, {
+        type: "morning",
+        tasks: tasks,
+      });
+    } catch (e) {
+      console.error("Failed to save morning tasks to Firebase", e);
+    }
+  };
+
+  const updateAbendTasks = async (tasks) => {
+    setAbendTasks(tasks);
+
+    // Lokal speichern
+    try {
+      const abendKey = `ticktask_abend_tasks_${user.uid}`;
+      localStorage.setItem(abendKey, JSON.stringify(tasks));
+    } catch (e) {
+      console.error("Failed to save abend tasks locally", e);
+    }
+
+    // Zu Firebase speichern
+    try {
+      const abendCol = collection(db, "users", user.uid, "routineTasks");
+      const abendDoc = doc(abendCol, "abend");
+      await setDoc(abendDoc, {
+        type: "abend",
+        tasks: tasks,
+      });
+    } catch (e) {
+      console.error("Failed to save abend tasks to Firebase", e);
+    }
+  };
+
+  const updateDailyTasks = async (tasks) => {
+    setDailyTasks(tasks);
+
+    // Lokal speichern
+    try {
+      const dailyKey = `ticktask_daily_tasks_${user.uid}`;
+      localStorage.setItem(dailyKey, JSON.stringify(tasks));
+    } catch (e) {
+      console.error("Failed to save daily tasks locally", e);
+    }
+
+    // Zu Firebase speichern
+    try {
+      const dailyCol = collection(db, "users", user.uid, "routineTasks");
+      const dailyDoc = doc(dailyCol, "daily");
+      await setDoc(dailyDoc, {
+        type: "daily",
+        tasks: tasks,
+      });
+    } catch (e) {
+      console.error("Failed to save daily tasks to Firebase", e);
+    }
+  };
+
   const handleLogout = () => {
     signOut(auth);
   };
@@ -337,6 +471,196 @@ export function Ticktask({ user }) {
       console.error("Failed to read frequent templates cache", e);
     }
 
+    // Lokale Weekly Tasks laden
+    try {
+      const weeklyKey = `ticktask_weekly_tasks_${user.uid}`;
+      const weeklyRaw = localStorage.getItem(weeklyKey);
+      if (weeklyRaw) {
+        const weeklyParsed = JSON.parse(weeklyRaw);
+        if (weeklyParsed && typeof weeklyParsed === "object") {
+          setWeeklyTasks(weeklyParsed);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read weekly tasks cache", e);
+    }
+
+    // Firebase Weekly Tasks abonnieren
+    const weeklyCol = collection(db, "users", user.uid, "weeklyTasks");
+    const unsubscribeWeekly = onSnapshot(
+      weeklyCol,
+      (snapshot) => {
+        console.log("Weekly tasks snapshot:", snapshot.docs.length, "docs");
+        const serverWeeklyTasks = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log("Server weekly tasks:", serverWeeklyTasks);
+
+        if (serverWeeklyTasks.length > 0) {
+          // Konvertiere Firebase-Daten zu unserem Format
+          const weeklyData = {
+            monday:
+              serverWeeklyTasks.find((task) => task.day === "monday")?.tasks ||
+              [],
+            tuesday:
+              serverWeeklyTasks.find((task) => task.day === "tuesday")?.tasks ||
+              [],
+            wednesday:
+              serverWeeklyTasks.find((task) => task.day === "wednesday")
+                ?.tasks || [],
+            thursday:
+              serverWeeklyTasks.find((task) => task.day === "thursday")
+                ?.tasks || [],
+            friday:
+              serverWeeklyTasks.find((task) => task.day === "friday")?.tasks ||
+              [],
+            saturday:
+              serverWeeklyTasks.find((task) => task.day === "saturday")
+                ?.tasks || [],
+            sunday:
+              serverWeeklyTasks.find((task) => task.day === "sunday")?.tasks ||
+              [],
+          };
+          console.log("Setting weekly data:", weeklyData);
+          setWeeklyTasks(weeklyData);
+        } else {
+          console.log("No weekly tasks found in Firebase");
+        }
+      },
+      (error) => {
+        console.error("Failed to subscribe weekly tasks", error);
+      }
+    );
+
+    // Lokale Morning Tasks laden
+    try {
+      const morningKey = `ticktask_morning_tasks_${user.uid}`;
+      const morningRaw = localStorage.getItem(morningKey);
+      if (morningRaw) {
+        const morningParsed = JSON.parse(morningRaw);
+        if (Array.isArray(morningParsed)) {
+          setMorningTasks(morningParsed);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read morning tasks cache", e);
+    }
+
+    // Lokale Abend Tasks laden
+    try {
+      const abendKey = `ticktask_abend_tasks_${user.uid}`;
+      const abendRaw = localStorage.getItem(abendKey);
+      if (abendRaw) {
+        const abendParsed = JSON.parse(abendRaw);
+        if (Array.isArray(abendParsed)) {
+          setAbendTasks(abendParsed);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read abend tasks cache", e);
+    }
+
+    // Lokale Daily Tasks laden
+    try {
+      const dailyKey = `ticktask_daily_tasks_${user.uid}`;
+      const dailyRaw = localStorage.getItem(dailyKey);
+      if (dailyRaw) {
+        const dailyParsed = JSON.parse(dailyRaw);
+        if (Array.isArray(dailyParsed)) {
+          setDailyTasks(dailyParsed);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to read daily tasks cache", e);
+    }
+
+    // Firebase Routine Tasks abonnieren
+    const routineCol = collection(db, "users", user.uid, "routineTasks");
+    const unsubscribeRoutine = onSnapshot(
+      routineCol,
+      (snapshot) => {
+        console.log("Routine tasks snapshot:", snapshot.docs.length, "docs");
+        const serverRoutineTasks = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log("Server routine tasks:", serverRoutineTasks);
+
+        // Morning Tasks aus Firebase laden
+        const morningTask = serverRoutineTasks.find(
+          (task) => task.type === "morning"
+        );
+        if (morningTask && Array.isArray(morningTask.tasks)) {
+          setMorningTasks(morningTask.tasks);
+        }
+
+        // Abend Tasks aus Firebase laden
+        const abendTask = serverRoutineTasks.find(
+          (task) => task.type === "abend"
+        );
+        if (abendTask && Array.isArray(abendTask.tasks)) {
+          setAbendTasks(abendTask.tasks);
+        }
+
+        // Daily Tasks aus Firebase laden
+        const dailyTask = serverRoutineTasks.find(
+          (task) => task.type === "daily"
+        );
+        if (dailyTask && Array.isArray(dailyTask.tasks)) {
+          setDailyTasks(dailyTask.tasks);
+        }
+      },
+      (error) => {
+        console.error("Failed to subscribe routine tasks", error);
+      }
+    );
+
+    // Load completed states from localStorage
+    try {
+      const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
+      const morningCompletedRaw = localStorage.getItem(morningCompletedKey);
+      if (morningCompletedRaw) {
+        const morningCompletedArray = JSON.parse(morningCompletedRaw);
+        setMorningCompleted(new Set(morningCompletedArray));
+      }
+    } catch (e) {
+      console.error("Failed to load morning completed tasks", e);
+    }
+
+    try {
+      const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
+      const abendCompletedRaw = localStorage.getItem(abendCompletedKey);
+      if (abendCompletedRaw) {
+        const abendCompletedArray = JSON.parse(abendCompletedRaw);
+        setAbendCompleted(new Set(abendCompletedArray));
+      }
+    } catch (e) {
+      console.error("Failed to load abend completed tasks", e);
+    }
+
+    try {
+      const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}`;
+      const weeklyCompletedRaw = localStorage.getItem(weeklyCompletedKey);
+      if (weeklyCompletedRaw) {
+        const weeklyCompletedArray = JSON.parse(weeklyCompletedRaw);
+        setWeeklyCompleted(new Set(weeklyCompletedArray));
+      }
+    } catch (e) {
+      console.error("Failed to load weekly completed tasks", e);
+    }
+
+    try {
+      const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
+      const dailyCompletedRaw = localStorage.getItem(dailyCompletedKey);
+      if (dailyCompletedRaw) {
+        const dailyCompletedArray = JSON.parse(dailyCompletedRaw);
+        setDailyCompleted(new Set(dailyCompletedArray));
+      }
+    } catch (e) {
+      console.error("Failed to load daily completed tasks", e);
+    }
+
     // Firestore im Hintergrund abonnieren (nur für Updates, nicht zum Überschreiben)
     const tasksCol = collection(db, "users", user.uid, "tasks");
     const unsubscribe = onSnapshot(
@@ -384,8 +708,73 @@ export function Ticktask({ user }) {
         console.error("Failed to subscribe tasks", error);
       }
     );
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      unsubscribeRoutine();
+      unsubscribeWeekly();
+    };
   }, [user?.uid]);
+
+  // Save completed states to localStorage whenever they change
+  useEffect(() => {
+    if (user?.uid) {
+      try {
+        const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
+        const morningCompletedArray = Array.from(morningCompleted);
+        localStorage.setItem(
+          morningCompletedKey,
+          JSON.stringify(morningCompletedArray)
+        );
+      } catch (e) {
+        console.error("Failed to save morning completed tasks", e);
+      }
+    }
+  }, [morningCompleted, user?.uid]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      try {
+        const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
+        const abendCompletedArray = Array.from(abendCompleted);
+        localStorage.setItem(
+          abendCompletedKey,
+          JSON.stringify(abendCompletedArray)
+        );
+      } catch (e) {
+        console.error("Failed to save abend completed tasks", e);
+      }
+    }
+  }, [abendCompleted, user?.uid]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      try {
+        const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}`;
+        const weeklyCompletedArray = Array.from(weeklyCompleted);
+        localStorage.setItem(
+          weeklyCompletedKey,
+          JSON.stringify(weeklyCompletedArray)
+        );
+      } catch (e) {
+        console.error("Failed to save weekly completed tasks", e);
+      }
+    }
+  }, [weeklyCompleted, user?.uid]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      try {
+        const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
+        const dailyCompletedArray = Array.from(dailyCompleted);
+        localStorage.setItem(
+          dailyCompletedKey,
+          JSON.stringify(dailyCompletedArray)
+        );
+      } catch (e) {
+        console.error("Failed to save daily completed tasks", e);
+      }
+    }
+  }, [dailyCompleted, user?.uid]);
 
   const [task, _setTask] = useState({
     name: "",
@@ -397,7 +786,18 @@ export function Ticktask({ user }) {
 
   return (
     <div>
-      <Header user={user} onLogout={handleLogout}></Header>
+      <Header
+        user={user}
+        onLogout={handleLogout}
+        weeklyTasks={weeklyTasks}
+        updateWeeklyTasks={updateWeeklyTasks}
+        morningTasks={morningTasks}
+        updateMorningTasks={updateMorningTasks}
+        abendTasks={abendTasks}
+        updateAbendTasks={updateAbendTasks}
+        dailyTasks={dailyTasks}
+        updateDailyTasks={updateDailyTasks}
+      ></Header>
       <Input onAdd={handleAdd} task={task} tasks={tasks}></Input>
       <Main
         tasks={tasks}
@@ -407,6 +807,19 @@ export function Ticktask({ user }) {
         onEdit={handleEdit}
         onFrequentDelete={handleFrequentDelete}
         onCopyTask={handleCopyTask}
+        weeklyTasks={weeklyTasks}
+        dailyTasks={dailyTasks}
+        morningTasks={morningTasks}
+        abendTasks={abendTasks}
+        user={user}
+        morningCompleted={morningCompleted}
+        setMorningCompleted={setMorningCompleted}
+        abendCompleted={abendCompleted}
+        setAbendCompleted={setAbendCompleted}
+        weeklyCompleted={weeklyCompleted}
+        setWeeklyCompleted={setWeeklyCompleted}
+        dailyCompleted={dailyCompleted}
+        setDailyCompleted={setDailyCompleted}
       ></Main>
     </div>
   );

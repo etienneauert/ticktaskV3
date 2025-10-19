@@ -1,0 +1,33 @@
+.checklistWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: transparent;
+}
+
+.checklistContainer {
+  background-color: transparent;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.checklistTitle {
+  color: #d5ff05;
+  margin-bottom: 15px;
+  font-size: 18px;
+  text-align: center;
+  background-color: transparent;
+}
+
+.emptyState {
+  color: rgb(171, 171, 171);
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  opacity: 0.7;
+  font-size: 14px;
+  background-color: transparent;
+}

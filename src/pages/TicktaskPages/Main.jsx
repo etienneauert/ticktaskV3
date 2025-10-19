@@ -1,5 +1,6 @@
 import MainTasks from "./MainTasks";
 import MainRoutine from "./MainRoutine";
+import Checklist from "./Checklist/Checklist";
 import styles from "./Main.module.css";
 
 export default function Main({
@@ -10,11 +11,32 @@ export default function Main({
   onEdit,
   onFrequentDelete,
   onCopyTask,
+  weeklyTasks,
+  dailyTasks,
+  morningTasks,
+  abendTasks,
+  user,
+  morningCompleted,
+  setMorningCompleted,
+  abendCompleted,
+  setAbendCompleted,
+  weeklyCompleted,
+  setWeeklyCompleted,
+  dailyCompleted,
+  setDailyCompleted,
 }) {
   return (
     <div className={styles.Main}>
       <div className={styles.MainRoutine}>
-        <MainRoutine></MainRoutine>
+        <MainRoutine
+          morningTasks={morningTasks}
+          abendTasks={abendTasks}
+          user={user}
+          morningCompleted={morningCompleted}
+          setMorningCompleted={setMorningCompleted}
+          abendCompleted={abendCompleted}
+          setAbendCompleted={setAbendCompleted}
+        ></MainRoutine>
       </div>
       <div className={styles.MainTasks}>
         <MainTasks
@@ -28,7 +50,15 @@ export default function Main({
         ></MainTasks>
       </div>
       <div className={styles.MainRoutine}>
-        <MainRoutine></MainRoutine>
+        <Checklist
+          weeklyTasks={weeklyTasks}
+          dailyTasks={dailyTasks}
+          user={user}
+          weeklyCompleted={weeklyCompleted}
+          setWeeklyCompleted={setWeeklyCompleted}
+          dailyCompleted={dailyCompleted}
+          setDailyCompleted={setDailyCompleted}
+        ></Checklist>
       </div>
     </div>
   );

@@ -8,11 +8,13 @@ import _trashBin from "../../assets/trash-bin.png";
 import plusSign from "../../assets/plus-sign.png";
 import playgrey from "../../assets/play-grey.png";
 import trashgrey from "../../assets/trash-grey.png";
+import reloadneon from "../../assets/reloadneon.png";
 
 export default function Popup({ open, onConfirm, onCancel, taskText }) {
   const [urgent, setUrgent] = useState(false);
   const [taskDuration, setTaskDuration] = useState(0);
   const [frequent, setFrequent] = useState(false);
+  const [isRotating, setIsRotating] = useState(false);
 
   // Reset state when popup opens
   useEffect(() => {
@@ -20,8 +22,16 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
       setUrgent(false);
       setTaskDuration(0);
       setFrequent(false);
+      setIsRotating(false);
     }
   }, [open]);
+
+  const handleReload = () => {
+    setTaskDuration(0);
+    setIsRotating(true);
+    // Reset rotation state after animation completes
+    setTimeout(() => setIsRotating(false), 500);
+  };
 
   if (!open) return null;
 
@@ -38,7 +48,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
           />
         </div>
         <div className={styles.modalHeader}>
-          <h1>Customize your task!</h1>
+          <h1>Customize your task</h1>
         </div>
 
         {/* Demo Task Preview */}
@@ -105,42 +115,46 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               60 min
             </button>
 
-            {taskDuration > 0 && (
-              <button
-                type="button"
-                className={styles.resetBtn}
-                onClick={() => setTaskDuration(0)}
-              >
-                Reset
-              </button>
-            )}
+            <img
+              className={`${styles.reload} ${
+                isRotating ? styles.rotating : ""
+              }`}
+              onClick={handleReload}
+              src={reloadneon}
+              alt=""
+            />
           </div>
         </div>
+        <div className={styles.checkboxes}>
+          {taskDuration > 0 && (
+            <>
+              <div className={styles.Priority}>
+                <h2>Add Priority</h2>
+                <label className={styles.checkboxRow}>
+                  <input
+                    type="checkbox"
+                    checked={urgent}
+                    onChange={(e) => setUrgent(e.target.checked)}
+                    className={styles.checkboxInput}
+                  />
+                  <span className={styles.grey}>Urgent</span>
+                </label>
+              </div>
 
-        <div className={styles.Priority}>
-          <h2>Add Priority</h2>
-          <label className={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              checked={urgent}
-              onChange={(e) => setUrgent(e.target.checked)}
-              className={styles.checkboxInput}
-            />
-            <span>Urgent</span>
-          </label>
-        </div>
-
-        <div className={styles.Priority}>
-          <h2>Add to recurring Tasks</h2>
-          <label className={styles.checkboxRow}>
-            <input
-              type="checkbox"
-              checked={frequent}
-              onChange={(e) => setFrequent(e.target.checked)}
-              className={styles.checkboxInput}
-            />
-            <span>Reccuring</span>
-          </label>
+              <div className={styles.Recurring}>
+                <h2>Add to recurring Tasks</h2>
+                <label className={styles.checkboxRow}>
+                  <input
+                    type="checkbox"
+                    checked={frequent}
+                    onChange={(e) => setFrequent(e.target.checked)}
+                    className={styles.checkboxInput}
+                  />
+                  <span className={styles.grey}>Reccuring</span>
+                </label>
+              </div>
+            </>
+          )}
         </div>
 
         {taskDuration > 0 && (

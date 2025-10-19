@@ -1,0 +1,172 @@
+.weeklyContainer {
+  background-color: transparent;
+}
+
+.weeklyDays {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: nowrap;
+  animation: fadeIn 0.3s ease-out 0.3s both;
+  background-color: transparent;
+}
+
+.weeklySection {
+  flex: 1;
+  min-width: 150px;
+  padding: 15px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: transparent;
+  min-height: 70px;
+  cursor: pointer;
+  transition: flex 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.weeklySection:hover {
+  flex: 2;
+  min-height: calc(100% + 50px);
+  border-color: #d5ff05;
+  background-color: transparent;
+}
+
+.weeklySection h3 {
+  color: #d5ff05;
+  margin-bottom: 10px;
+  font-size: 16px;
+  text-align: center;
+  background-color: transparent;
+}
+
+.inputContainer {
+  margin-top: 15px;
+  background-color: transparent;
+}
+
+.inputRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background-color: transparent;
+}
+
+.dayInput {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #d5ff05;
+  border-radius: 4px;
+  background-color: inherit;
+  color: #fff;
+  font-size: 12px;
+  outline: none;
+}
+
+.dayInput::placeholder {
+  color: #ababab;
+}
+
+.submitButton {
+  padding: 6px 10px;
+  border: 1px solid #d5ff05;
+  border-radius: 4px;
+  background-color: transparent;
+  color: #d5ff05;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tasksList {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: transparent;
+}
+
+.taskItem {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  padding: 4px 0;
+  background-color: transparent;
+}
+
+.bulletPoint {
+  color: #d5ff05;
+  font-size: 16px;
+  margin-right: 8px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  background-color: transparent;
+}
+
+.taskText {
+  color: #ababab;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  flex: 1;
+  background-color: transparent;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  color: #ff4444;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 2px 6px;
+  margin-left: 8px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.weeklySection:hover .deleteButton {
+  opacity: 1;
+  visibility: visible;
+}
+
+.deleteButton:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+  color: #ff6666;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.emptyPlaceholder {
+  color: rgb(171, 171, 171);
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
+  opacity: 0.7;
+  font-size: 11px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.emptyPlaceholder span {
+  background-color: transparent;
+}

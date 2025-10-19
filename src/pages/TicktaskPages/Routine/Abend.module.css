@@ -1,0 +1,75 @@
+.abendContainer {
+  background-color: transparent;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+  width: 300px;
+}
+
+.abendTitle {
+  color: #d5ff05;
+  margin-bottom: 15px;
+  font-size: 18px;
+  text-align: center;
+  background-color: transparent;
+}
+
+.tasksList {
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: transparent;
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  color: #ababab;
+  font-size: 14px;
+  background-color: transparent;
+}
+
+.checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgb(213, 255, 5);
+  border-radius: 4px;
+  margin-right: 10px;
+  cursor: pointer;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.checkbox:checked {
+  background-color: rgb(213, 255, 5);
+  background-image: url("../../../../assets/check.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.taskText {
+  flex-grow: 1;
+  word-break: break-word;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.taskText.completed {
+  text-decoration: line-through;
+  color: #ababab;
+  opacity: 0.7;
+}
+
+.emptyState {
+  color: rgb(171, 171, 171);
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  opacity: 0.7;
+  font-size: 14px;
+  background-color: transparent;
+}

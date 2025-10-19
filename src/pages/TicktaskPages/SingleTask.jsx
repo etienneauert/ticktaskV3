@@ -267,7 +267,7 @@ export default function SingleTask({
                 onClick={() => onCopyTask?.(task)}
                 src={neonPlus}
                 alt="Copy Task"
-                title="Task kopieren"
+                title="Add Tasks to Main list"
               />
             )}
             <img
