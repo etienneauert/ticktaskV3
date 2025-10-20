@@ -5,13 +5,14 @@
 }
 
 .MainRoutine {
-  width: 25%;
+  width: 26%;
+  margin: 0 auto;
 
   /* background-color: blue; */
 }
 
 .MainTasks {
-  width: 50%;
+  width: 40%;
 
   display: flex;
   justify-content: center;

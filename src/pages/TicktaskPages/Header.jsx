@@ -3,6 +3,7 @@ import fire from "../../assets/flame.png";
 import setting from "../../assets/setting.png";
 import info from "../../assets/info.png";
 import SettingsPopup from "./Settings/SettingsPopup";
+import InfoPopup from "./Info/InfoPopup";
 import { useState } from "react";
 
 export default function Header({
@@ -18,6 +19,7 @@ export default function Header({
   user,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   return (
     <div className={styles.headerContainer}>
       <div className={styles.streak}>
@@ -31,7 +33,10 @@ export default function Header({
         >
           <img src={setting} alt="" />
         </button>
-        <button className={styles.headerAboutButton}>
+        <button
+          className={styles.headerAboutButton}
+          onClick={() => setInfoOpen(true)}
+        >
           <img src={info} alt="" />
         </button>
         <button className={styles.headerLogoutButton} onClick={onLogout}>
@@ -52,6 +57,8 @@ export default function Header({
         updateDailyTasks={updateDailyTasks}
         user={user}
       />
+
+      <InfoPopup open={infoOpen} onClose={() => setInfoOpen(false)} />
     </div>
   );
 }

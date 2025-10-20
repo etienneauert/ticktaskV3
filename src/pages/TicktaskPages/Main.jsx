@@ -24,6 +24,9 @@ export default function Main({
   setWeeklyCompleted,
   dailyCompleted,
   setDailyCompleted,
+  runningTaskId,
+  onTaskStart,
+  onTaskStop,
 }) {
   return (
     <div className={styles.Main}>
@@ -47,6 +50,9 @@ export default function Main({
           onEdit={onEdit}
           onFrequentDelete={onFrequentDelete}
           onCopyTask={onCopyTask}
+          runningTaskId={runningTaskId}
+          onTaskStart={onTaskStart}
+          onTaskStop={onTaskStop}
         ></MainTasks>
       </div>
       <div className={styles.MainRoutine}>

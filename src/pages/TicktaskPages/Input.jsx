@@ -39,7 +39,12 @@ export default function Input({ onAdd }) {
           onChange={(e) => setValue(e.target.value)}
           placeholder="Enter new Task..."
         />
-        <button type="submit" className={styles.submitButton}>
+        <button
+          type="submit"
+          className={`${styles.submitButton} ${
+            value.trim() ? styles.submitButtonActive : ""
+          }`}
+        >
           <img src={rightArrow2} alt="" />
         </button>
       </form>

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { auth } from "../firebase/firebase.js";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import styles from "./Auth.module.css";
 
-export default function Auth() {
+export default function Auth({ onSwitchToLogin }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -25,35 +26,35 @@ export default function Auth() {
     setError("");
     setMessage("");
 
-    // Validierung
+    // Validation
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwörter stimmen nicht überein");
+      setError("Passwords do not match");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("Passwort muss mindestens 6 Zeichen lang sein");
+      setError("Password must be at least 6 characters long");
       return;
     }
 
     setLoading(true);
 
     try {
-      // Benutzer registrieren
+      // Register user
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
       );
 
-      // Benutzername aktualisieren
+      // Update display name
       await updateProfile(userCredential.user, {
         displayName: formData.name,
       });
 
-      setMessage("Registrierung erfolgreich! Willkommen bei TickTask!");
+      setMessage("Registration successful! Welcome to TickTask!");
 
-      // Formular zurücksetzen
+      // Reset form
       setFormData({
         name: "",
         email: "",
@@ -61,21 +62,21 @@ export default function Auth() {
         confirmPassword: "",
       });
     } catch (error) {
-      console.error("Registrierungsfehler:", error);
+      console.error("Registration error:", error);
 
-      // Benutzerfreundliche Fehlermeldungen
+      // Friendly error messages
       switch (error.code) {
         case "auth/email-already-in-use":
-          setError("Diese E-Mail-Adresse wird bereits verwendet");
+          setError("This email address is already in use");
           break;
         case "auth/invalid-email":
-          setError("Ungültige E-Mail-Adresse");
+          setError("Invalid email address");
           break;
         case "auth/weak-password":
-          setError("Passwort ist zu schwach");
+          setError("Password is too weak");
           break;
         default:
-          setError("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
+          setError("An error occurred. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -83,8 +84,8 @@ export default function Auth() {
   };
 
   return (
-    <div>
-      <h1>TickTask Registrierung</h1>
+    <div className={styles.Auth}>
+      <h1>TickTask Registration</h1>
 
       <form onSubmit={handleSubmit}>
         <div>
@@ -95,54 +96,58 @@ export default function Auth() {
             value={formData.name}
             onChange={handleChange}
             required
-            placeholder="Dein vollständiger Name"
+            placeholder="Your full name"
           />
         </div>
 
         <div>
-          <label>E-Mail:</label>
+          <label>Email:</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             required
-            placeholder="deine@email.com"
+            placeholder="your@email.com"
           />
         </div>
 
         <div>
-          <label>Passwort:</label>
+          <label>Password:</label>
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
             required
-            placeholder="Mindestens 6 Zeichen"
+            placeholder="At least 6 characters"
           />
         </div>
 
         <div>
-          <label>Passwort bestätigen:</label>
+          <label>Confirm Password:</label>
           <input
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
             required
-            placeholder="Passwort wiederholen"
+            placeholder="Repeat password"
           />
         </div>
 
         <button type="submit" disabled={loading}>
-          {loading ? "Registriere..." : "Registrieren"}
+          {loading ? "Registering..." : "Register"}
         </button>
       </form>
 
-      {error && <div>{error}</div>}
+      {error && <div className={styles.error}>{error}</div>}
 
-      {message && <div>{message}</div>}
+      {message && <div className={styles.message}>{message}</div>}
+
+      <button className={styles.switchButton} onClick={onSwitchToLogin}>
+        Go to Login
+      </button>
     </div>
   );
 }

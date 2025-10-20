@@ -11,6 +11,9 @@ export default function MainTasks({
   onEdit,
   onFrequentDelete,
   onCopyTask,
+  runningTaskId,
+  onTaskStart,
+  onTaskStop,
 }) {
   const [showDoneTasks, setShowDoneTasks] = useState(false);
   const [showFrequentTasks, setShowFrequentTasks] = useState(false);
@@ -70,6 +73,9 @@ export default function MainTasks({
         tasks={sortedActiveTasks}
         onDelete={onDelete}
         onTaskDone={onTaskDone}
+        runningTaskId={runningTaskId}
+        onTaskStart={onTaskStart}
+        onTaskStop={onTaskStop}
       ></Task>
       {doneTasks.length > 0 && (
         <div className={styles.DoneTasks}>
@@ -96,6 +102,9 @@ export default function MainTasks({
               onDelete={onDelete}
               onTaskDone={onTaskDone}
               isDoneList={true}
+              runningTaskId={runningTaskId}
+              onTaskStart={onTaskStart}
+              onTaskStop={onTaskStop}
             ></Task>
           )}
         </div>
@@ -129,6 +138,9 @@ export default function MainTasks({
               onCopyTask={onCopyTask}
               isDoneList={true}
               isFrequentList={true}
+              runningTaskId={runningTaskId}
+              onTaskStart={onTaskStart}
+              onTaskStop={onTaskStop}
             ></Task>
           )}
         </div>

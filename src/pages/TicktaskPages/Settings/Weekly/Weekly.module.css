@@ -29,7 +29,7 @@
 .weeklySection:hover {
   flex: 2;
   min-height: calc(100% + 50px);
-  border-color: #d5ff05;
+  /* border-color: #d5ff05; */
   background-color: transparent;
 }
 

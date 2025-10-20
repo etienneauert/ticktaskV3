@@ -3,7 +3,7 @@ import { auth } from "../firebase/firebase.js";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import styles from "./Login.module.css";
 
-export function Login() {
+export function Login({ onSwitchToAuth, onGuestLogin }) {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,28 +25,26 @@ export function Login() {
 
     try {
       await signInWithEmailAndPassword(auth, formData.email, formData.password);
-      // Login erfolgreich - onAuthStateChanged in App.jsx wird automatisch ausgelöst
+      // Login successful - onAuthStateChanged in App.jsx will fire automatically
     } catch (error) {
-      console.error("Login-Fehler:", error);
+      console.error("Login error:", error);
 
-      // Benutzerfreundliche Fehlermeldungen
+      // Friendly error messages
       switch (error.code) {
         case "auth/user-not-found":
-          setError("Kein Benutzer mit dieser E-Mail gefunden");
+          setError("No user found with this email");
           break;
         case "auth/wrong-password":
-          setError("Falsches Passwort");
+          setError("Incorrect password");
           break;
         case "auth/invalid-email":
-          setError("Ungültige E-Mail-Adresse");
+          setError("Invalid email address");
           break;
         case "auth/too-many-requests":
-          setError(
-            "Zu viele fehlgeschlagene Versuche. Bitte warte einen Moment"
-          );
+          setError("Too many failed attempts. Please wait a moment");
           break;
         default:
-          setError("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
+          setError("An error occurred. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -59,29 +57,31 @@ export function Login() {
 
       <form onSubmit={handleSubmit}>
         <div>
+          <label>Email:</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
             required
-            placeholder="deine@email.com"
+            placeholder="your@email.com"
           />
         </div>
 
         <div>
+          <label>Password:</label>
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
             required
-            placeholder="Dein Passwort"
+            placeholder="Your password"
           />
         </div>
 
         <button type="submit" disabled={loading}>
-          {loading ? "Logge ein..." : "Einloggen"}
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
 
@@ -99,6 +99,15 @@ export function Login() {
       </div>
 
       {error && <div>{error}</div>}
+
+      <div className={styles.actionsRow}>
+        <button className={styles.switchButton} onClick={onSwitchToAuth}>
+          Register
+        </button>
+        <button className={styles.guestButton} onClick={onGuestLogin}>
+          Guest Login
+        </button>
+      </div>
     </div>
   );
 }

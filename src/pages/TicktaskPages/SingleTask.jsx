@@ -10,6 +10,7 @@ import play from "../../assets/play.png";
 import pauseBlack from "../../assets/pause-black.png";
 import playBlack from "../../assets/play-black.png";
 import resetBlack from "../../assets/reset-black.png";
+import TaskCompletionPopup from "./TaskCompletionPopup";
 
 export default function SingleTask({
   task,
@@ -20,6 +21,9 @@ export default function SingleTask({
   onCopyTask,
   isDoneList = false,
   isFrequentList = false,
+  runningTaskId,
+  onTaskStart,
+  onTaskStop,
 }) {
   const text = typeof task === "string" ? task : task?.text;
   const urgent = typeof task !== "string" && task?.urgent;
@@ -32,6 +36,9 @@ export default function SingleTask({
   // Edit-State
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(text);
+
+  // Completion popup state
+  const [showCompletionPopup, setShowCompletionPopup] = useState(false);
 
   // Edit-Funktionen
   const handleEditStart = () => {
@@ -51,6 +58,31 @@ export default function SingleTask({
   const handleEditCancel = () => {
     setEditText(text);
     setIsEditing(false);
+  };
+
+  // Completion popup handlers
+  const handleTaskComplete = () => {
+    setIsCompleted(true);
+    setShowCompletionPopup(false);
+    // Task als erledigt markieren
+    if (onTaskDone) {
+      onTaskDone(task);
+    }
+  };
+
+  const handleAddTime = () => {
+    // Füge 5 Minuten hinzu
+    setTimeLeft(5 * 60);
+    setShowCompletionPopup(false);
+    setIsRunning(true);
+    // Task-Start melden
+    if (onTaskStart) {
+      onTaskStart(taskId);
+    }
+  };
+
+  const handleClosePopup = () => {
+    setShowCompletionPopup(false);
   };
 
   const handleKeyPress = (e) => {
@@ -167,8 +199,13 @@ export default function SingleTask({
           setTimeLeft((prevTime) => {
             if (prevTime <= 1) {
               setIsRunning(false);
-              setIsCompleted(true);
               setIsPaused(false);
+              // Zeige Completion-Popup statt direkt zu completieren
+              setShowCompletionPopup(true);
+              // Task-Stop melden wenn Timer abgeschlossen
+              if (onTaskStop) {
+                onTaskStop(taskId);
+              }
               return 0;
             }
             return prevTime - 1;
@@ -198,11 +235,15 @@ export default function SingleTask({
 
   const handleStart = useCallback(() => {
     if (taskDuration > 0 && isMountedRef.current) {
+      // Prüfe, ob bereits ein Task läuft
+      if (onTaskStart && !onTaskStart(taskId)) {
+        return; // Task-Start wurde blockiert
+      }
       setIsRunning(true);
       setIsCompleted(false);
       setIsPaused(false);
     }
-  }, [taskDuration]);
+  }, [taskDuration, onTaskStart, taskId]);
 
   const handlePause = useCallback(() => {
     if (isMountedRef.current) {
@@ -233,8 +274,12 @@ export default function SingleTask({
       } catch (error) {
         console.warn("Failed to clear timer state:", error);
       }
+      // Task-Stop melden
+      if (onTaskStop) {
+        onTaskStop(taskId);
+      }
     }
-  }, [taskDuration, taskId]);
+  }, [taskDuration, taskId, onTaskStop]);
 
   // Wenn Task abgeschlossen ist, zeige eine vereinfachte Version
   if (task.done || isDoneList) {
@@ -404,6 +449,14 @@ export default function SingleTask({
           )}
         </div>
       </li>
+
+      <TaskCompletionPopup
+        open={showCompletionPopup}
+        onClose={handleClosePopup}
+        onComplete={handleTaskComplete}
+        onAddTime={handleAddTime}
+        taskText={text}
+      />
     </div>
   );
 }

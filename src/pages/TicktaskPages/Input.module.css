@@ -21,7 +21,7 @@
 }
 
 .InputContainer button {
-  border: 2px solid rgb(213, 255, 5);
+  border: 1px solid #333;
   border-radius: 90px;
   z-index: 4;
   width: 50px;
@@ -87,4 +87,8 @@
 
 .submitButton:hover img {
   opacity: 0;
+}
+
+.submitButtonActive {
+  border: 2px solid #d5ff05 !important;
 }

@@ -24,8 +24,9 @@ export default function SettingsPopup({
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
 
   const tabs = [
+    { id: 1, label: "General" },
     { id: 0, label: "Routine" },
-    { id: 1, label: "Tasks" },
+
     { id: 3, label: "Weekly" },
     { id: 2, label: "Daily" },
   ];

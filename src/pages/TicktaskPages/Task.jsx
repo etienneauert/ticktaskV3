@@ -9,6 +9,9 @@ export function Task({
   onCopyTask,
   isDoneList = false,
   isFrequentList = false,
+  runningTaskId,
+  onTaskStart,
+  onTaskStop,
 }) {
   return (
     <div className={styles.takslist}>
@@ -25,6 +28,9 @@ export function Task({
               onCopyTask={onCopyTask}
               isDoneList={isDoneList}
               isFrequentList={isFrequentList}
+              runningTaskId={runningTaskId}
+              onTaskStart={onTaskStart}
+              onTaskStop={onTaskStop}
             />
           ))}
         </ul>

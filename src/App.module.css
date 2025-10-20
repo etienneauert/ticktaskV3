@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: rgb(16, 16, 21);
+  background-color: rgb(12, 12, 13);
 }
 
 /* Scrollbalken ausblenden */
@@ -32,4 +32,36 @@ html {
   margin: 0 auto;
 
   justify-content: center;
+}
+
+.switchButton {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  padding: 10px 20px;
+  border: 2px solid rgb(213, 255, 5);
+  border-radius: 10px;
+  background: linear-gradient(
+    45deg,
+    rgba(213, 255, 5, 0.1),
+    rgba(213, 255, 5, 0.2)
+  );
+  color: rgb(213, 255, 5);
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 1000;
+}
+
+.switchButton:hover {
+  background: linear-gradient(
+    45deg,
+    rgba(213, 255, 5, 0.3),
+    rgba(213, 255, 5, 0.4)
+  );
+  box-shadow: 0 0 15px rgba(213, 255, 5, 0.6);
+  transform: translateY(-2px);
 }

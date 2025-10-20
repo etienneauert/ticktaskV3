@@ -80,7 +80,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
         </div>
 
         <div className={styles.Duration}>
-          <h2>Add time</h2>
+          <h2>How much time do you need to complete the task?</h2>
 
           <div className={styles.durationButtons}>
             <button
@@ -89,6 +89,13 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               onClick={() => setTaskDuration((prev) => prev + 5)}
             >
               <img src={plusSign} alt="" />5 min
+            </button>
+            <button
+              type="button"
+              className={styles.durationBtn}
+              onClick={() => setTaskDuration((prev) => prev + 1)}
+            >
+              <img src={plusSign} alt="" />1 min
             </button>
             <button
               type="button"
@@ -129,7 +136,6 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
           {taskDuration > 0 && (
             <>
               <div className={styles.Priority}>
-                <h2>Add Priority</h2>
                 <label className={styles.checkboxRow}>
                   <input
                     type="checkbox"
@@ -142,7 +148,6 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
               </div>
 
               <div className={styles.Recurring}>
-                <h2>Add to recurring Tasks</h2>
                 <label className={styles.checkboxRow}>
                   <input
                     type="checkbox"
