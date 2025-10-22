@@ -31,3 +31,47 @@
   font-size: 14px;
   background-color: transparent;
 }
+
+/* Mobile Media Queries */
+@media (max-width: 768px) {
+  .checklistWrapper {
+    gap: 15px;
+  }
+
+  .checklistContainer {
+    padding: 15px;
+    min-width: 250px;
+    max-width: 100%;
+  }
+
+  .checklistTitle {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .emptyState {
+    padding: 15px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checklistWrapper {
+    gap: 12px;
+  }
+
+  .checklistContainer {
+    padding: 12px;
+    min-width: 200px;
+  }
+
+  .checklistTitle {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .emptyState {
+    padding: 12px;
+    font-size: 12px;
+  }
+}

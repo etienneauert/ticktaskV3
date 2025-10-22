@@ -141,3 +141,78 @@
 .emptyPlaceholder span {
   background-color: transparent;
 }
+
+/* Mobile Media Queries */
+@media (max-width: 768px) {
+  .dailyContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dailySection {
+    max-width: 100%;
+    width: 100%;
+    padding: 15px;
+  }
+
+  .dailySection h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .dailySection p {
+    font-size: 13px;
+  }
+
+  .dailyInput {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .submitButton {
+    font-size: 12px;
+    padding: 8px 12px;
+    min-width: 36px;
+    height: 36px;
+  }
+
+  .taskText {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dailySection {
+    padding: 12px;
+  }
+
+  .dailySection h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .dailySection p {
+    font-size: 12px;
+  }
+
+  .dailyInput {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .submitButton {
+    font-size: 11px;
+    padding: 6px 10px;
+    min-width: 32px;
+    height: 32px;
+  }
+
+  .taskText {
+    font-size: 12px;
+  }
+
+  .deleteButton {
+    font-size: 16px;
+    padding: 1px 4px;
+  }
+}

@@ -92,3 +92,89 @@
 .submitButtonActive {
   border: 2px solid #d5ff05 !important;
 }
+
+/* Mobile Media Queries */
+@media (max-width: 768px) {
+  .InputContainer {
+    margin-top: 80px;
+    gap: 15px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .InputContainer input {
+    min-width: 250px;
+    font-size: 18px;
+    padding: 10px 15px;
+    height: 50px;
+  }
+
+  .InputContainer button {
+    width: 50px;
+    height: 50px;
+  }
+
+  .InputContainer button img {
+    width: 18px;
+    height: 25px;
+  }
+
+  .submitButton {
+    width: 250px;
+    height: 32px;
+  }
+
+  .submitButton img {
+    width: 18px;
+    height: 25px;
+  }
+
+  .submitButton::after {
+    width: 18px;
+    height: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .InputContainer {
+    margin-top: 50px;
+    gap: 10px;
+    padding: 0 10px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .InputContainer input {
+    min-width: 200px;
+    font-size: 16px;
+    padding: 8px 12px;
+    height: 50px;
+  }
+
+  .InputContainer button {
+    width: 50px;
+    height: 50px;
+  }
+
+  .InputContainer button img {
+    width: 16px;
+    height: 22px;
+  }
+
+  .submitButton {
+    width: 200px;
+    height: 30px;
+  }
+
+  .submitButton img {
+    width: 16px;
+    height: 22px;
+  }
+
+  .submitButton::after {
+    width: 16px;
+    height: 22px;
+  }
+}

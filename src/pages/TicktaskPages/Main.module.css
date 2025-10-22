@@ -11,10 +11,89 @@
   /* background-color: blue; */
 }
 
+.MainWeekly {
+  width: 26%;
+  margin: 0 auto;
+
+  /* background-color: green; */
+}
+
 .MainTasks {
   width: 40%;
 
   display: flex;
   justify-content: center;
   /* background-color: red; */
+}
+
+/* Mobile Media Queries */
+@media (max-width: 1024px) {
+  .Main {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 60px;
+  }
+
+  .MainTasks {
+    width: 90%;
+    margin-bottom: 20px;
+    order: 1;
+  }
+
+  .MainRoutine {
+    width: 90%;
+    order: 2;
+  }
+
+  .MainWeekly {
+    width: 90%;
+    order: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .Main {
+    margin-top: 50px;
+    padding: 0 10px;
+  }
+
+  .MainTasks {
+    width: 95%;
+    margin-bottom: 15px;
+    order: 1;
+  }
+
+  .MainRoutine {
+    width: 95%;
+    order: 2;
+  }
+
+  .MainWeekly {
+    width: 95%;
+    order: 3;
+  }
+}
+
+@media (max-width: 480px) {
+  .Main {
+    margin-top: 40px;
+    padding: 0 5px;
+  }
+
+  .MainTasks {
+    width: 100%;
+    margin-bottom: 10px;
+    order: 1;
+  }
+
+  .MainRoutine {
+    width: 100%;
+    order: 2;
+    margin-bottom: 20px;
+  }
+
+  .MainWeekly {
+    width: 100%;
+    order: 3;
+  }
 }

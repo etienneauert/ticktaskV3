@@ -55,7 +55,7 @@ export default function Main({
           onTaskStop={onTaskStop}
         ></MainTasks>
       </div>
-      <div className={styles.MainRoutine}>
+      <div className={styles.MainWeekly}>
         <Checklist
           weeklyTasks={weeklyTasks}
           dailyTasks={dailyTasks}

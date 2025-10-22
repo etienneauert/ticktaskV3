@@ -63,7 +63,28 @@ export default function SingleTask({
   // Completion popup handlers
   const handleTaskComplete = () => {
     setIsCompleted(true);
+    setIsRunning(false);
+    setIsPaused(false);
     setShowCompletionPopup(false);
+
+    // Timer explizit stoppen
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
+    // Gespeicherten State löschen
+    try {
+      localStorage.removeItem(`timer_${taskId}`);
+    } catch (error) {
+      console.warn("Failed to clear timer state:", error);
+    }
+
+    // Task-Stop melden
+    if (onTaskStop) {
+      onTaskStop(taskId);
+    }
+
     // Task als erledigt markieren
     if (onTaskDone) {
       onTaskDone(task);
@@ -393,6 +414,30 @@ export default function SingleTask({
                     const taskDuration = parseInt(task.taskDuration) || 0;
                     const actualTimeUsed =
                       taskDuration - Math.floor(timeLeft / 60);
+
+                    // Timer-State zurücksetzen
+                    setIsRunning(false);
+                    setIsCompleted(true);
+                    setIsPaused(false);
+
+                    // Timer explizit stoppen
+                    if (intervalRef.current) {
+                      clearInterval(intervalRef.current);
+                      intervalRef.current = null;
+                    }
+
+                    // Gespeicherten State löschen
+                    try {
+                      localStorage.removeItem(`timer_${taskId}`);
+                    } catch (error) {
+                      console.warn("Failed to clear timer state:", error);
+                    }
+
+                    // Task-Stop melden
+                    if (onTaskStop) {
+                      onTaskStop(taskId);
+                    }
+
                     onTaskDone?.(task, actualTimeUsed);
                   }}
                 >

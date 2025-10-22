@@ -6,7 +6,9 @@ li {
   border-radius: 10px;
   padding: 10px;
   height: 45px;
-  min-width: 650px;
+  min-width: 100%;
+  max-width: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -64,6 +66,7 @@ li.running .countdown {
   display: flex;
   align-items: center;
   width: 100%;
+  justify-content: space-between;
 }
 
 .text {
@@ -71,14 +74,15 @@ li.running .countdown {
   margin-right: 16px;
   background-color: inherit;
   color: rgb(255, 255, 255);
-
   font-size: 17px;
 }
 
 .timer {
   justify-content: center;
-  background-color: red;
+  background-color: transparent;
   gap: 20px;
+  display: flex;
+  align-items: center;
 }
 
 .taskInfo {
@@ -200,7 +204,9 @@ li.running .countdown {
   border-radius: 10px;
   padding: 10px;
   height: 45px;
-  min-width: 600px;
+  min-width: 100%;
+  max-width: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -240,3 +246,56 @@ li.running .countdown {
 }
 
 /* Spezifisches Styling für frequent tasks Zeitangabe - wie normale taskliste */
+
+@media (max-width: 480px) {
+  li {
+    width: 330px;
+    padding: 6px;
+  }
+
+  .text {
+    font-size: 14px;
+    margin-right: 4px;
+    max-width: 200px;
+  }
+
+  .countdown {
+    font-size: 13px;
+  }
+
+  .timerControls {
+    gap: 2px;
+    margin-right: 2px;
+  }
+
+  .goButton,
+  .pauseButton,
+  .resetButton {
+    width: 20px;
+  }
+
+  .delete,
+  .neonplus {
+    width: 20px;
+  }
+
+  .timeInfo {
+    font-size: 11px;
+    margin-right: 4px;
+  }
+
+  .FinishButton {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+
+  .regularIcon,
+  .urgentIcon {
+    width: 16px;
+    margin-right: 5px;
+  }
+
+  .doneTask {
+    width: 300px;
+  }
+}

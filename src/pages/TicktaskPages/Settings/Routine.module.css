@@ -138,3 +138,83 @@
 .emptyPlaceholder span {
   background-color: transparent;
 }
+
+/* Mobile Media Queries */
+@media (max-width: 768px) {
+  .routineContainer {
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .routineSection {
+    max-width: 100%;
+    width: 100%;
+    padding: 15px;
+  }
+
+  .routineSection h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+
+  .routineSection p {
+    font-size: 13px;
+  }
+
+  .routineInput {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .submitButton {
+    font-size: 12px;
+    padding: 8px 12px;
+    min-width: 36px;
+    height: 36px;
+  }
+
+  .taskText {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .routineContainer {
+    gap: 15px;
+  }
+
+  .routineSection {
+    padding: 12px;
+  }
+
+  .routineSection h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .routineSection p {
+    font-size: 12px;
+  }
+
+  .routineInput {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+
+  .submitButton {
+    font-size: 11px;
+    padding: 6px 10px;
+    min-width: 32px;
+    height: 32px;
+  }
+
+  .taskText {
+    font-size: 12px;
+  }
+
+  .deleteButton {
+    font-size: 16px;
+    padding: 1px 4px;
+  }
+}

@@ -72,7 +72,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
 
-  // Global running task state
+  // Global running task state - always start with null
   const [runningTaskId, setRunningTaskId] = useState(null);
 
   // Error handling functions
@@ -88,17 +88,68 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   // Task running management
   const handleTaskStart = (taskId) => {
+    console.log("handleTaskStart called with taskId:", taskId);
+    console.log("Current runningTaskId:", runningTaskId);
+
+    // If there's already a running task, block the new one
     if (runningTaskId && runningTaskId !== taskId) {
+      console.log("Found existing running task:", runningTaskId);
       showErrorMessage("Nur ein Task kann gleichzeitig laufen!");
       return false;
     }
+
+    console.log("Starting task:", taskId);
     setRunningTaskId(taskId);
+    // Save to localStorage
+    if (!isGuestMode && user?.uid) {
+      try {
+        localStorage.setItem(
+          `ticktask_running_task_${user.uid}`,
+          JSON.stringify(taskId)
+        );
+        console.log("Saved running task to localStorage:", taskId);
+      } catch (e) {
+        console.error("Failed to save running task to localStorage", e);
+      }
+    }
     return true;
   };
 
   const handleTaskStop = (taskId) => {
+    console.log("handleTaskStop called with taskId:", taskId);
+    console.log("Current runningTaskId:", runningTaskId);
+
     if (runningTaskId === taskId) {
+      console.log("Stopping task:", taskId);
       setRunningTaskId(null);
+      // Clear from localStorage
+      if (!isGuestMode && user?.uid) {
+        try {
+          localStorage.removeItem(`ticktask_running_task_${user.uid}`);
+          console.log("Cleared running task from localStorage");
+        } catch (e) {
+          console.error("Failed to clear running task from localStorage", e);
+        }
+      }
+    } else {
+      console.log("Task stop ignored - not the running task");
+    }
+  };
+
+  // Force clear running task - for debugging
+  const clearRunningTask = () => {
+    console.log("Force clearing running task");
+    setRunningTaskId(null);
+    if (!isGuestMode && user?.uid) {
+      try {
+        localStorage.removeItem(`ticktask_running_task_${user.uid}`);
+        console.log("Force cleared running task from localStorage");
+      } catch (e) {
+        console.error(
+          "Failed to force clear running task from localStorage",
+          e
+        );
+      }
     }
   };
 
@@ -556,6 +607,43 @@ export function Ticktask({ user, isGuestMode = false }) {
       return;
     }
 
+    // Check if there's a running task and validate it
+    if (!isGuestMode && user?.uid) {
+      try {
+        const stored = localStorage.getItem(
+          `ticktask_running_task_${user.uid}`
+        );
+        if (stored) {
+          const runningTaskId = JSON.parse(stored);
+          console.log("Found running task:", runningTaskId);
+
+          // Check if timer is actually still running
+          const timerKey = `timer_${runningTaskId}`;
+          const timerState = localStorage.getItem(timerKey);
+
+          if (timerState) {
+            const parsed = JSON.parse(timerState);
+            if (parsed.isRunning && !parsed.isCompleted) {
+              console.log("Timer is still running, keeping running task");
+              setRunningTaskId(runningTaskId);
+            } else {
+              console.log("Timer is not running, clearing running task");
+              setRunningTaskId(null);
+              localStorage.removeItem(`ticktask_running_task_${user.uid}`);
+            }
+          } else {
+            console.log("No timer state found, clearing running task");
+            setRunningTaskId(null);
+            localStorage.removeItem(`ticktask_running_task_${user.uid}`);
+          }
+        }
+      } catch (e) {
+        console.error("Failed to check running task state", e);
+        setRunningTaskId(null);
+        localStorage.removeItem(`ticktask_running_task_${user.uid}`);
+      }
+    }
+
     // Lokale Tasks laden
     try {
       const cacheKey = `ticktask_tasks_${user.uid}`;
@@ -635,8 +723,19 @@ export function Ticktask({ user, isGuestMode = false }) {
               serverWeeklyTasks.find((task) => task.day === "sunday")?.tasks ||
               [],
           };
-          console.log("Setting weekly data:", weeklyData);
+          console.log("Loading weekly data from Firebase:", weeklyData);
           setWeeklyTasks(weeklyData);
+
+          // Speichere auch in localStorage für Offline-Zugriff
+          try {
+            localStorage.setItem(
+              `ticktask_weekly_tasks_${user.uid}`,
+              JSON.stringify(weeklyData)
+            );
+            console.log("Saved weekly tasks to localStorage");
+          } catch (e) {
+            console.error("Failed to save weekly tasks to localStorage", e);
+          }
         } else {
           console.log("No weekly tasks found in Firebase");
         }
@@ -762,7 +861,20 @@ export function Ticktask({ user, isGuestMode = false }) {
           (task) => task.type === "morning"
         );
         if (morningTask && Array.isArray(morningTask.tasks)) {
+          console.log(
+            "Loading morning tasks from Firebase:",
+            morningTask.tasks
+          );
           setMorningTasks(morningTask.tasks);
+          // Auch in localStorage speichern für Offline-Zugriff
+          try {
+            localStorage.setItem(
+              `ticktask_morning_tasks_${user.uid}`,
+              JSON.stringify(morningTask.tasks)
+            );
+          } catch (e) {
+            console.error("Failed to save morning tasks to localStorage", e);
+          }
         }
 
         // Abend Tasks aus Firebase laden
@@ -770,7 +882,17 @@ export function Ticktask({ user, isGuestMode = false }) {
           (task) => task.type === "abend"
         );
         if (abendTask && Array.isArray(abendTask.tasks)) {
+          console.log("Loading abend tasks from Firebase:", abendTask.tasks);
           setAbendTasks(abendTask.tasks);
+          // Auch in localStorage speichern für Offline-Zugriff
+          try {
+            localStorage.setItem(
+              `ticktask_abend_tasks_${user.uid}`,
+              JSON.stringify(abendTask.tasks)
+            );
+          } catch (e) {
+            console.error("Failed to save abend tasks to localStorage", e);
+          }
         }
 
         // Daily Tasks aus Firebase laden
@@ -778,7 +900,17 @@ export function Ticktask({ user, isGuestMode = false }) {
           (task) => task.type === "daily"
         );
         if (dailyTask && Array.isArray(dailyTask.tasks)) {
+          console.log("Loading daily tasks from Firebase:", dailyTask.tasks);
           setDailyTasks(dailyTask.tasks);
+          // Auch in localStorage speichern für Offline-Zugriff
+          try {
+            localStorage.setItem(
+              `ticktask_daily_tasks_${user.uid}`,
+              JSON.stringify(dailyTask.tasks)
+            );
+          } catch (e) {
+            console.error("Failed to save daily tasks to localStorage", e);
+          }
         }
       },
       (error) => {
@@ -797,7 +929,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           id: doc.id,
           ...doc.data(),
         }));
-        console.debug("Server tasks (", serverTasks.length, ")", serverTasks);
+        console.log("Server tasks (", serverTasks.length, ")", serverTasks);
 
         // Synchronisiere mit Server: füge neue hinzu und entferne gelöschte
         setTasks((prev) => {
@@ -827,6 +959,24 @@ export function Ticktask({ user, isGuestMode = false }) {
               filtered.push(serverTask);
             }
           });
+
+          // Speichere synchronisierte Tasks in localStorage
+          try {
+            localStorage.setItem(
+              `ticktask_tasks_${user.uid}`,
+              JSON.stringify(filtered)
+            );
+            console.log(
+              "Saved synchronized tasks to localStorage:",
+              filtered.length,
+              "tasks"
+            );
+          } catch (e) {
+            console.error(
+              "Failed to save synchronized tasks to localStorage",
+              e
+            );
+          }
 
           return filtered;
         });
@@ -1013,6 +1163,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           runningTaskId={runningTaskId}
           onTaskStart={handleTaskStart}
           onTaskStop={handleTaskStop}
+          onClearRunningTask={clearRunningTask}
         />
         <ErrorMessage
           message={errorMessage}
@@ -1062,6 +1213,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         runningTaskId={runningTaskId}
         onTaskStart={handleTaskStart}
         onTaskStop={handleTaskStop}
+        onClearRunningTask={clearRunningTask}
       ></Main>
 
       <ErrorMessage

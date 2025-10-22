@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -386,4 +386,192 @@
 .Priority *,
 .Recurring * {
   background-color: transparent !important;
+}
+
+/* Mobile Media Queries */
+@media (max-width: 768px) {
+  .modal {
+    width: 95vw;
+    height: 80vh;
+    max-height: 500px;
+    padding: 20px;
+  }
+
+  .modalHeader {
+    margin-top: 15px;
+    margin-bottom: 30px;
+  }
+
+  .demoTask {
+    min-width: 300px;
+    max-width: 100%;
+    padding: 8px;
+  }
+
+  .demoText {
+    font-size: 14px;
+    margin-right: 12px;
+  }
+
+  .demoCountdown {
+    font-size: 15px;
+  }
+
+  .demoGoButton {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+  }
+
+  .demoDelete {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+  }
+
+  .demoDelete img {
+    width: 20px;
+  }
+
+  .durationButtons {
+    gap: 15px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .durationButtons button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .durationButtons button img {
+    width: 11px;
+  }
+
+  .Duration {
+    margin-top: 30px;
+  }
+
+  .currentTime {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .reload {
+    width: 28px;
+    height: 28px;
+  }
+
+  .Priority,
+  .Recurring {
+    margin-top: 30px;
+  }
+
+  .addButton {
+    padding: 8px 25px;
+    font-size: 16px;
+    margin-top: 40px;
+  }
+
+  .checkboxes {
+    gap: 25px;
+    flex-wrap: wrap;
+  }
+
+  .settingsContent {
+    margin-top: 30px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    width: 98vw;
+    height: 85vh;
+    padding: 15px;
+  }
+
+  .modalHeader {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  .demoTask {
+    min-width: 250px;
+    padding: 6px;
+  }
+
+  .demoText {
+    font-size: 13px;
+    margin-right: 10px;
+  }
+
+  .demoCountdown {
+    font-size: 14px;
+  }
+
+  .demoGoButton {
+    width: 20px;
+    height: 20px;
+    font-size: 9px;
+  }
+
+  .demoDelete {
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+  }
+
+  .demoDelete img {
+    width: 18px;
+  }
+
+  .durationButtons {
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .durationButtons button {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .durationButtons button img {
+    width: 10px;
+  }
+
+  .Duration {
+    margin-top: 20px;
+  }
+
+  .currentTime {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .reload {
+    width: 24px;
+    height: 24px;
+  }
+
+  .Priority,
+  .Recurring {
+    margin-top: 20px;
+  }
+
+  .addButton {
+    padding: 6px 20px;
+    font-size: 14px;
+    margin-top: 30px;
+  }
+
+  .checkboxes {
+    gap: 20px;
+  }
+
+  .settingsContent {
+    margin-top: 20px;
+    font-size: 13px;
+  }
 }

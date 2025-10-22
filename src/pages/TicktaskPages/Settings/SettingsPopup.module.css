@@ -7,6 +7,7 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  overflow: hidden;
 }
 
 .modal {
@@ -16,11 +17,14 @@
   width: 1070px;
   height: 500px;
   max-width: 90vw;
+  max-height: 90vh;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 -20px 40px rgba(0, 0, 0, 0.7),
     20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7),
     0 0 0 4px rgba(255, 255, 255, 0.1);
   transition: width 0.3s ease;
   background-color: transparent;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .modalWide {
@@ -109,6 +113,8 @@
 .tabContent {
   min-height: 200px;
   background-color: transparent;
+  display: flex;
+  flex-direction: column;
 }
 
 .tabPanel {
@@ -116,4 +122,87 @@
   font-size: 16px;
   padding: 20px 0;
   background-color: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile Media Queries */
+@media (max-width: 768px) {
+  .modal {
+    width: 95vw;
+    height: 80vh;
+    max-height: 80vh;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .modalWide {
+    width: 95vw;
+  }
+
+  .modalHeader {
+    margin-bottom: 30px;
+  }
+
+  .settingsContent {
+    margin-top: 30px;
+    font-size: 14px;
+  }
+
+  .tabsHeader {
+    max-width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tabButton {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  .tabPanel {
+    font-size: 14px;
+    padding: 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    width: 98vw;
+    height: 85vh;
+    max-height: 85vh;
+    padding: 15px;
+    overflow-y: auto;
+  }
+
+  .modalWide {
+    width: 98vw;
+  }
+
+  .modalHeader {
+    margin-bottom: 20px;
+  }
+
+  .settingsContent {
+    margin-top: 20px;
+    font-size: 13px;
+  }
+
+  .tabsHeader {
+    flex-direction: row;
+    gap: 5px;
+    flex-wrap: wrap;
+  }
+
+  .tabButton {
+    font-size: 13px;
+    padding: 8px 12px;
+    flex: 1;
+    text-align: center;
+  }
+
+  .tabPanel {
+    font-size: 13px;
+    padding: 12px 0;
+  }
 }
