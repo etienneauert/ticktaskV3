@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { auth } from "../firebase/firebase.js";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import googleIcon from "../assets/google.png";
 import styles from "./Login.module.css";
 
 export function Login({ onSwitchToAuth, onGuestLogin }) {
@@ -10,6 +15,7 @@ export function Login({ onSwitchToAuth, onGuestLogin }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -51,6 +57,29 @@ export function Login({ onSwitchToAuth, onGuestLogin }) {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    try {
+      setGoogleLoading(true);
+      setError("");
+
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      // onAuthStateChanged in App.jsx wird automatisch ausgelöst
+    } catch (error) {
+      console.error("Google Sign-In error:", error);
+
+      if (error.code === "auth/popup-closed-by-user") {
+        setError("Google Sign-In wurde abgebrochen");
+      } else if (error.code === "auth/popup-blocked") {
+        setError("Popup wurde blockiert. Bitte erlaube Popups für diese Seite");
+      } else {
+        setError("Google Sign-In Fehler. Bitte versuche es erneut.");
+      }
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
   return (
     <div className={styles.Login}>
       <h1>TickTask Login</h1>
@@ -85,20 +114,19 @@ export function Login({ onSwitchToAuth, onGuestLogin }) {
         </button>
       </form>
 
-      <div>
+      {error && <div>{error}</div>}
+
+      {/* Google Sign-In Button */}
+      <div className={styles.googleSignIn}>
         <button
-          onClick={() => {
-            setFormData({
-              email: "andi@gmail.com",
-              password: "testing",
-            });
-          }}
+          onClick={handleGoogleSignIn}
+          disabled={googleLoading}
+          className={styles.googleButton}
         >
-          Quick Login
+          {googleLoading ? "Google Sign-In..." : "Sign in with Google"}
+          <img src={googleIcon} alt="Google" className={styles.googleIcon} />
         </button>
       </div>
-
-      {error && <div>{error}</div>}
 
       <div className={styles.actionsRow}>
         <button className={styles.switchButton} onClick={onSwitchToAuth}>

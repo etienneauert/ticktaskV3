@@ -10,6 +10,7 @@
   color: white;
   cursor: default;
   width: 100%;
+  min-width: 600px;
   background-color: transparent;
   box-sizing: border-box;
 }
@@ -70,6 +71,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  min-width: 600px;
   background-color: inherit;
 
   /* background-color: rgb(41, 40, 53); */
@@ -77,7 +79,7 @@
   padding: 6px 10px;
   border-radius: 8px;
   transition: background-color 0.2s ease;
-  /* box-sizing: border-box; */
+  box-sizing: border-box;
 }
 
 .DoneTasksHeader:hover {
@@ -120,11 +122,15 @@
 @media (max-width: 768px) {
   .DoneTasks,
   .FrequentTasks {
-    width: 100%;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
   }
 
   .DoneTasksHeader {
-    width: 100%;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
   }
 
   .DoneTasks {
@@ -140,11 +146,14 @@
 @media (max-width: 480px) {
   .DoneTasks,
   .FrequentTasks {
-    width: 100%;
+    min-width: 100% !important;
+    max-width: 100% !important;
   }
 
   .DoneTasksHeader {
-    width: 100%;
+    width: 300px !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
   }
 
   .DoneTasks {

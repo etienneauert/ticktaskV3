@@ -54,6 +54,9 @@ export function Ticktask({ user, isGuestMode = false }) {
   const [weeklyCompleted, setWeeklyCompleted] = useState(new Set());
   const [dailyCompleted, setDailyCompleted] = useState(new Set());
 
+  // Streak state
+  const [streak, setStreak] = useState(0);
+
   // Gast-Modus: Verwende Gast-Daten wenn im Gast-Modus
   const currentWeeklyTasks = isGuestMode ? guestData.weeklyTasks : weeklyTasks;
   const currentMorningTasks = isGuestMode
@@ -90,6 +93,101 @@ export function Ticktask({ user, isGuestMode = false }) {
   const hideErrorMessage = () => {
     setShowError(false);
     setErrorMessage("");
+  };
+
+  // Streak management
+  const canIncreaseStreak = () => {
+    // Prüfe nur die aktiven Tasks (nicht Done/Frequent Tasks)
+    const activeTasks = tasks.filter((task) => !task.completed);
+
+    // Prüfe Morning Tasks nur wenn welche existieren
+    let morningOk = true;
+    if (morningTasks.length > 0) {
+      const morningNotCompleted = morningTasks.filter(
+        (task) => !currentMorningCompleted.has(task.id)
+      );
+      morningOk = morningNotCompleted.length === 0;
+    }
+
+    // Prüfe Abend Tasks nur wenn welche existieren
+    let abendOk = true;
+    if (abendTasks.length > 0) {
+      const abendNotCompleted = abendTasks.filter(
+        (task) => !currentAbendCompleted.has(task.id)
+      );
+      abendOk = abendNotCompleted.length === 0;
+    }
+
+    // Prüfe Weekly Tasks für heute nur wenn welche existieren
+    const today = new Date();
+    const dayNames = [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ];
+    const currentDay = dayNames[today.getDay()];
+    const todayWeeklyTasks = currentWeeklyTasks[currentDay] || [];
+
+    let weeklyOk = true;
+    if (todayWeeklyTasks.length > 0) {
+      const weeklyNotCompleted = todayWeeklyTasks.filter(
+        (task) => !currentWeeklyCompleted.has(task.id)
+      );
+      weeklyOk = weeklyNotCompleted.length === 0;
+    }
+
+    // Prüfe Daily Tasks nur wenn welche existieren
+    let dailyOk = true;
+    if (currentDailyTasks.length > 0) {
+      const dailyNotCompleted = currentDailyTasks.filter(
+        (task) => !currentDailyCompleted.has(task.id)
+      );
+      dailyOk = dailyNotCompleted.length === 0;
+    }
+
+    const canIncrease =
+      activeTasks.length === 0 && morningOk && abendOk && weeklyOk && dailyOk;
+
+    console.log("🔍 Streak Check:");
+    console.log(
+      "- Aktive Tasks:",
+      activeTasks.length,
+      "(Done/Frequent Tasks werden ignoriert)"
+    );
+    console.log(
+      "- Morning OK:",
+      morningOk,
+      "(Tasks:",
+      morningTasks.length,
+      ")"
+    );
+    console.log("- Abend OK:", abendOk, "(Tasks:", abendTasks.length, ")");
+    console.log(
+      "- Weekly OK:",
+      weeklyOk,
+      "(Tasks:",
+      todayWeeklyTasks.length,
+      ")"
+    );
+    console.log(
+      "- Daily OK:",
+      dailyOk,
+      "(Tasks:",
+      currentDailyTasks.length,
+      ")"
+    );
+    console.log("- Can increase:", canIncrease);
+
+    return canIncrease;
+  };
+
+  const increaseStreak = () => {
+    // Validierung erfolgt bereits im Button, daher keine weitere Prüfung nötig
+    setStreak((prevStreak) => prevStreak + 1);
   };
 
   // Task running management
@@ -1101,6 +1199,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           updateAbendTasks={updateAbendTasks}
           dailyTasks={currentDailyTasks}
           updateDailyTasks={updateDailyTasks}
+          streak={streak}
         />
         <Input onAdd={handleAdd} task={task} tasks={guestData.tasks} />
         <Main
@@ -1128,6 +1227,8 @@ export function Ticktask({ user, isGuestMode = false }) {
           onTaskStart={handleTaskStart}
           onTaskStop={handleTaskStop}
           onClearRunningTask={clearRunningTask}
+          increaseStreak={increaseStreak}
+          canIncreaseStreak={canIncreaseStreak}
         />
         <ErrorMessage
           message={errorMessage}
@@ -1151,6 +1252,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         updateAbendTasks={updateAbendTasks}
         dailyTasks={dailyTasks}
         updateDailyTasks={updateDailyTasks}
+        streak={streak}
       ></Header>
       <Input onAdd={handleAdd} task={task} tasks={tasks}></Input>
       <Main
@@ -1178,6 +1280,8 @@ export function Ticktask({ user, isGuestMode = false }) {
         onTaskStart={handleTaskStart}
         onTaskStop={handleTaskStop}
         onClearRunningTask={clearRunningTask}
+        increaseStreak={increaseStreak}
+        canIncreaseStreak={canIncreaseStreak}
       ></Main>
 
       <ErrorMessage

@@ -17,13 +17,14 @@ export default function Header({
   dailyTasks,
   updateDailyTasks,
   user,
+  streak,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   return (
     <div className={styles.headerContainer}>
       <div className={styles.streak}>
-        <p className={styles.counter}>3</p>
+        <p className={styles.counter}>{streak}</p>
         <img className={styles.fireIcon} src={fire} alt="" />
       </div>
       <div className={styles.buttonsRight}>

@@ -56,11 +56,19 @@ export default function Thursday({ tasks, onUpdateTasks }) {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && inputValue.trim()) {
+                onUpdateTasks([...tasks, inputValue.trim()]);
+                setInputValue("");
+              }
+            }}
             placeholder=""
             className={styles.dayInput}
           />
           <button
-            className={styles.submitButton}
+            className={`${styles.submitButton} ${
+              inputValue.trim() ? styles.active : ""
+            }`}
             onClick={() => {
               if (inputValue.trim()) {
                 onUpdateTasks([...tasks, inputValue.trim()]);

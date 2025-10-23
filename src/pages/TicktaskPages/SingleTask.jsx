@@ -39,6 +39,7 @@ export default function SingleTask({
 
   // Completion popup state
   const [showCompletionPopup, setShowCompletionPopup] = useState(false);
+  const popupTimeoutRef = useRef(null);
 
   // Edit-Funktionen
   const handleEditStart = () => {
@@ -60,12 +61,26 @@ export default function SingleTask({
     setIsEditing(false);
   };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleEditSave();
+    } else if (e.key === "Escape") {
+      handleEditCancel();
+    }
+  };
+
   // Completion popup handlers
   const handleTaskComplete = () => {
     setIsCompleted(true);
     setIsRunning(false);
     setIsPaused(false);
     setShowCompletionPopup(false);
+
+    // Clear popup timeout
+    if (popupTimeoutRef.current) {
+      clearTimeout(popupTimeoutRef.current);
+      popupTimeoutRef.current = null;
+    }
 
     // Timer explizit stoppen
     if (intervalRef.current) {
@@ -92,6 +107,12 @@ export default function SingleTask({
   };
 
   const handleAddTime = () => {
+    // Clear popup timeout
+    if (popupTimeoutRef.current) {
+      clearTimeout(popupTimeoutRef.current);
+      popupTimeoutRef.current = null;
+    }
+
     // Füge 5 Minuten hinzu
     setTimeLeft(5 * 60);
     setShowCompletionPopup(false);
@@ -103,15 +124,15 @@ export default function SingleTask({
   };
 
   const handleClosePopup = () => {
-    setShowCompletionPopup(false);
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleEditSave();
-    } else if (e.key === "Escape") {
-      handleEditCancel();
+    // Clear popup timeout
+    if (popupTimeoutRef.current) {
+      clearTimeout(popupTimeoutRef.current);
+      popupTimeoutRef.current = null;
     }
+
+    setShowCompletionPopup(false);
+    // Fallback: Timer bei 0:00 stehen lassen
+    setIsCompleted(true);
   };
 
   // Sichere Funktion zum Laden der Timer-States
@@ -209,6 +230,10 @@ export default function SingleTask({
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
+      if (popupTimeoutRef.current) {
+        clearTimeout(popupTimeoutRef.current);
+        popupTimeoutRef.current = null;
+      }
     };
   }, [taskId]);
 
@@ -223,6 +248,13 @@ export default function SingleTask({
               setIsPaused(false);
               // Zeige Completion-Popup statt direkt zu completieren
               setShowCompletionPopup(true);
+              // Auto-close Popup nach 10 Sekunden als Fallback
+              popupTimeoutRef.current = setTimeout(() => {
+                if (showCompletionPopup) {
+                  setShowCompletionPopup(false);
+                  setIsCompleted(true);
+                }
+              }, 10000);
               // Task-Stop melden wenn Timer abgeschlossen
               if (onTaskStop) {
                 onTaskStop(taskId);

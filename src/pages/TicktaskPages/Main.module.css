@@ -1,7 +1,15 @@
 .Main {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   margin-top: 80px;
+}
+
+.MainContent {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .MainRoutine {
@@ -26,12 +34,23 @@
   /* background-color: red; */
 }
 
+.MainCenteredButton {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  /* background-color: purple; */
+}
+
 /* Mobile Media Queries */
 @media (max-width: 1024px) {
   .Main {
+    margin-top: 60px;
+  }
+
+  .MainContent {
     flex-direction: column;
     align-items: center;
-    margin-top: 60px;
   }
 
   .MainTasks {
@@ -49,6 +68,11 @@
   .MainWeekly {
     width: 90%;
     order: 3;
+    margin-bottom: 20px;
+  }
+
+  .MainCenteredButton {
+    width: 90%;
     margin-bottom: 20px;
   }
 }
@@ -76,6 +100,11 @@
     order: 3;
     margin-bottom: 20px;
   }
+
+  .MainCenteredButton {
+    width: 95%;
+    margin-bottom: 20px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -99,6 +128,11 @@
   .MainWeekly {
     width: 100%;
     order: 3;
+    margin-bottom: 20px;
+  }
+
+  .MainCenteredButton {
+    width: 100%;
     margin-bottom: 20px;
   }
 }

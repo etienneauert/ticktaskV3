@@ -51,6 +51,8 @@
   color: #fff;
   font-size: 12px;
   outline: none;
+  height: 20px;
+  transition: border-color 0.3s ease;
 }
 
 .dailyInput::placeholder {
@@ -58,23 +60,26 @@
 }
 
 .submitButton {
-  padding: 0;
-  border: none;
-  border-radius: 0;
+  border: 1px solid #333;
+  border-radius: 90px;
   background-color: transparent;
-  color: transparent;
-  font-size: 14px;
+  color: #333;
+  font-size: 15px;
   font-weight: bold;
   cursor: pointer;
-  min-width: 20px;
+  min-width: 30px;
   height: 20px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url("../../assets/add.png");
-  background-size: 20px;
-  background-repeat: no-repeat;
-  background-position: center;
+  flex-shrink: 0;
+}
+
+.submitButton.active {
+  border-color: #d5ff05;
+  box-shadow: 0 0 5px rgba(213, 255, 5, 0.3);
+  color: #d5ff05;
 }
 
 .tasksList {
@@ -175,15 +180,16 @@
   }
 
   .dailyInput {
-    font-size: 14px;
-    padding: 8px 12px;
+    font-size: 16px !important;
+    padding: 10px !important;
+    min-height: 44px !important;
   }
 
   .submitButton {
-    font-size: 12px;
-    padding: 8px 12px;
-    min-width: 36px;
-    height: 36px;
+    font-size: 16px !important;
+    padding: 10px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
   }
 
   .taskText {
@@ -212,15 +218,16 @@
   }
 
   .dailyInput {
-    font-size: 13px;
-    padding: 6px 10px;
+    font-size: 16px !important;
+    padding: 12px !important;
+    min-height: 44px !important;
   }
 
   .submitButton {
-    font-size: 11px;
-    padding: 6px 10px;
-    min-width: 32px;
-    height: 32px;
+    font-size: 16px !important;
+    padding: 12px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
   }
 
   .taskText {

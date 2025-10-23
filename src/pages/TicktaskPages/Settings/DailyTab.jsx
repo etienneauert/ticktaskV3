@@ -42,11 +42,19 @@ export default function DailyTab({ dailyTasks, onUpdateDailyTasks }) {
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" && inputValue.trim()) {
+                    onUpdateDailyTasks([...dailyTasks, inputValue.trim()]);
+                    setInputValue("");
+                  }
+                }}
                 placeholder=""
                 className={dailyStyles.dailyInput}
               />
               <button
-                className={dailyStyles.submitButton}
+                className={`${dailyStyles.submitButton} ${
+                  inputValue.trim() ? dailyStyles.active : ""
+                }`}
                 onClick={() => {
                   if (inputValue.trim()) {
                     onUpdateDailyTasks([...dailyTasks, inputValue.trim()]);
