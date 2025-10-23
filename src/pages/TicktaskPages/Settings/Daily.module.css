@@ -45,7 +45,7 @@
 .dailyInput {
   width: 100%;
   padding: 6px 10px;
-  border: 1px solid #d5ff05;
+  border: 1px solid #333;
   border-radius: 4px;
   background-color: transparent;
   color: #fff;
@@ -58,19 +58,23 @@
 }
 
 .submitButton {
-  padding: 6px 10px;
-  border: 1px solid #d5ff05;
-  border-radius: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
   background-color: transparent;
-  color: #d5ff05;
+  color: transparent;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
-  min-width: 32px;
-  height: 32px;
+  min-width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image: url("../../assets/add.png");
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .tasksList {
@@ -155,6 +159,12 @@
     padding: 15px;
   }
 
+  .taskItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .dailySection h3 {
     font-size: 16px;
     margin-bottom: 12px;
@@ -189,6 +199,12 @@
   .dailySection h3 {
     font-size: 15px;
     margin-bottom: 10px;
+  }
+
+  .taskItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .dailySection p {

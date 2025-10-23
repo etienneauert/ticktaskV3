@@ -126,6 +126,15 @@
   .DoneTasksHeader {
     width: 100%;
   }
+
+  .DoneTasks {
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+
+  .FrequentTasks {
+    margin: 5px 2px 20px 2px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -136,5 +145,13 @@
 
   .DoneTasksHeader {
     width: 100%;
+  }
+
+  .DoneTasks {
+    margin-top: 15px;
+  }
+
+  .FrequentTasks {
+    margin: 3px 2px 15px 2px;
   }
 }

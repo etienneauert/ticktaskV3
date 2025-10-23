@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -34,6 +34,15 @@
   margin-top: 20px;
   margin-bottom: 50px;
   background-color: transparent;
+}
+
+.modalHeader h1 {
+  background-color: transparent !important;
+}
+
+.regularIcon,
+.urgentIcon {
+  background-color: transparent !important;
 }
 
 .actions {
@@ -215,6 +224,7 @@
 .Duration h2 {
   color: rgb(171, 171, 171);
   background-color: transparent;
+  font-size: 14px;
 }
 
 .currentTime {
@@ -285,6 +295,7 @@
 .Priority h2 {
   margin-bottom: 20px;
   color: rgb(171, 171, 171);
+  font-size: 14px;
 }
 
 .Recurring {
@@ -299,6 +310,7 @@
 .Recurring h2 {
   margin-bottom: 20px;
   color: rgb(171, 171, 171);
+  font-size: 14px;
 }
 
 @keyframes slideInFromBottom {
@@ -493,8 +505,13 @@
   }
 
   .modalHeader {
-    margin-top: 10px;
+    margin-top: 50px;
     margin-bottom: 20px;
+    background-color: transparent;
+  }
+
+  .modalHeader h1 {
+    background-color: transparent !important;
   }
 
   .demoTask {
@@ -503,12 +520,12 @@
   }
 
   .demoText {
-    font-size: 13px;
-    margin-right: 10px;
+    font-size: 11px;
+    margin-right: 8px;
   }
 
   .demoCountdown {
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .demoGoButton {
@@ -533,12 +550,12 @@
   }
 
   .durationButtons button {
-    padding: 6px 10px;
-    font-size: 11px;
+    padding: 5px 8px;
+    font-size: 10px;
   }
 
   .durationButtons button img {
-    width: 10px;
+    width: 9px;
   }
 
   .Duration {
@@ -561,9 +578,9 @@
   }
 
   .addButton {
-    padding: 6px 20px;
-    font-size: 14px;
-    margin-top: 30px;
+    padding: 5px 16px;
+    font-size: 12px;
+    margin-top: 25px;
   }
 
   .checkboxes {
@@ -572,6 +589,17 @@
 
   .settingsContent {
     margin-top: 20px;
-    font-size: 13px;
+    font-size: 11px;
+  }
+
+  .Duration h2,
+  .Priority h2,
+  .Recurring h2 {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .modal h1 {
+    background-color: transparent !important;
   }
 }

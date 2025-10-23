@@ -43,11 +43,13 @@
   .MainRoutine {
     width: 90%;
     order: 2;
+    margin-bottom: 20px;
   }
 
   .MainWeekly {
     width: 90%;
     order: 3;
+    margin-bottom: 20px;
   }
 }
 
@@ -59,18 +61,20 @@
 
   .MainTasks {
     width: 95%;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     order: 1;
   }
 
   .MainRoutine {
     width: 95%;
     order: 2;
+    margin-bottom: 20px;
   }
 
   .MainWeekly {
     width: 95%;
     order: 3;
+    margin-bottom: 20px;
   }
 }
 
@@ -82,7 +86,7 @@
 
   .MainTasks {
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     order: 1;
   }
 
@@ -95,5 +99,6 @@
   .MainWeekly {
     width: 100%;
     order: 3;
+    margin-bottom: 20px;
   }
 }

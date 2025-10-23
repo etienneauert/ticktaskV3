@@ -8,7 +8,7 @@ li {
   height: 45px;
   min-width: 100%;
   max-width: 100%;
-  width: 100%;
+  width: 650px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,7 +65,7 @@ li.running .countdown {
 .LI {
   display: flex;
   align-items: center;
-  width: 100%;
+
   justify-content: space-between;
 }
 
@@ -200,13 +200,12 @@ li.running .countdown {
 .doneTask {
   list-style: none;
   background-color: inherit;
+
   margin-top: 10px;
   border-radius: 10px;
   padding: 10px;
   height: 45px;
-  min-width: 100%;
-  max-width: 100%;
-  width: 100%;
+  width: 600px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -249,7 +248,7 @@ li.running .countdown {
 
 @media (max-width: 480px) {
   li {
-    width: 330px;
+    max-width: 350px;
     padding: 6px;
   }
 
@@ -279,6 +278,11 @@ li.running .countdown {
     width: 20px;
   }
 
+  .taskInfo {
+    gap: 0px;
+    margin-left: 10px;
+  }
+
   .timeInfo {
     font-size: 11px;
     margin-right: 4px;
@@ -296,6 +300,6 @@ li.running .countdown {
   }
 
   .doneTask {
-    width: 300px;
+    max-width: 300px;
   }
 }

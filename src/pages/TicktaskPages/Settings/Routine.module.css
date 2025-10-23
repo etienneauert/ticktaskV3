@@ -46,7 +46,7 @@
 .routineInput {
   width: 100%;
   padding: 6px 10px;
-  border: 1px solid #d5ff05;
+  border: 1px solid #333;
   border-radius: 4px;
   background-color: transparent;
   color: #fff;
@@ -59,19 +59,23 @@
 }
 
 .submitButton {
-  padding: 6px 10px;
-  border: 1px solid #d5ff05;
-  border-radius: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
   background-color: transparent;
-  color: #d5ff05;
+  color: transparent;
   font-size: 14px;
   font-weight: bold;
   cursor: pointer;
-  min-width: 32px;
-  height: 32px;
+  min-width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-image: url("../../assets/add.png");
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .tasksList {
@@ -143,8 +147,8 @@
 @media (max-width: 768px) {
   .routineContainer {
     flex-direction: column;
-    gap: 20px;
     align-items: center;
+    gap: 20px;
   }
 
   .routineSection {
@@ -153,29 +157,10 @@
     padding: 15px;
   }
 
-  .routineSection h3 {
-    font-size: 16px;
-    margin-bottom: 12px;
-  }
-
-  .routineSection p {
-    font-size: 13px;
-  }
-
-  .routineInput {
-    font-size: 14px;
-    padding: 8px 12px;
-  }
-
-  .submitButton {
-    font-size: 12px;
-    padding: 8px 12px;
-    min-width: 36px;
-    height: 36px;
-  }
-
-  .taskText {
-    font-size: 13px;
+  .taskItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }
 
@@ -188,33 +173,9 @@
     padding: 12px;
   }
 
-  .routineSection h3 {
-    font-size: 15px;
-    margin-bottom: 10px;
-  }
-
-  .routineSection p {
-    font-size: 12px;
-  }
-
-  .routineInput {
-    font-size: 13px;
-    padding: 6px 10px;
-  }
-
-  .submitButton {
-    font-size: 11px;
-    padding: 6px 10px;
-    min-width: 32px;
-    height: 32px;
-  }
-
-  .taskText {
-    font-size: 12px;
-  }
-
-  .deleteButton {
-    font-size: 16px;
-    padding: 1px 4px;
+  .taskItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 }

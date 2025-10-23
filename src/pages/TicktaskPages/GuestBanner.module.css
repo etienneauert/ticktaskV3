@@ -1,0 +1,56 @@
+.guestBanner {
+  background: linear-gradient(180deg, rgb(252, 46, 46), rgb(255, 11, 11));
+  color: white;
+  font-size: 20px;
+  text-align: center;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 4px 15px rgb(222, 15, 15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  max-height: 50px;
+  padding: 10px;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.guestText {
+  background-color: transparent;
+  margin: 0;
+  font-size: 20px;
+  text-align: center;
+}
+
+.guestButton {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0;
+  font-size: 16px;
+  min-width: 120px;
+}
+
+/* Mobile Media Query - nur bei Handy-Größe kleiner */
+@media (max-width: 480px) {
+  .guestBanner {
+    font-size: 16px;
+    gap: 6px;
+    max-height: 40px;
+    padding: 8px;
+  }
+
+  .guestText {
+    font-size: 14px;
+    min-width: 150px;
+  }
+
+  .guestButton {
+    padding: 4px 8px;
+    font-size: 12px;
+    min-width: 80px;
+  }
+}
