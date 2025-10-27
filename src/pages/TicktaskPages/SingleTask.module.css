@@ -136,6 +136,7 @@ li.running .countdown {
   background-color: inherit;
   width: 26px;
   cursor: pointer;
+  margin-left: 5px;
 }
 
 .resetButton {
@@ -346,18 +347,22 @@ li.running .countdown {
   }
 
   .countdown {
-    font-size: 13px;
+    font-size: 16px;
+  }
+
+  li.running .countdown {
+    font-size: 15px;
   }
 
   .timerControls {
-    gap: 2px;
-    margin-right: 2px;
+    gap: 1px !important;
+    margin-right: 0px !important;
   }
 
   .goButton,
   .pauseButton,
   .resetButton {
-    width: 20px;
+    width: 21px !important;
   }
 
   .delete,
@@ -368,7 +373,7 @@ li.running .countdown {
 
   .taskInfo {
     gap: 0px;
-    margin-left: 10px;
+    margin-left: 5px;
   }
 
   .timeInfo {
