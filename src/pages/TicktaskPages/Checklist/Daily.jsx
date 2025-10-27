@@ -1,4 +1,5 @@
 import styles from "./Daily.module.css";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function Daily({
   dailyTasks,
@@ -6,6 +7,8 @@ export default function Daily({
   completedTasks,
   setCompletedTasks,
 }) {
+  const { t } = useLanguage();
+
   const toggleTask = (taskText) => {
     setCompletedTasks((prev) => {
       const next = new Set(prev);
@@ -20,12 +23,12 @@ export default function Daily({
 
   return (
     <div className={styles.dailyContainer}>
-      <h4 className={styles.dailyTitle}>Daily</h4>
+      <h4 className={styles.dailyTitle}>{t("daily")}</h4>
 
       <div className={styles.tasksList}>
         {dailyTasks.length === 0 ? (
           <div className={styles.emptyState}>
-            <span>No tasks for today</span>
+            <span>{t("noTasksForToday")}</span>
           </div>
         ) : (
           dailyTasks.map((task, index) => {

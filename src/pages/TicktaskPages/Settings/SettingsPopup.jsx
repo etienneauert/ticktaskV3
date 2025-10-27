@@ -6,6 +6,7 @@ import TasksTab from "./TasksTab";
 import DailyTab from "./DailyTab";
 import WeeklyTab from "./WeeklyTab";
 import GeneralTab from "./GeneralTab";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function SettingsPopup({
   open,
@@ -25,13 +26,23 @@ export default function SettingsPopup({
   const [activeTab, setActiveTab] = useState(0);
   const buttonRefs = useRef([]);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const { t } = useLanguage();
+
+  // Prüfe ob ein bestimmter Tab nach Reload geöffnet werden soll
+  useEffect(() => {
+    const savedTab = localStorage.getItem("ticktask_settingsTab");
+    if (savedTab) {
+      const tabIndex = parseInt(savedTab, 10);
+      setActiveTab(tabIndex);
+      localStorage.removeItem("ticktask_settingsTab");
+    }
+  }, []);
 
   const tabs = [
-    { id: 1, label: "General" },
-    { id: 0, label: "Routine" },
-
-    { id: 3, label: "Weekly" },
-    { id: 2, label: "Daily" },
+    { id: 1, label: t("general") },
+    { id: 0, label: t("routine") },
+    { id: 3, label: t("weekly") },
+    { id: 2, label: t("daily") },
   ];
 
   useEffect(() => {

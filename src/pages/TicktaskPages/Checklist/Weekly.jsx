@@ -1,4 +1,5 @@
 import styles from "./Weekly.module.css";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function Weekly({
   weeklyTasks,
@@ -6,6 +7,8 @@ export default function Weekly({
   completedTasks,
   setCompletedTasks,
 }) {
+  const { t } = useLanguage();
+
   // Aktuellen Tag ermitteln
   const today = new Date();
   const dayNames = [
@@ -35,14 +38,12 @@ export default function Weekly({
 
   return (
     <div className={styles.weeklyContainer}>
-      <h4 className={styles.weeklyTitle}>
-        {currentDay.charAt(0).toUpperCase() + currentDay.slice(1)}
-      </h4>
+      <h4 className={styles.weeklyTitle}>{t(currentDay)}</h4>
 
       <div className={styles.tasksList}>
         {todayTasks.length === 0 ? (
           <div className={styles.emptyState}>
-            <span>No tasks for today</span>
+            <span>{t("noTasksForToday")}</span>
           </div>
         ) : (
           todayTasks.map((task, index) => {

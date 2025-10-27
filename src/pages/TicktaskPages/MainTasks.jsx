@@ -2,6 +2,7 @@ import { Task } from "./Task";
 import styles from "./MainTasks.module.css";
 import { useState, useEffect, useRef } from "react";
 import arrowDown from "../../assets/arrow-down.png";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function MainTasks({
   tasks = [],
@@ -19,6 +20,7 @@ export default function MainTasks({
   const [showDoneTasks, setShowDoneTasks] = useState(false);
   const [showFrequentTasks, setShowFrequentTasks] = useState(false);
   const frequentTasksTimeoutRef = useRef(null);
+  const { t } = useLanguage();
   // Filtere Tasks: nicht abgeschlossene Tasks für die normale Liste
   const activeTasks = tasks.filter((task) => !task.done);
   const doneTasks = tasks.filter((task) => task.done);
@@ -115,7 +117,7 @@ export default function MainTasks({
           >
             <div className={styles.headerLeft}>
               <h3>
-                Done Tasks
+                {t("doneTasks")}
                 <span className={styles.length}>{doneTasks.length}</span>
               </h3>
               {showDoneTasks && doneTasks.length > 0 && (
@@ -123,14 +125,12 @@ export default function MainTasks({
                   className={styles.clearAllButton}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (
-                      window.confirm("Möchtest du alle Done Tasks löschen?")
-                    ) {
+                    if (window.confirm(t("confirmClearAll"))) {
                       onClearAllDone?.();
                     }
                   }}
                 >
-                  Clear All
+                  {t("clearAll")}
                 </button>
               )}
             </div>
@@ -177,7 +177,7 @@ export default function MainTasks({
             }}
           >
             <h3>
-              Frequent Tasks
+              {t("frequentTasks")}
               <span className={styles.length}>{frequentTasks.length}</span>
             </h3>
             <img

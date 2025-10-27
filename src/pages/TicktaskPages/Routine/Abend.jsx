@@ -1,5 +1,6 @@
 import styles from "./Abend.module.css";
 import { useState } from "react";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function Abend({
   abendTasks,
@@ -7,6 +8,8 @@ export default function Abend({
   completedTasks,
   setCompletedTasks,
 }) {
+  const { t } = useLanguage();
+
   const toggleTask = (taskText) => {
     setCompletedTasks((prev) => {
       const next = new Set(prev);
@@ -21,12 +24,12 @@ export default function Abend({
 
   return (
     <div className={styles.abendContainer}>
-      <h4 className={styles.abendTitle}>Evening</h4>
+      <h4 className={styles.abendTitle}>{t("evening")}</h4>
 
       <div className={styles.tasksList}>
         {abendTasks.length === 0 ? (
           <div className={styles.emptyState}>
-            <span>No tasks for today</span>
+            <span>{t("noTasksForToday")}</span>
           </div>
         ) : (
           abendTasks.map((task, index) => {

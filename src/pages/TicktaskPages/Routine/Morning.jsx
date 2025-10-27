@@ -1,5 +1,6 @@
 import styles from "./Morning.module.css";
 import { useState } from "react";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function Morning({
   morningTasks,
@@ -7,6 +8,8 @@ export default function Morning({
   completedTasks,
   setCompletedTasks,
 }) {
+  const { t } = useLanguage();
+
   const toggleTask = (taskText) => {
     setCompletedTasks((prev) => {
       const next = new Set(prev);
@@ -21,12 +24,12 @@ export default function Morning({
 
   return (
     <div className={styles.morningContainer}>
-      <h4 className={styles.morningTitle}>Morning</h4>
+      <h4 className={styles.morningTitle}>{t("morning")}</h4>
 
       <div className={styles.tasksList}>
         {morningTasks.length === 0 ? (
           <div className={styles.emptyState}>
-            <span>No tasks for today</span>
+            <span>{t("noTasksForToday")}</span>
           </div>
         ) : (
           morningTasks.map((task, index) => {

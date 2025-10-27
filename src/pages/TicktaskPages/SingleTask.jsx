@@ -11,6 +11,7 @@ import pauseBlack from "../../assets/pause-black.png";
 import playBlack from "../../assets/play-black.png";
 import resetBlack from "../../assets/reset-black.png";
 import TaskCompletionPopup from "./TaskCompletionPopup";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function SingleTask({
   task,
@@ -29,6 +30,7 @@ export default function SingleTask({
   const urgent = typeof task !== "string" && task?.urgent;
   const taskDuration =
     typeof task !== "string" ? parseInt(task?.taskDuration) || 0 : 0;
+  const { t } = useLanguage();
 
   // Timer-State mit eindeutiger Task-ID
   const taskId = task?.id || `task-${index}`;
@@ -376,7 +378,11 @@ export default function SingleTask({
                 : `${actualTime}:00 / ${plannedTime}:00`}
             </div>
           )}
-          <div className={styles.taskInfo}>
+          <div
+            className={`${styles.taskInfo} ${
+              isFrequentList ? styles.frequentTaskInfo : ""
+            }`}
+          >
             {isFrequentList && (
               <img
                 className={styles.neonplus}
@@ -491,7 +497,7 @@ export default function SingleTask({
                     onTaskDone?.(task, actualTimeUsed);
                   }}
                 >
-                  Done
+                  {t("done")}
                 </button>
               )}
               {isRunning && !isPaused && (

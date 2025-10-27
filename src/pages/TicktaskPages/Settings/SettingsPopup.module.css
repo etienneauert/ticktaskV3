@@ -259,6 +259,63 @@
   background-color: rgba(255, 0, 0, 0.1);
   color: #ff6666;
   border-color: #ff6666;
+  border-radius: 8px;
+}
+
+/* Language Settings */
+.languageRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 16px;
+  background-color: transparent;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 400px;
+  margin-top: 15px;
+}
+
+.languageLabel {
+  color: #ababab;
+  font-size: 14px;
+  margin: 0;
+  background-color: transparent;
+}
+
+.languageButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.languageButton {
+  background-color: transparent;
+  color: #ababab;
+  border: 1px solid #555;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+}
+
+.languageButton:hover {
+  border-radius: 8px;
+}
+
+.languageButtonActive {
+  background-color: transparent !important;
+  color: #d5ff05 !important;
+  border-color: #d5ff05 !important;
+}
+
+.languageButtonActive:hover {
+  background-color: transparent !important;
+  color: #d5ff05 !important;
+  border-color: #d5ff05 !important;
 }
 
 /* Mobile Styles for General Tab */
@@ -284,6 +341,26 @@
     padding: 5px 10px;
     font-size: 11px;
   }
+
+  .languageRow {
+    padding: 10px 14px;
+    max-width: 350px;
+    margin-top: 12px;
+  }
+
+  .languageLabel {
+    font-size: 13px;
+  }
+
+  .languageButtons {
+    gap: 6px;
+  }
+
+  .languageButton {
+    padding: 5px 10px;
+    font-size: 11px;
+    min-width: 70px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -307,5 +384,21 @@
   .resetButton {
     padding: 4px 8px;
     font-size: 10px;
+  }
+
+  .languageRow {
+    padding: 8px 12px;
+    max-width: 300px;
+    margin-top: 10px;
+  }
+
+  .languageLabel {
+    font-size: 12px;
+  }
+
+  .languageButton {
+    padding: 4px 8px;
+    font-size: 10px;
+    min-width: 60px;
   }
 }

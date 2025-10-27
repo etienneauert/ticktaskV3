@@ -2,10 +2,13 @@ import { useState } from "react";
 import Popup from "./Popup";
 import styles from "./Input.module.css";
 import rightArrow2 from "../../assets/right-arrow-2.png";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function Input({ onAdd }) {
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
+  const { t } = useLanguage();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const trimmed = value.trim();
@@ -37,7 +40,7 @@ export default function Input({ onAdd }) {
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Enter new Task..."
+          placeholder={t("addTaskPlaceholder")}
         />
         <button
           type="submit"

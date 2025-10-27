@@ -1,17 +1,19 @@
 import styles from "./Routine.module.css";
 import { useState } from "react";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function MorningRoutine({ tasks, onUpdateTasks }) {
   const [inputValue, setInputValue] = useState("");
+  const { t } = useLanguage();
 
   return (
     <div className={styles.routineSection}>
-      <h3>Morning Routine</h3>
+      <h3>{t("morningRoutine")}</h3>
 
       <div className={styles.tasksList}>
         {tasks.length === 0 ? (
           <div className={styles.emptyPlaceholder}>
-            <span>No tasks yet</span>
+            <span>{t("noTasksYet")}</span>
           </div>
         ) : (
           tasks.map((task, index) => (

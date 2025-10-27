@@ -92,6 +92,10 @@ li.running .countdown {
   font-size: 10px;
 }
 
+.taskInfo.frequentTaskInfo {
+  gap: 0px;
+}
+
 .timer {
   border-radius: 4px;
   justify-content: center;
@@ -119,11 +123,11 @@ li.running .countdown {
 
 .timerControls {
   display: flex;
-  margin-right: 10px;
+  margin-right: 5px;
   justify-content: center;
   background-color: inherit;
   align-items: center;
-  gap: 10px;
+  gap: 0px;
 }
 
 .goButton {
@@ -161,10 +165,6 @@ li.running .countdown {
   width: 25px;
   cursor: pointer;
   transition: 0.3s ease;
-}
-
-.neonplus:hover {
-  scale: 1.05;
 }
 
 .regularIcon {
@@ -323,7 +323,7 @@ li.running .countdown {
 }
 
 .neonplus:hover {
-  transform: scale(1.1);
+  transform: scale(1.03);
 }
 
 /* Spezifisches Styling für frequent tasks Zeitangabe */

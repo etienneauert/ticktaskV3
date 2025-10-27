@@ -1,10 +1,12 @@
 import styles from "./Weekly.module.css";
 import { useState, useEffect } from "react";
+import { useLanguage } from "../../../../contexts/LanguageContext";
 
 export default function Saturday({ tasks, onUpdateTasks }) {
   const [isHovered, setIsHovered] = useState(false);
   const [showInput, setShowInput] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (isHovered) {
@@ -23,11 +25,11 @@ export default function Saturday({ tasks, onUpdateTasks }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <h3>Saturday</h3>
+      <h3>{t("saturday")}</h3>
       <div className={styles.tasksList}>
         {tasks.length === 0 ? (
           <div className={styles.emptyPlaceholder}>
-            <span>No tasks yet</span>
+            <span>{t("noTasksYet")}</span>
           </div>
         ) : (
           tasks.map((task, index) => (

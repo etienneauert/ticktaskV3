@@ -4,7 +4,8 @@ import setting from "../../assets/setting.png";
 import info from "../../assets/info.png";
 import SettingsPopup from "./Settings/SettingsPopup";
 import InfoPopup from "./Info/InfoPopup";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function Header({
   onLogout,
@@ -22,6 +23,19 @@ export default function Header({
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
+  const { t } = useLanguage();
+
+  // Prüfe ob SettingsPopup nach Reload geöffnet werden soll
+  useEffect(() => {
+    const shouldReopenSettings = localStorage.getItem(
+      "ticktask_reopenSettings"
+    );
+    if (shouldReopenSettings === "true") {
+      setSettingsOpen(true);
+      localStorage.removeItem("ticktask_reopenSettings");
+    }
+  }, []);
+
   return (
     <div className={styles.headerContainer}>
       <div className={styles.streak}>
@@ -42,7 +56,7 @@ export default function Header({
           <img src={info} alt="" />
         </button>
         <button className={styles.headerLogoutButton} onClick={onLogout}>
-          Logout
+          {t("logout")}
         </button>
       </div>
 
