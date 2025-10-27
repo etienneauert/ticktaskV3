@@ -20,6 +20,7 @@ export const useGuestData = (isGuestMode) => {
     abendCompleted: new Set(),
     weeklyCompleted: new Set(),
     dailyCompleted: new Set(),
+    streak: 0,
   });
 
   useEffect(() => {
@@ -89,6 +90,7 @@ export const useGuestData = (isGuestMode) => {
         abendCompleted: new Set(),
         weeklyCompleted: new Set(),
         dailyCompleted: new Set(),
+        streak: 0,
       });
     }
   };

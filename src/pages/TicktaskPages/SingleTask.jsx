@@ -144,10 +144,12 @@ export default function SingleTask({
         const now = Date.now();
         const startTime = parsed.startTime;
 
-        // Wenn Timer läuft und nicht pausiert, berechne verbleibende Zeit
+        // Wenn Timer läuft und nicht pausiert, berechne verbleibende Zeit basierend auf echter Zeit
         if (parsed.isRunning && !parsed.isPaused && startTime) {
           const elapsed = Math.floor((now - startTime) / 1000);
           const remaining = Math.max(0, parsed.timeLeft - elapsed);
+
+          // Timer Recovery - berechne verbleibende Zeit basierend auf echter Zeit
 
           return {
             timeLeft: remaining,
@@ -190,14 +192,30 @@ export default function SingleTask({
   const saveTimerState = useCallback(
     (state) => {
       try {
+        // Lade aktuellen State um Start-Zeit zu erhalten
+        const currentStored = localStorage.getItem(`timer_${taskId}`);
+        let startTime = null;
+
+        if (currentStored) {
+          const currentParsed = JSON.parse(currentStored);
+          startTime = currentParsed.startTime;
+        }
+
+        // Wenn Timer neu startet, setze neue Start-Zeit
+        if (state.isRunning && !state.isPaused && !startTime) {
+          startTime = Date.now();
+        }
+
         const stateToSave = {
           timeLeft: state.timeLeft,
           isRunning: state.isRunning,
           isCompleted: state.isCompleted,
           isPaused: state.isPaused,
-          startTime: state.isRunning && !state.isPaused ? Date.now() : null,
+          startTime: startTime,
           lastSaved: Date.now(),
         };
+
+        // Timer state saved
         localStorage.setItem(`timer_${taskId}`, JSON.stringify(stateToSave));
       } catch (error) {
         console.warn("Failed to save timer state:", error);
@@ -278,7 +296,7 @@ export default function SingleTask({
         intervalRef.current = null;
       }
     };
-  }, [isRunning, isPaused, taskId, timeLeft]);
+  }, [isRunning, isPaused, taskId]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);

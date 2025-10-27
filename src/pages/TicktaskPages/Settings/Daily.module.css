@@ -61,14 +61,14 @@
 
 .submitButton {
   border: 1px solid #333;
-  border-radius: 90px;
+  border-radius: 50%;
   background-color: transparent;
   color: #333;
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
-  min-width: 30px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
   display: flex;
   align-items: center;
@@ -187,9 +187,9 @@
 
   .submitButton {
     font-size: 16px !important;
-    padding: 10px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
   }
 
   .taskText {
@@ -225,9 +225,9 @@
 
   .submitButton {
     font-size: 16px !important;
-    padding: 12px !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
   }
 
   .taskText {

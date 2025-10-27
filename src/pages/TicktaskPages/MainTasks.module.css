@@ -2,15 +2,15 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  margin-top: 50px;
+  margin: 0px 2px 20px 2px;
   border: 1px solid #333;
   border-radius: 10px;
   align-items: center;
   color: white;
   cursor: default;
-  width: 100%;
-  min-width: 600px;
+  width: 650px;
+  min-width: 650px;
+  max-width: 650px;
   background-color: transparent;
   box-sizing: border-box;
 }
@@ -33,10 +33,16 @@
   align-items: center;
   color: white;
   cursor: default;
-  width: 100%;
+  width: 650px;
+  min-width: 650px;
+  max-width: 650px;
   background-color: inherit;
   box-sizing: border-box;
   border: 1px solid #333;
+}
+
+.noMarginTop {
+  margin-top: 0px !important;
 }
 
 .FrequentTasks img {
@@ -54,6 +60,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  min-width: 650px;
   background-color: transparent;
   cursor: pointer;
   padding: 6px 10px;
@@ -71,7 +78,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  min-width: 600px;
+  min-width: 650px;
   background-color: inherit;
 
   /* background-color: rgb(41, 40, 53); */
@@ -80,6 +87,54 @@
   border-radius: 8px;
   transition: background-color 0.2s ease;
   box-sizing: border-box;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.clearAllButton {
+  background-color: transparent;
+  color: #ababab;
+  border: 1px solid #555;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clearAllButton:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff6666;
+  border-color: #ff6666;
+}
+
+/* Mobile Styles for Clear All Button */
+@media (max-width: 768px) {
+  .headerLeft {
+    gap: 8px;
+  }
+
+  .clearAllButton {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerLeft {
+    gap: 6px;
+  }
+
+  .clearAllButton {
+    padding: 2px 4px;
+    font-size: 9px;
+  }
 }
 
 .DoneTasksHeader:hover {
@@ -133,13 +188,38 @@
     max-width: 100% !important;
   }
 
+  .FrequentTasksHeader {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+
   .DoneTasks {
-    margin-top: 20px;
-    margin-bottom: 15px;
+    margin: 5px 2px 20px 2px;
   }
 
   .FrequentTasks {
     margin: 5px 2px 20px 2px;
+  }
+
+  /* Margin für Tasks innerhalb der Frequent Tasks */
+  .FrequentTasks ul {
+    margin: 0 10px !important;
+  }
+
+  .FrequentTasks li {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Margin für Tasks innerhalb der Done Tasks */
+  .DoneTasks ul {
+    margin: 0 10px !important;
+  }
+
+  .DoneTasks li {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }
 
@@ -156,11 +236,37 @@
     max-width: 100% !important;
   }
 
+  .FrequentTasksHeader {
+    width: 300px !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+
   .DoneTasks {
-    margin-top: 15px;
+    margin: 3px 2px 15px 2px;
   }
 
   .FrequentTasks {
     margin: 3px 2px 15px 2px;
+  }
+
+  /* Margin für Tasks innerhalb der Frequent Tasks - kleinere Screens */
+  .FrequentTasks ul {
+    margin: 0 8px !important;
+  }
+
+  .FrequentTasks li {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Margin für Tasks innerhalb der Done Tasks - kleinere Screens */
+  .DoneTasks ul {
+    margin: 0 8px !important;
+  }
+
+  .DoneTasks li {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 }

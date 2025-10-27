@@ -31,6 +31,7 @@ export default function Main({
   onTaskStop,
   increaseStreak,
   canIncreaseStreak,
+  onClearAllDone,
 }) {
   // Button-Validierung: State für Button-Status
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -176,6 +177,7 @@ export default function Main({
             runningTaskId={runningTaskId}
             onTaskStart={onTaskStart}
             onTaskStop={onTaskStop}
+            onClearAllDone={onClearAllDone}
           ></MainTasks>
         </div>
         <div className={styles.MainWeekly}>
@@ -248,7 +250,7 @@ export default function Main({
             return shouldDisable;
           })()}
         >
-          Streak erhöhen
+          Finish Day
         </CenteredButton>
       </div>
     </div>

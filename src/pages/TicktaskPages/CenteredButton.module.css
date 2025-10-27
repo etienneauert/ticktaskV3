@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 20px;
+  padding: 10px 20px;
   background-color: transparent;
 }
 
@@ -51,7 +51,7 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .container {
-    padding: 15px;
+    padding: 8px 15px;
   }
 
   .centeredButton {
@@ -63,7 +63,7 @@
 
 @media (max-width: 480px) {
   .container {
-    padding: 10px;
+    padding: 5px 10px;
   }
 
   .centeredButton {

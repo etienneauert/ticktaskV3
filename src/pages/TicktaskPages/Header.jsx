@@ -18,6 +18,7 @@ export default function Header({
   updateDailyTasks,
   user,
   streak,
+  onResetStreak,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
@@ -57,6 +58,8 @@ export default function Header({
         dailyTasks={dailyTasks}
         updateDailyTasks={updateDailyTasks}
         user={user}
+        streak={streak}
+        onResetStreak={onResetStreak}
       />
 
       <InfoPopup open={infoOpen} onClose={() => setInfoOpen(false)} />

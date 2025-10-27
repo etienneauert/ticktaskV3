@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
@@ -74,6 +74,7 @@
   margin: 20px 0;
   padding: 0;
   background-color: transparent;
+  margin-top: 70px;
 }
 
 .demoTask {

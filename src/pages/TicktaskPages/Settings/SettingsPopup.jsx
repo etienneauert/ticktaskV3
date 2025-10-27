@@ -5,6 +5,7 @@ import RoutineTab from "./RoutineTab";
 import TasksTab from "./TasksTab";
 import DailyTab from "./DailyTab";
 import WeeklyTab from "./WeeklyTab";
+import GeneralTab from "./GeneralTab";
 
 export default function SettingsPopup({
   open,
@@ -18,6 +19,8 @@ export default function SettingsPopup({
   dailyTasks,
   updateDailyTasks,
   user,
+  streak,
+  onResetStreak,
 }) {
   const [activeTab, setActiveTab] = useState(0);
   const buttonRefs = useRef([]);
@@ -96,7 +99,9 @@ export default function SettingsPopup({
                   updateAbendTasks={updateAbendTasks}
                 />
               )}
-              {activeTab === 1 && <TasksTab />}
+              {activeTab === 1 && (
+                <GeneralTab streak={streak} onResetStreak={onResetStreak} />
+              )}
               {activeTab === 2 && (
                 <DailyTab
                   dailyTasks={dailyTasks}

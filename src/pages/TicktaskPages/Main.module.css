@@ -35,10 +35,11 @@
 }
 
 .MainCenteredButton {
-  width: 100%;
+  width: 400px;
   display: flex;
   justify-content: center;
-  margin-top: 30px;
+  margin-bottom: 100px;
+
   /* background-color: purple; */
 }
 
@@ -73,7 +74,7 @@
 
   .MainCenteredButton {
     width: 90%;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
   }
 }
 
@@ -103,7 +104,7 @@
 
   .MainCenteredButton {
     width: 95%;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
   }
 }
 
@@ -133,6 +134,6 @@
 
   .MainCenteredButton {
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
   }
 }

@@ -47,9 +47,9 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
             alt=""
           />
         </div>
-        <div className={styles.modalHeader}>
+        {/* <div className={styles.modalHeader}>
           <h1>Customize your task</h1>
-        </div>
+        </div> */}
 
         {/* Demo Task Preview */}
         <div className={styles.demoPreview}>

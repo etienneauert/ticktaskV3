@@ -1,6 +1,6 @@
 import { Task } from "./Task";
 import styles from "./MainTasks.module.css";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import arrowDown from "../../assets/arrow-down.png";
 
 export default function MainTasks({
@@ -14,9 +14,11 @@ export default function MainTasks({
   runningTaskId,
   onTaskStart,
   onTaskStop,
+  onClearAllDone,
 }) {
   const [showDoneTasks, setShowDoneTasks] = useState(false);
   const [showFrequentTasks, setShowFrequentTasks] = useState(false);
+  const frequentTasksTimeoutRef = useRef(null);
   // Filtere Tasks: nicht abgeschlossene Tasks für die normale Liste
   const activeTasks = tasks.filter((task) => !task.done);
   const doneTasks = tasks.filter((task) => task.done);
@@ -29,6 +31,34 @@ export default function MainTasks({
   // Debug: Log frequent tasks
   console.log("All tasks:", tasks);
   console.log("Frequent tasks:", frequentTasks);
+
+  // Auto-close Frequent Tasks nach 10 Sekunden
+  useEffect(() => {
+    if (showFrequentTasks) {
+      // Clear existing timeout
+      if (frequentTasksTimeoutRef.current) {
+        clearTimeout(frequentTasksTimeoutRef.current);
+      }
+
+      // Set new timeout
+      frequentTasksTimeoutRef.current = setTimeout(() => {
+        setShowFrequentTasks(false);
+      }, 10000); // 10 Sekunden
+    } else {
+      // Clear timeout when closed manually
+      if (frequentTasksTimeoutRef.current) {
+        clearTimeout(frequentTasksTimeoutRef.current);
+        frequentTasksTimeoutRef.current = null;
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (frequentTasksTimeoutRef.current) {
+        clearTimeout(frequentTasksTimeoutRef.current);
+      }
+    };
+  }, [showFrequentTasks]);
 
   // Sortiere aktive Tasks: Dringende zuerst, dann normale Tasks nach Erstellungsdatum
   const sortedActiveTasks = [...activeTasks].sort((a, b) => {
@@ -83,10 +113,27 @@ export default function MainTasks({
             className={styles.DoneTasksHeader}
             onClick={() => setShowDoneTasks(!showDoneTasks)}
           >
-            <h3>
-              Done Tasks
-              <span className={styles.length}>{doneTasks.length}</span>
-            </h3>
+            <div className={styles.headerLeft}>
+              <h3>
+                Done Tasks
+                <span className={styles.length}>{doneTasks.length}</span>
+              </h3>
+              {showDoneTasks && doneTasks.length > 0 && (
+                <button
+                  className={styles.clearAllButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (
+                      window.confirm("Möchtest du alle Done Tasks löschen?")
+                    ) {
+                      onClearAllDone?.();
+                    }
+                  }}
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
             <img
               src={arrowDown}
               alt=""
@@ -111,10 +158,23 @@ export default function MainTasks({
       )}
 
       {frequentTasks.length > 0 && (
-        <div className={styles.FrequentTasks}>
+        <div
+          className={`${styles.FrequentTasks} ${
+            doneTasks.length === 0 && activeTasks.length === 0
+              ? styles.noMarginTop
+              : ""
+          }`}
+        >
           <div
             className={styles.FrequentTasksHeader}
-            onClick={() => setShowFrequentTasks(!showFrequentTasks)}
+            onClick={() => {
+              setShowFrequentTasks(!showFrequentTasks);
+              // Reset timeout when manually toggling
+              if (frequentTasksTimeoutRef.current) {
+                clearTimeout(frequentTasksTimeoutRef.current);
+                frequentTasksTimeoutRef.current = null;
+              }
+            }}
           >
             <h3>
               Frequent Tasks
@@ -132,10 +192,37 @@ export default function MainTasks({
           {showFrequentTasks && frequentTasks.length > 0 && (
             <Task
               tasks={sortedFrequentTasks}
-              onDelete={onFrequentDelete}
-              onTaskDone={onTaskDone}
+              onDelete={(task) => {
+                onFrequentDelete(task);
+                // Reset timeout when interacting with tasks
+                if (frequentTasksTimeoutRef.current) {
+                  clearTimeout(frequentTasksTimeoutRef.current);
+                  frequentTasksTimeoutRef.current = setTimeout(() => {
+                    setShowFrequentTasks(false);
+                  }, 10000);
+                }
+              }}
+              onTaskDone={(task) => {
+                onTaskDone(task);
+                // Reset timeout when interacting with tasks
+                if (frequentTasksTimeoutRef.current) {
+                  clearTimeout(frequentTasksTimeoutRef.current);
+                  frequentTasksTimeoutRef.current = setTimeout(() => {
+                    setShowFrequentTasks(false);
+                  }, 10000);
+                }
+              }}
               onEdit={onEdit}
-              onCopyTask={onCopyTask}
+              onCopyTask={(task) => {
+                onCopyTask(task);
+                // Reset timeout when interacting with tasks
+                if (frequentTasksTimeoutRef.current) {
+                  clearTimeout(frequentTasksTimeoutRef.current);
+                  frequentTasksTimeoutRef.current = setTimeout(() => {
+                    setShowFrequentTasks(false);
+                  }, 10000);
+                }
+              }}
               isDoneList={true}
               isFrequentList={true}
               runningTaskId={runningTaskId}

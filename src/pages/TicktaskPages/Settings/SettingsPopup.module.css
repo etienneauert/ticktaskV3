@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
@@ -204,5 +204,108 @@
   .tabPanel {
     font-size: 13px;
     padding: 12px 0;
+  }
+}
+
+/* General Tab Styles */
+.generalSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: transparent;
+}
+
+.streakRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 16px;
+  background-color: transparent;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.currentStreak {
+  color: #ababab;
+  font-size: 14px;
+  margin: 0;
+  background-color: transparent;
+}
+
+.streakNumber {
+  color: #d5ff05;
+  font-weight: 500;
+  font-size: 16px;
+  background-color: transparent;
+}
+
+.resetButton {
+  background-color: transparent;
+  color: #ababab;
+  border: 1px solid #555;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resetButton:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #ff6666;
+  border-color: #ff6666;
+}
+
+/* Mobile Styles for General Tab */
+@media (max-width: 768px) {
+  .generalSection {
+    padding: 15px;
+  }
+
+  .streakRow {
+    padding: 10px 14px;
+    max-width: 350px;
+  }
+
+  .currentStreak {
+    font-size: 13px;
+  }
+
+  .streakNumber {
+    font-size: 15px;
+  }
+
+  .resetButton {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .generalSection {
+    padding: 10px;
+  }
+
+  .streakRow {
+    padding: 8px 12px;
+    max-width: 300px;
+  }
+
+  .currentStreak {
+    font-size: 12px;
+  }
+
+  .streakNumber {
+    font-size: 14px;
+  }
+
+  .resetButton {
+    padding: 4px 8px;
+    font-size: 10px;
   }
 }
