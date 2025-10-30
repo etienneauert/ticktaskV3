@@ -87,7 +87,7 @@
 }
 
 .Auth button:hover {
-  box-shadow: 0 0 9px #d5ff05;
+  box-shadow: none;
 }
 
 .Auth button:disabled {
@@ -168,6 +168,7 @@
 .googleButton:hover {
   border-color: #d5ff05 !important;
   color: #d5ff05 !important;
+  box-shadow: none !important;
 }
 
 .googleButton:disabled {
