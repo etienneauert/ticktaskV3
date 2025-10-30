@@ -14,13 +14,18 @@ export default function ErrorMessage({ message, onClose, isVisible }) {
 
   if (!isVisible) return null;
 
+  // Teile die Nachricht in Überschrift und Inhalt auf
+  const lines = message.split("\n");
+  const title = lines[0];
+  const content = lines.slice(1).join("\n");
+
   return (
     <div className={styles.errorContainer}>
       <div className={styles.errorMessage}>
-        <span className={styles.errorText}>{message}</span>
-        <button className={styles.closeButton} onClick={onClose}>
-          ×
-        </button>
+        <div className={styles.errorText}>
+          <strong>{title}</strong>
+          {content}
+        </div>
       </div>
     </div>
   );

@@ -104,6 +104,9 @@ export const LanguageProvider = ({ children }) => {
       daily: "Täglich",
       weekly: "Wöchentlich",
       noTasksForToday: "Keine Tasks für heute",
+
+      // Finish Day
+      finishDay: "Tag beenden",
     },
     en: {
       // App general
@@ -186,6 +189,9 @@ export const LanguageProvider = ({ children }) => {
       daily: "Daily",
       weekly: "Weekly",
       noTasksForToday: "No tasks for today",
+
+      // Finish Day
+      finishDay: "Finish Day",
     },
   };
 

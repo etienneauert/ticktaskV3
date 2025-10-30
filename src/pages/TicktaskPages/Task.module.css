@@ -1,3 +1,18 @@
 .takslist {
   margin-bottom: 0px;
 }
+
+.takslist ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.takslist li {
+  margin-bottom: 15px;
+}
+
+/* Spezifische Styles für Done Tasks */
+.doneList li {
+  margin-bottom: 0px;
+}

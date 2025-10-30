@@ -13,17 +13,24 @@
   padding: 12px 20px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
-  display: flex;
-  align-items: center;
-  gap: 12px;
   min-width: 300px;
   max-width: 500px;
 }
 
 .errorText {
-  flex: 1;
   font-weight: 500;
   font-size: 14px;
+  background-color: transparent !important;
+  white-space: pre-line;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.errorText strong {
+  font-weight: 700;
+  font-size: 16px;
+  display: block;
+  margin-bottom: 8px;
   background-color: transparent;
 }
 

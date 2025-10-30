@@ -79,7 +79,7 @@
 
 .demoTask {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   background-color: transparent;
   border: 1px solid rgb(129, 129, 129);
@@ -88,7 +88,8 @@
   padding: 10px;
   min-width: 500px;
   max-width: 600px;
-  height: 45px;
+  height: auto;
+  min-height: 45px;
   background-color: transparent;
 }
 
@@ -98,7 +99,10 @@
   color: rgb(171, 171, 171);
   font-size: 16px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  line-height: 1.3;
+  word-break: break-word;
+  white-space: normal;
   background-color: transparent;
 }
 
@@ -419,6 +423,7 @@
     min-width: 300px;
     max-width: 100%;
     padding: 8px;
+    min-height: 55px;
   }
 
   .demoText {
@@ -518,6 +523,7 @@
   .demoTask {
     min-width: 250px;
     padding: 6px;
+    min-height: 60px;
   }
 
   .demoText {
@@ -536,13 +542,13 @@
   }
 
   .demoDelete {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     font-size: 12px;
   }
 
   .demoDelete img {
-    width: 18px;
+    width: 22px;
   }
 
   .durationButtons {

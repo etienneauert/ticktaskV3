@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  margin: 0px 2px 20px 2px;
+  margin: 20px 2px 20px 2px;
   border: 1px solid #333;
   border-radius: 10px;
   align-items: center;
@@ -13,6 +13,7 @@
   max-width: 650px;
   background-color: transparent;
   box-sizing: border-box;
+  padding-bottom: 15px;
 }
 .DoneTasks img {
   width: 25px;
@@ -39,6 +40,7 @@
   background-color: inherit;
   box-sizing: border-box;
   border: 1px solid #333;
+  padding-bottom: 15px;
 }
 
 .noMarginTop {

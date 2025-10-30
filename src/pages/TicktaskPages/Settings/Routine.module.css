@@ -45,14 +45,14 @@
 
 .routineInput {
   width: 100%;
-  padding: 6px 10px;
+  padding: 10px 14px;
   border: 1px solid #333;
   border-radius: 4px;
   background-color: transparent;
   color: #fff;
-  font-size: 12px;
+  font-size: 14px;
   outline: none;
-  height: 20px;
+  height: 28px;
   transition: border-color 0.3s ease;
 }
 

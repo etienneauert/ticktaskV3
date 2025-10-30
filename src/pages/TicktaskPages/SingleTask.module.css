@@ -5,7 +5,8 @@ li {
 
   border-radius: 10px;
   padding: 10px;
-  height: 45px;
+  height: auto;
+  min-height: 45px;
   min-width: 100%;
   max-width: 100%;
   width: 650px;
@@ -127,7 +128,7 @@ li.running .countdown {
   justify-content: center;
   background-color: inherit;
   align-items: center;
-  gap: 0px;
+  gap: 8px;
 }
 
 .goButton {
@@ -140,7 +141,6 @@ li.running .countdown {
   background-color: inherit;
   width: 26px;
   cursor: pointer;
-  margin-left: 5px;
 }
 
 .resetButton {
@@ -201,18 +201,22 @@ li.running .countdown {
 .doneTask {
   list-style: none;
   background-color: inherit;
-
   margin-top: 10px;
-
   border-radius: 10px;
   padding: 10px;
-  height: 45px;
+  height: auto;
+  min-height: 45px;
   width: 570px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   /* background-color: rgb(41, 40, 53); */
   cursor: default;
+}
+
+/* Reduzierter Abstand für Done Tasks, außer dem ersten */
+.doneTask:not(:first-child) {
+  margin-top: 5px;
 }
 
 /* Mobile Responsive für doneTask und frequentTask */
@@ -225,6 +229,7 @@ li.running .countdown {
     padding: 10px 5px !important;
     margin: 10px 0 !important;
     justify-content: space-between !important;
+    min-height: 55px !important; /* mehr Platz bei Umbruch */
   }
 
   .doneTask .text,
@@ -267,6 +272,7 @@ li.running .countdown {
     padding: 10px 3px !important;
     margin: 10px 0 !important;
     justify-content: space-between !important;
+    min-height: 60px !important; /* noch etwas mehr Platz bei kleinsten Screens */
   }
 
   .doneTask .text,
@@ -314,6 +320,86 @@ li.running .countdown {
   font-weight: 500;
 }
 
+/* Mobile Optimierungen: engerer Abstand und größere Icons für Frequent Tasks */
+@media (max-width: 768px) {
+  /* Fixe Höhe aufheben: auto mit Mindesthöhe für Umbrüche */
+  li {
+    height: auto !important;
+    min-height: 55px !important;
+  }
+
+  .doneTask {
+    height: auto !important;
+    min-height: 55px !important;
+  }
+  .taskInfo.frequentTaskInfo {
+    gap: 0px !important;
+  }
+
+  .taskInfo.frequentTaskInfo .neonplus {
+    margin: 0 6px !important; /* etwas Luft links & rechts */
+  }
+
+  .taskInfo.frequentTaskInfo .neonplus,
+  .taskInfo.frequentTaskInfo .delete {
+    width: 20px !important;
+  }
+
+  /* Gleiche Icon-Größe (Trash) für Done-Tasks und normale Liste wie Frequent */
+  .doneTask .delete {
+    width: 20px !important;
+  }
+
+  .LI .delete {
+    width: 20px !important;
+  }
+
+  /* Laufende Tasks: Icon-Größen an Frequent angleichen */
+  .goButton,
+  .pauseButton,
+  .resetButton {
+    width: 20px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Fixe Höhe aufheben: auto mit Mindesthöhe für Umbrüche */
+  li {
+    height: auto !important;
+    min-height: 60px !important;
+  }
+
+  .doneTask {
+    height: auto !important;
+    min-height: 60px !important;
+  }
+  .taskInfo.frequentTaskInfo {
+    gap: 0px !important;
+  }
+
+  .taskInfo.frequentTaskInfo .neonplus {
+    margin: 0 4px !important; /* etwas Luft links & rechts, weiterhin kompakt */
+  }
+
+  .taskInfo.frequentTaskInfo .delete {
+    margin-right: 0px !important; /* kein zusätzlicher Außenabstand rechts */
+  }
+
+  .taskInfo.frequentTaskInfo .neonplus,
+  .taskInfo.frequentTaskInfo .delete {
+    width: 22px !important; /* größer für Mobile */
+  }
+
+  /* Gleiche Icon-Größe (Trash) für Done-Tasks und normale Liste wie Frequent */
+  .doneTask .delete {
+    width: 22px !important;
+  }
+
+  .LI .delete {
+    width: 22px !important;
+  }
+}
+
 .neonplus {
   background-color: inherit;
   width: 25px;
@@ -355,14 +441,14 @@ li.running .countdown {
   }
 
   .timerControls {
-    gap: 1px !important;
+    gap: 4px !important;
     margin-right: 0px !important;
   }
 
   .goButton,
   .pauseButton,
   .resetButton {
-    width: 21px !important;
+    width: 22px !important;
   }
 
   .delete,

@@ -21,6 +21,7 @@ import {
   doc,
   updateDoc,
   setDoc,
+  getDoc,
 } from "firebase/firestore";
 
 export function Ticktask({ user, isGuestMode = false }) {
@@ -199,6 +200,44 @@ export function Ticktask({ user, isGuestMode = false }) {
     return canIncrease;
   };
 
+  // Firebase-Funktionen für Streak
+  const loadStreakFromFirebase = async () => {
+    if (!user?.uid || isGuestMode) return;
+
+    try {
+      const streakDoc = doc(db, "users", user.uid, "profile", "streak");
+      const streakSnap = await getDoc(streakDoc);
+
+      if (streakSnap.exists()) {
+        const firebaseStreak = streakSnap.data().value || 0;
+        setStreak(firebaseStreak);
+        // Auch in localStorage speichern für Offline-Zugriff
+        localStorage.setItem(
+          `ticktask_streak_${user.uid}`,
+          firebaseStreak.toString()
+        );
+        console.log("Loaded streak from Firebase:", firebaseStreak);
+      }
+    } catch (e) {
+      console.error("Failed to load streak from Firebase", e);
+    }
+  };
+
+  const saveStreakToFirebase = async (streakValue) => {
+    if (!user?.uid || isGuestMode) return;
+
+    try {
+      const streakDoc = doc(db, "users", user.uid, "profile", "streak");
+      await setDoc(streakDoc, {
+        value: streakValue,
+        lastUpdated: serverTimestamp(),
+      });
+      console.log("Saved streak to Firebase:", streakValue);
+    } catch (e) {
+      console.error("Failed to save streak to Firebase", e);
+    }
+  };
+
   const increaseStreak = () => {
     // Validierung erfolgt bereits im Button, daher keine weitere Prüfung nötig
     setStreak((prevStreak) => {
@@ -223,6 +262,9 @@ export function Ticktask({ user, isGuestMode = false }) {
         } catch (e) {
           console.error("Failed to save streak to localStorage", e);
         }
+
+        // Auch in Firebase speichern
+        saveStreakToFirebase(newStreak);
       }
 
       return newStreak;
@@ -249,6 +291,9 @@ export function Ticktask({ user, isGuestMode = false }) {
       } catch (e) {
         console.error("Failed to reset streak in localStorage", e);
       }
+
+      // Auch in Firebase speichern
+      saveStreakToFirebase(0);
     }
   };
 
@@ -774,6 +819,9 @@ export function Ticktask({ user, isGuestMode = false }) {
     // Firebase Verbindungsüberwachung starten (nur für angemeldete Benutzer)
     if (user?.uid && !isGuestMode) {
       startConnectionMonitoring();
+
+      // Streak aus Firebase laden
+      loadStreakFromFirebase();
     }
 
     if (!user?.uid && !isGuestMode) {
@@ -1143,6 +1191,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         console.error("❌ Failed to subscribe tasks", error);
       }
     );
+
     return () => {
       unsubscribe();
       unsubscribeRoutine();
@@ -1288,6 +1337,18 @@ export function Ticktask({ user, isGuestMode = false }) {
           updateDailyTasks={updateDailyTasks}
           streak={streak}
           onResetStreak={resetStreak}
+          tasks={guestData.tasks}
+          morningCompleted={currentMorningCompleted}
+          setMorningCompleted={setMorningCompleted}
+          abendCompleted={currentAbendCompleted}
+          setAbendCompleted={setAbendCompleted}
+          dailyCompleted={currentDailyCompleted}
+          setDailyCompleted={setDailyCompleted}
+          weeklyCompleted={currentWeeklyCompleted}
+          setWeeklyCompleted={setWeeklyCompleted}
+          increaseStreak={increaseStreak}
+          isGuestMode={true}
+          showErrorMessage={showErrorMessage}
         />
         <Input onAdd={handleAdd} task={task} tasks={guestData.tasks} />
         <Main
@@ -1343,6 +1404,17 @@ export function Ticktask({ user, isGuestMode = false }) {
         updateDailyTasks={updateDailyTasks}
         streak={streak}
         onResetStreak={resetStreak}
+        tasks={tasks}
+        morningCompleted={morningCompleted}
+        setMorningCompleted={setMorningCompleted}
+        abendCompleted={abendCompleted}
+        setAbendCompleted={setAbendCompleted}
+        dailyCompleted={dailyCompleted}
+        setDailyCompleted={setDailyCompleted}
+        weeklyCompleted={weeklyCompleted}
+        setWeeklyCompleted={setWeeklyCompleted}
+        increaseStreak={increaseStreak}
+        showErrorMessage={showErrorMessage}
       ></Header>
       <Input onAdd={handleAdd} task={task} tasks={tasks}></Input>
       <Main
@@ -1369,9 +1441,6 @@ export function Ticktask({ user, isGuestMode = false }) {
         runningTaskId={runningTaskId}
         onTaskStart={handleTaskStart}
         onTaskStop={handleTaskStop}
-        onClearRunningTask={clearRunningTask}
-        increaseStreak={increaseStreak}
-        canIncreaseStreak={canIncreaseStreak}
         onClearAllDone={clearAllDoneTasks}
       ></Main>
 

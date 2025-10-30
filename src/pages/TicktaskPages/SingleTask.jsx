@@ -152,6 +152,9 @@ export default function SingleTask({
           const remaining = Math.max(0, parsed.timeLeft - elapsed);
 
           // Timer Recovery - berechne verbleibende Zeit basierend auf echter Zeit
+          console.log(
+            `Timer Recovery für ${taskId}: elapsed=${elapsed}s, remaining=${remaining}s`
+          );
 
           return {
             timeLeft: remaining,
@@ -203,9 +206,18 @@ export default function SingleTask({
           startTime = currentParsed.startTime;
         }
 
-        // Wenn Timer neu startet, setze neue Start-Zeit
-        if (state.isRunning && !state.isPaused && !startTime) {
-          startTime = Date.now();
+        // Wenn Timer neu startet oder von Pause wieder aufgenommen wird, setze neue Start-Zeit
+        if (state.isRunning && !state.isPaused) {
+          // Nur neue Start-Zeit setzen wenn Timer vorher nicht lief oder pausiert war
+          if (
+            !startTime ||
+            (currentStored && JSON.parse(currentStored).isPaused)
+          ) {
+            startTime = Date.now();
+          }
+        } else if (!state.isRunning || state.isPaused) {
+          // Timer gestoppt oder pausiert - Start-Zeit löschen
+          startTime = null;
         }
 
         const stateToSave = {
@@ -315,8 +327,16 @@ export default function SingleTask({
       setIsRunning(true);
       setIsCompleted(false);
       setIsPaused(false);
+
+      // Start-Zeit sofort speichern für korrekte Recovery
+      saveTimerState({
+        timeLeft,
+        isRunning: true,
+        isCompleted: false,
+        isPaused: false,
+      });
     }
-  }, [taskDuration, onTaskStart, taskId]);
+  }, [taskDuration, onTaskStart, taskId, timeLeft, saveTimerState]);
 
   const handlePause = useCallback(() => {
     if (isMountedRef.current) {
@@ -448,11 +468,7 @@ export default function SingleTask({
 
         {taskDuration > 0 && !isFrequentList && (
           <div className={styles.timer}>
-            {isCompleted ? (
-              <div className={styles.completed}>✅ Completed!</div>
-            ) : (
-              <div className={styles.countdown}>{formatTime(timeLeft)}</div>
-            )}
+            <div className={styles.countdown}>{formatTime(timeLeft)}</div>
             <div className={styles.timerControls}>
               {!isRunning && !isCompleted && (
                 <img

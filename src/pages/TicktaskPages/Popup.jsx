@@ -86,16 +86,16 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
             <button
               type="button"
               className={styles.durationBtn}
-              onClick={() => setTaskDuration((prev) => prev + 5)}
+              onClick={() => setTaskDuration((prev) => prev + 1)}
             >
-              <img src={plusSign} alt="" />5 min
+              <img src={plusSign} alt="" />1 min
             </button>
             <button
               type="button"
               className={styles.durationBtn}
-              onClick={() => setTaskDuration((prev) => prev + 1)}
+              onClick={() => setTaskDuration((prev) => prev + 5)}
             >
-              <img src={plusSign} alt="" />1 min
+              <img src={plusSign} alt="" />5 min
             </button>
             <button
               type="button"

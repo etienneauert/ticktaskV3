@@ -1,20 +1,22 @@
 import styles from "./SettingsPopup.module.css";
 import dailyStyles from "./Daily.module.css";
 import { useState } from "react";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function DailyTab({ dailyTasks, onUpdateDailyTasks }) {
   const [inputValue, setInputValue] = useState("");
+  const { t } = useLanguage();
 
   return (
     <div className={styles.tabPanel}>
       <div className={dailyStyles.dailyContainer}>
         <div className={dailyStyles.dailySection}>
-          <h3>Daily Tasks</h3>
+          <h3>{t("dailyTasks")}</h3>
 
           <div className={dailyStyles.tasksList}>
             {dailyTasks.length === 0 ? (
               <div className={dailyStyles.emptyPlaceholder}>
-                <span>No tasks yet</span>
+                <span>{t("noTasksYet")}</span>
               </div>
             ) : (
               dailyTasks.map((task, index) => (

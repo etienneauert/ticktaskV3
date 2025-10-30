@@ -14,7 +14,7 @@ export function Task({
   onTaskStop,
 }) {
   return (
-    <div className={styles.takslist}>
+    <div className={`${styles.takslist} ${isDoneList ? styles.doneList : ""}`}>
       {
         <ul>
           {tasks.map((task, i) => (
