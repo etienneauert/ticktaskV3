@@ -110,7 +110,7 @@ export default function MainTasks({
         onTaskStop={onTaskStop}
       ></Task>
       {doneTasks.length > 0 && (
-        <div className={styles.DoneTasks}>
+        <div className={`${styles.DoneTasks} ${showDoneTasks ? styles.DoneTasksExpanded : ""}`}>
           <div
             className={styles.DoneTasksHeader}
             onClick={() => setShowDoneTasks(!showDoneTasks)}
@@ -163,7 +163,7 @@ export default function MainTasks({
             doneTasks.length === 0 && activeTasks.length === 0
               ? styles.noMarginTop
               : ""
-          }`}
+          } ${showFrequentTasks ? styles.FrequentTasksExpanded : ""}`}
         >
           <div
             className={styles.FrequentTasksHeader}

@@ -13,6 +13,10 @@
   max-width: 650px;
   background-color: transparent;
   box-sizing: border-box;
+  padding-bottom: 0;
+}
+
+.DoneTasks.DoneTasksExpanded {
   padding-bottom: 15px;
 }
 .DoneTasks img {
@@ -40,6 +44,10 @@
   background-color: inherit;
   box-sizing: border-box;
   border: 1px solid #333;
+  padding-bottom: 0;
+}
+
+.FrequentTasks.FrequentTasksExpanded {
   padding-bottom: 15px;
 }
 

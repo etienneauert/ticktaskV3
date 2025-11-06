@@ -226,10 +226,10 @@ li.running .countdown {
     width: 100% !important;
     min-width: 100% !important;
     max-width: 100% !important;
-    padding: 10px 5px !important;
-    margin: 10px 0 !important;
+    padding: 8px 5px !important;
+    margin: 8px 0 !important;
     justify-content: space-between !important;
-    min-height: 55px !important; /* mehr Platz bei Umbruch */
+    min-height: 45px !important;
   }
 
   .doneTask .text,
@@ -269,10 +269,10 @@ li.running .countdown {
     width: 300px !important;
     min-width: 100% !important;
     max-width: 100% !important;
-    padding: 10px 3px !important;
-    margin: 10px 0 !important;
+    padding: 8px 3px !important;
+    margin: 8px 0 !important;
     justify-content: space-between !important;
-    min-height: 60px !important; /* noch etwas mehr Platz bei kleinsten Screens */
+    min-height: 45px !important;
   }
 
   .doneTask .text,
@@ -325,12 +325,14 @@ li.running .countdown {
   /* Fixe Höhe aufheben: auto mit Mindesthöhe für Umbrüche */
   li {
     height: auto !important;
-    min-height: 55px !important;
+    min-height: 45px !important;
+    margin-bottom: 12px !important;
+    padding: 8px !important;
   }
 
   .doneTask {
     height: auto !important;
-    min-height: 55px !important;
+    min-height: 45px !important;
   }
   .taskInfo.frequentTaskInfo {
     gap: 0px !important;
@@ -366,12 +368,14 @@ li.running .countdown {
   /* Fixe Höhe aufheben: auto mit Mindesthöhe für Umbrüche */
   li {
     height: auto !important;
-    min-height: 60px !important;
+    min-height: 45px !important;
+    margin-bottom: 10px !important;
+    padding: 6px !important;
   }
 
   .doneTask {
     height: auto !important;
-    min-height: 60px !important;
+    min-height: 45px !important;
   }
   .taskInfo.frequentTaskInfo {
     gap: 0px !important;

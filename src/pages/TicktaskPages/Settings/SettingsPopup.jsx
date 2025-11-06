@@ -63,6 +63,29 @@ export default function SettingsPopup({
     }
   }, [open, activeTab]);
 
+  // Verhindere Body-Scroll auf Mobile wenn Popup offen ist
+  useEffect(() => {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (open && isMobile) {
+      // Speichere die aktuelle Scroll-Position
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        // Stelle die Scroll-Position wieder her
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [open]);
+
   if (!open) return null;
 
   return (

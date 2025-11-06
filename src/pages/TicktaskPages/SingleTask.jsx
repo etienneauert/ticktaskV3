@@ -147,9 +147,10 @@ export default function SingleTask({
         const startTime = parsed.startTime;
 
         // Wenn Timer läuft und nicht pausiert, berechne verbleibende Zeit basierend auf echter Zeit
-        if (parsed.isRunning && !parsed.isPaused && startTime) {
+        if (parsed.isRunning && !parsed.isPaused && startTime && parsed.initialTimeLeft) {
           const elapsed = Math.floor((now - startTime) / 1000);
-          const remaining = Math.max(0, parsed.timeLeft - elapsed);
+          // Verwende initialTimeLeft (ursprüngliche Zeit beim Start) statt timeLeft
+          const remaining = Math.max(0, parsed.initialTimeLeft - elapsed);
 
           // Timer Recovery - berechne verbleibende Zeit basierend auf echter Zeit
           console.log(
@@ -197,13 +198,15 @@ export default function SingleTask({
   const saveTimerState = useCallback(
     (state) => {
       try {
-        // Lade aktuellen State um Start-Zeit zu erhalten
+        // Lade aktuellen State um Start-Zeit und ursprüngliche Zeit zu erhalten
         const currentStored = localStorage.getItem(`timer_${taskId}`);
         let startTime = null;
+        let initialTimeLeft = null;
 
         if (currentStored) {
           const currentParsed = JSON.parse(currentStored);
           startTime = currentParsed.startTime;
+          initialTimeLeft = currentParsed.initialTimeLeft;
         }
 
         // Wenn Timer neu startet oder von Pause wieder aufgenommen wird, setze neue Start-Zeit
@@ -214,14 +217,17 @@ export default function SingleTask({
             (currentStored && JSON.parse(currentStored).isPaused)
           ) {
             startTime = Date.now();
+            // Speichere die ursprüngliche Zeit beim Start
+            initialTimeLeft = state.timeLeft;
           }
         } else if (!state.isRunning || state.isPaused) {
-          // Timer gestoppt oder pausiert - Start-Zeit löschen
+          // Timer gestoppt oder pausiert - Start-Zeit löschen, aber initialTimeLeft behalten
           startTime = null;
         }
 
         const stateToSave = {
           timeLeft: state.timeLeft,
+          initialTimeLeft: initialTimeLeft || state.timeLeft, // Behalte ursprüngliche Zeit
           isRunning: state.isRunning,
           isCompleted: state.isCompleted,
           isPaused: state.isPaused,
@@ -269,34 +275,62 @@ export default function SingleTask({
     };
   }, [taskId]);
 
-  // Timer-Logik - nur wenn diese Task läuft und nicht pausiert
+  // Funktion zur Berechnung der verbleibenden Zeit basierend auf Startzeitpunkt
+  const calculateRemainingTime = useCallback(() => {
+    try {
+      const stored = localStorage.getItem(`timer_${taskId}`);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.isRunning && !parsed.isPaused && parsed.startTime && parsed.initialTimeLeft) {
+          const now = Date.now();
+          const elapsed = Math.floor((now - parsed.startTime) / 1000);
+          // Verwende initialTimeLeft (ursprüngliche Zeit beim Start) statt timeLeft
+          const remaining = Math.max(0, parsed.initialTimeLeft - elapsed);
+          return remaining;
+        }
+      }
+    } catch (error) {
+      console.warn("Failed to calculate remaining time:", error);
+    }
+    return timeLeft;
+  }, [taskId, timeLeft]);
+
+  // Timer-Logik - zeitstempel-basiert für Hintergrund-Execution
   useEffect(() => {
     if (isRunning && !isPaused && timeLeft > 0 && isMountedRef.current) {
-      intervalRef.current = setInterval(() => {
+      // Berechne verbleibende Zeit basierend auf Startzeitpunkt
+      const updateTime = () => {
         if (isMountedRef.current) {
-          setTimeLeft((prevTime) => {
-            if (prevTime <= 1) {
-              setIsRunning(false);
-              setIsPaused(false);
-              // Zeige Completion-Popup statt direkt zu completieren
-              setShowCompletionPopup(true);
-              // Auto-close Popup nach 10 Sekunden als Fallback
-              popupTimeoutRef.current = setTimeout(() => {
-                if (showCompletionPopup) {
-                  setShowCompletionPopup(false);
-                  setIsCompleted(true);
-                }
-              }, 10000);
-              // Task-Stop melden wenn Timer abgeschlossen
-              if (onTaskStop) {
-                onTaskStop(taskId);
+          const remaining = calculateRemainingTime();
+          
+          if (remaining <= 0) {
+            setIsRunning(false);
+            setIsPaused(false);
+            setTimeLeft(0);
+            // Zeige Completion-Popup statt direkt zu completieren
+            setShowCompletionPopup(true);
+            // Auto-close Popup nach 10 Sekunden als Fallback
+            popupTimeoutRef.current = setTimeout(() => {
+              if (showCompletionPopup) {
+                setShowCompletionPopup(false);
+                setIsCompleted(true);
               }
-              return 0;
+            }, 10000);
+            // Task-Stop melden wenn Timer abgeschlossen
+            if (onTaskStop) {
+              onTaskStop(taskId);
             }
-            return prevTime - 1;
-          });
+          } else {
+            setTimeLeft(remaining);
+          }
         }
-      }, 1000);
+      };
+
+      // Initiale Berechnung
+      updateTime();
+
+      // Update alle Sekunde für UI
+      intervalRef.current = setInterval(updateTime, 1000);
     } else {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -310,7 +344,34 @@ export default function SingleTask({
         intervalRef.current = null;
       }
     };
-  }, [isRunning, isPaused, taskId]);
+  }, [isRunning, isPaused, taskId, calculateRemainingTime, onTaskStop]);
+
+  // Aktualisiere Timer wenn Tab wieder sichtbar wird
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && isRunning && !isPaused && isMountedRef.current) {
+        // Berechne verbleibende Zeit neu wenn Tab wieder sichtbar wird
+        const remaining = calculateRemainingTime();
+        setTimeLeft(remaining);
+        
+        // Prüfe ob Timer abgelaufen ist
+        if (remaining <= 0) {
+          setIsRunning(false);
+          setIsPaused(false);
+          setShowCompletionPopup(true);
+          if (onTaskStop) {
+            onTaskStop(taskId);
+          }
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [isRunning, isPaused, calculateRemainingTime, onTaskStop, taskId]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);

@@ -10,6 +10,7 @@
   flex: 1;
   max-width: 400px;
   padding: 20px;
+  margin-bottom: 20px;
   border: 1px solid #333;
   border-radius: 8px;
   background-color: transparent;
@@ -86,8 +87,9 @@
 .tasksList {
   margin-top: 10px;
   margin-bottom: 10px;
-  max-height: 200px;
+  max-height: 150px;
   overflow-y: auto;
+  padding-bottom: 10px;
   background-color: transparent;
 }
 
