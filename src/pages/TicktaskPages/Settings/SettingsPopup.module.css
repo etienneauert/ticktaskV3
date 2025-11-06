@@ -156,13 +156,15 @@
 
   .tabsHeader {
     max-width: 100%;
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 4px;
   }
 
   .tabButton {
-    font-size: 14px;
-    padding: 10px 16px;
+    font-size: 13px;
+    padding: 10px 8px;
+    flex: 1;
+    min-width: 0;
   }
 
   .tabPanel {
@@ -195,15 +197,16 @@
 
   .tabsHeader {
     flex-direction: row;
-    gap: 5px;
-    flex-wrap: wrap;
+    gap: 3px;
+    flex-wrap: nowrap;
   }
 
   .tabButton {
-    font-size: 13px;
-    padding: 8px 12px;
+    font-size: 12px;
+    padding: 8px 4px;
     flex: 1;
     text-align: center;
+    min-width: 0;
   }
 
   .tabPanel {

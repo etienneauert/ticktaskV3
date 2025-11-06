@@ -130,6 +130,19 @@ export default function Header({
       weeklyTasks[today.toUpperCase()] ||
       [];
 
+    // Prüfe ob überhaupt Tasks vorhanden sind
+    const hasAnyTasks =
+      tasks.length > 0 ||
+      morningTasks.length > 0 ||
+      abendTasks.length > 0 ||
+      dailyTasks.length > 0 ||
+      todayTasks.length > 0;
+
+    // Wenn keine Tasks vorhanden sind, Button deaktivieren
+    if (!hasAnyTasks) {
+      return true;
+    }
+
     const allTodayTasksCompleted =
       todayTasks.length === 0 ||
       todayTasks.every((task) => weeklyCompleted.has(task));
