@@ -2,16 +2,14 @@ import { useState } from "react";
 import { auth } from "../firebase/firebase.js";
 import {
   createUserWithEmailAndPassword,
-  updateProfile,
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
 import googleIcon from "../assets/google.png";
 import styles from "./Auth.module.css";
 
-export default function Auth({ onSwitchToLogin }) {
+export default function Auth({ onSwitchToLogin, onGuestLogin }) {
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -54,16 +52,10 @@ export default function Auth({ onSwitchToLogin }) {
         formData.password
       );
 
-      // Update display name
-      await updateProfile(userCredential.user, {
-        displayName: formData.name,
-      });
-
       setMessage("Registration successful! Welcome to TickTask!");
 
       // Reset form
       setFormData({
-        name: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -119,18 +111,6 @@ export default function Auth({ onSwitchToLogin }) {
       <h1>TickTask Registration</h1>
 
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            placeholder="Your full name"
-          />
-        </div>
-
         <div>
           <label>Email:</label>
           <input
@@ -188,9 +168,14 @@ export default function Auth({ onSwitchToLogin }) {
         </button>
       </div>
 
-      <button className={styles.switchButton} onClick={onSwitchToLogin}>
-        Go to Login
-      </button>
+      <div className={styles.actionsRow}>
+        <button className={styles.switchButton} onClick={onSwitchToLogin}>
+          Go to Login
+        </button>
+        <button className={styles.guestButton} onClick={onGuestLogin}>
+          Guest
+        </button>
+      </div>
     </div>
   );
 }

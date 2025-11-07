@@ -41,7 +41,7 @@ export const LanguageProvider = ({ children }) => {
       // Tasks
       addTask: "Task hinzufügen",
       doneTasks: "Erledigte Tasks",
-      frequentTasks: "Häufige Tasks",
+      frequentTasks: "Wiederkehrende Tasks",
       clearAll: "Alle löschen",
 
       // Timer
@@ -192,7 +192,7 @@ export const LanguageProvider = ({ children }) => {
       // Tasks
       addTask: "Add Task",
       doneTasks: "Done Tasks",
-      frequentTasks: "Frequent Tasks",
+      frequentTasks: "Recurring Tasks",
       clearAll: "Clear All",
 
       // Timer

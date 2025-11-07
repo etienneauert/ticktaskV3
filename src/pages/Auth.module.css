@@ -114,8 +114,14 @@
   background-color: inherit;
 }
 
-.Auth .switchButton {
+.Auth .actionsRow {
+  display: flex;
+  gap: 10px;
+  width: 100%;
   margin-top: 20px;
+}
+
+.Auth .switchButton {
   padding: 10px 20px;
   border: 1px solid #333;
   border-radius: 8px;
@@ -127,11 +133,32 @@
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
-  width: 100%;
+  flex: 1;
   box-sizing: border-box;
 }
 
 .Auth .switchButton:hover {
+  color: #d5ff05;
+  border-color: #d5ff05;
+}
+
+.Auth .guestButton {
+  padding: 10px 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: transparent;
+  color: #ababab;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.Auth .guestButton:hover {
   color: #d5ff05;
   border-color: #d5ff05;
 }

@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
@@ -67,6 +67,7 @@
 .close {
   width: 20px;
   cursor: pointer;
+  background-color: transparent;
 }
 
 /* Demo Preview Styles */
@@ -192,8 +193,8 @@
 
 .durationButtons button:hover {
   scale: 1.02;
-  background-color: rgb(213, 255, 5);
-  color: black;
+  background-color: rgb(213, 255, 5) !important;
+  color: black !important;
 }
 
 .durationButtons button:active {
@@ -414,6 +415,10 @@
     padding: 20px;
   }
 
+  .close {
+    background-color: transparent !important;
+  }
+
   .modalHeader {
     margin-top: 15px;
     margin-bottom: 30px;
@@ -422,7 +427,7 @@
   .demoTask {
     min-width: 300px;
     max-width: 100%;
-    padding: 8px;
+    padding: 5px 8px;
     min-height: 55px;
   }
 
@@ -459,8 +464,41 @@
   }
 
   .durationButtons button {
+    flex: 1 1 calc(33.333% - 10px);
+    min-width: 80px;
+    max-width: calc(33.333% - 10px);
+  }
+
+  .durationButtons .reload {
+    flex: 0 0 auto;
+  }
+
+  .demoPreview {
+    margin-top: 90px !important;
+  }
+
+  .demoTask {
+    align-items: center !important;
+    padding: 5px 8px !important;
+  }
+
+  .demoText {
+    align-items: center !important;
+  }
+
+  .Duration {
+    margin-top: 70px !important;
+    margin-bottom: 30px !important;
+  }
+
+  .durationButtons button {
     padding: 8px 12px;
     font-size: 12px;
+  }
+
+  .durationButtons button:hover {
+    background-color: rgb(213, 255, 5) !important;
+    color: black !important;
   }
 
   .durationButtons button img {
@@ -510,6 +548,10 @@
     padding: 15px;
   }
 
+  .close {
+    background-color: transparent !important;
+  }
+
   .modalHeader {
     margin-top: 50px;
     margin-bottom: 20px;
@@ -522,7 +564,7 @@
 
   .demoTask {
     min-width: 250px;
-    padding: 6px;
+    padding: 4px 6px;
     min-height: 60px;
   }
 
@@ -554,11 +596,46 @@
   .durationButtons {
     gap: 10px;
     margin-top: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .durationButtons button {
+    flex: 1 1 calc(33.333% - 7px);
+    min-width: 70px;
+    max-width: calc(33.333% - 7px);
+  }
+
+  .durationButtons .reload {
+    flex: 0 0 auto;
+  }
+
+  .demoPreview {
+    margin-top: 30px !important;
+  }
+
+  .demoTask {
+    align-items: center !important;
+    padding: 4px 6px !important;
+  }
+
+  .demoText {
+    align-items: center !important;
+  }
+
+  .Duration {
+    margin-top: 70px !important;
+    margin-bottom: 30px !important;
   }
 
   .durationButtons button {
     padding: 5px 8px;
     font-size: 10px;
+  }
+
+  .durationButtons button:hover {
+    background-color: rgb(213, 255, 5) !important;
+    color: black !important;
   }
 
   .durationButtons button img {

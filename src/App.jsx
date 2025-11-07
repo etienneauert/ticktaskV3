@@ -46,7 +46,10 @@ export default function App() {
             onGuestLogin={() => setIsGuestMode(true)}
           />
         ) : (
-          <Auth onSwitchToLogin={() => setShowLogin(true)} />
+          <Auth 
+            onSwitchToLogin={() => setShowLogin(true)} 
+            onGuestLogin={() => setIsGuestMode(true)}
+          />
         )}
       </div>
     </LanguageProvider>
