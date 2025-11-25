@@ -41,6 +41,11 @@
   box-sizing: border-box;
 }
 
+.DayHeaderToday {
+  border: 2px solid #d5ff05;
+  box-shadow: 0 0 8px rgba(213, 255, 5, 0.3);
+}
+
 .DayName {
   font-weight: 600;
   font-size: 14px;

@@ -114,6 +114,16 @@ export default function WeekCalendar({ user }) {
 
   const weekDates = getWeekDates();
 
+  // Prüfe ob ein Datum der aktuelle Tag ist
+  const isToday = (date) => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  };
+
   // Berechne die Position des gelben Balkens für die aktuelle Zeit
   const getCurrentTimePosition = () => {
     const now = currentTime;
@@ -134,7 +144,8 @@ export default function WeekCalendar({ user }) {
     const barHeight = 1; // Höhe der HorizontalBar zwischen Zeilen
     // Jede vollständige Stunde: cellHeight + barHeight (außer der letzten)
     // Für die Position innerhalb der aktuellen Stunde: nur cellHeight
-    const topPosition = hourIndex * (cellHeight + barHeight) + minutesInHour * cellHeight;
+    const topPosition =
+      hourIndex * (cellHeight + barHeight) + minutesInHour * cellHeight;
 
     // Prüfe ob der aktuelle Tag in der angezeigten Woche liegt
     const today = new Date();
@@ -169,7 +180,12 @@ export default function WeekCalendar({ user }) {
         <div className={styles.LeftBar}></div>
         <div className={styles.TimeColumnHeader}></div>
         {weekDays.map((day, index) => (
-          <div key={day} className={styles.DayHeader}>
+          <div
+            key={day}
+            className={`${styles.DayHeader} ${
+              isToday(weekDates[index]) ? styles.DayHeaderToday : ""
+            }`}
+          >
             <div className={styles.DayName}>{day}</div>
             <div className={styles.DayDate}>
               {weekDates[index].getDate()}.
