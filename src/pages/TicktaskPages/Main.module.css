@@ -12,6 +12,12 @@
   width: 100%;
 }
 
+.WeekCalendarContainer {
+  width: 100%;
+  margin-top: 40px;
+  padding: 0 20px;
+}
+
 .MainRoutine {
   width: 26%;
   margin: 0 auto;
@@ -76,6 +82,11 @@
     width: 90%;
     margin-bottom: 5px;
   }
+
+  .WeekCalendarContainer {
+    padding: 0 10px;
+    margin-top: 30px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -106,6 +117,11 @@
     width: 95%;
     margin-bottom: 5px;
   }
+
+  .WeekCalendarContainer {
+    padding: 0 5px;
+    margin-top: 20px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -135,5 +151,10 @@
   .MainCenteredButton {
     width: 100%;
     margin-bottom: 5px;
+  }
+
+  .WeekCalendarContainer {
+    padding: 0;
+    margin-top: 20px;
   }
 }

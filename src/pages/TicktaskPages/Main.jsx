@@ -1,6 +1,7 @@
 import MainTasks from "./MainTasks";
 import MainRoutine from "./MainRoutine";
 import Checklist from "./Checklist/Checklist";
+import WeekCalendar from "./WeekCalendar";
 import styles from "./Main.module.css";
 
 export default function Main({
@@ -69,6 +70,9 @@ export default function Main({
             setDailyCompleted={setDailyCompleted}
           ></Checklist>
         </div>
+      </div>
+      <div className={styles.WeekCalendarContainer}>
+        <WeekCalendar />
       </div>
     </div>
   );

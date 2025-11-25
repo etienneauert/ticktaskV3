@@ -1197,61 +1197,78 @@ export function Ticktask({ user, isGuestMode = false }) {
       console.error("Failed to read daily tasks cache", e);
     }
 
-    // Lokale completed states laden
-    try {
-      const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
-      const morningCompletedRaw = localStorage.getItem(morningCompletedKey);
-      if (morningCompletedRaw && morningCompletedRaw !== "[]") {
-        const morningCompletedArray = JSON.parse(morningCompletedRaw);
-        setMorningCompleted(new Set(morningCompletedArray));
+    // Completed states aus localStorage laden (nur einmal beim Start)
+    if (user?.uid && !isGuestMode) {
+      try {
+        const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
+        const morningCompletedRaw = localStorage.getItem(morningCompletedKey);
+        if (morningCompletedRaw) {
+          const morningCompletedArray = JSON.parse(morningCompletedRaw);
+          if (Array.isArray(morningCompletedArray)) {
+            setMorningCompleted(new Set(morningCompletedArray));
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load morning completed tasks", e);
       }
-    } catch (e) {
-      console.error("Failed to load morning completed tasks", e);
-    }
 
-    try {
-      const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
-      const abendCompletedRaw = localStorage.getItem(abendCompletedKey);
-      if (abendCompletedRaw && abendCompletedRaw !== "[]") {
-        const abendCompletedArray = JSON.parse(abendCompletedRaw);
-        setAbendCompleted(new Set(abendCompletedArray));
+      try {
+        const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
+        const abendCompletedRaw = localStorage.getItem(abendCompletedKey);
+        if (abendCompletedRaw) {
+          const abendCompletedArray = JSON.parse(abendCompletedRaw);
+          if (Array.isArray(abendCompletedArray)) {
+            setAbendCompleted(new Set(abendCompletedArray));
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load abend completed tasks", e);
       }
-    } catch (e) {
-      console.error("Failed to load abend completed tasks", e);
-    }
 
-    try {
-      // Weekly completed tasks - tagesspezifisch laden
-      const today = new Date();
-      const dayNames = [
-        "sunday",
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-      ];
-      const currentDay = dayNames[today.getDay()];
-      const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}_${currentDay}`;
-      const weeklyCompletedRaw = localStorage.getItem(weeklyCompletedKey);
-      if (weeklyCompletedRaw && weeklyCompletedRaw !== "[]") {
-        const weeklyCompletedArray = JSON.parse(weeklyCompletedRaw);
-        setWeeklyCompleted(new Set(weeklyCompletedArray));
+      try {
+        const today = new Date();
+        const dayNames = [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+        ];
+        const currentDay = dayNames[today.getDay()];
+        const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}_${currentDay}`;
+        const weeklyCompletedRaw = localStorage.getItem(weeklyCompletedKey);
+        if (weeklyCompletedRaw) {
+          const weeklyCompletedArray = JSON.parse(weeklyCompletedRaw);
+          if (Array.isArray(weeklyCompletedArray)) {
+            setWeeklyCompleted(new Set(weeklyCompletedArray));
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load weekly completed tasks", e);
       }
-    } catch (e) {
-      console.error("Failed to load weekly completed tasks", e);
-    }
 
-    try {
-      const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
-      const dailyCompletedRaw = localStorage.getItem(dailyCompletedKey);
-      if (dailyCompletedRaw && dailyCompletedRaw !== "[]") {
-        const dailyCompletedArray = JSON.parse(dailyCompletedRaw);
-        setDailyCompleted(new Set(dailyCompletedArray));
+      try {
+        const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
+        const dailyCompletedRaw = localStorage.getItem(dailyCompletedKey);
+        if (dailyCompletedRaw) {
+          const dailyCompletedArray = JSON.parse(dailyCompletedRaw);
+          if (Array.isArray(dailyCompletedArray)) {
+            setDailyCompleted(new Set(dailyCompletedArray));
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load daily completed tasks", e);
       }
-    } catch (e) {
-      console.error("Failed to load daily completed tasks", e);
+      
+      // Markiere dass States geladen wurden (nach kurzer Verzögerung, damit setState durch ist)
+      setTimeout(() => {
+        hasLoadedCompletedStates.current = true;
+      }, 100);
+    } else {
+      // Im Gast-Modus oder ohne User: Markiere sofort als geladen
+      hasLoadedCompletedStates.current = true;
     }
 
     // Firebase Routine Tasks abonnieren
@@ -1377,33 +1394,39 @@ export function Ticktask({ user, isGuestMode = false }) {
   }, [user?.uid]);
 
   // Save completed states to localStorage whenever they change
+  // WICHTIG: Nur speichern wenn States wirklich geändert wurden (nicht beim ersten Laden)
+  const hasLoadedCompletedStates = useRef(false);
+  
   useEffect(() => {
-    if (user?.uid && !isGuestMode) {
-      try {
-        const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
-        const morningCompletedArray = Array.from(morningCompleted);
-        localStorage.setItem(
-          morningCompletedKey,
-          JSON.stringify(morningCompletedArray)
-        );
-      } catch (e) {
-        console.error("Failed to save morning completed tasks", e);
-      }
+    // Warte bis States aus localStorage geladen wurden
+    if (!hasLoadedCompletedStates.current) return;
+    if (!user?.uid || isGuestMode) return;
+    
+    try {
+      const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
+      const morningCompletedArray = Array.from(morningCompleted);
+      localStorage.setItem(
+        morningCompletedKey,
+        JSON.stringify(morningCompletedArray)
+      );
+    } catch (e) {
+      console.error("Failed to save morning completed tasks", e);
     }
   }, [morningCompleted, user?.uid, isGuestMode]);
 
   useEffect(() => {
-    if (user?.uid && !isGuestMode) {
-      try {
-        const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
-        const abendCompletedArray = Array.from(abendCompleted);
-        localStorage.setItem(
-          abendCompletedKey,
-          JSON.stringify(abendCompletedArray)
-        );
-      } catch (e) {
-        console.error("Failed to save abend completed tasks", e);
-      }
+    if (!hasLoadedCompletedStates.current) return;
+    if (!user?.uid || isGuestMode) return;
+    
+    try {
+      const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
+      const abendCompletedArray = Array.from(abendCompleted);
+      localStorage.setItem(
+        abendCompletedKey,
+        JSON.stringify(abendCompletedArray)
+      );
+    } catch (e) {
+      console.error("Failed to save abend completed tasks", e);
     }
   }, [abendCompleted, user?.uid, isGuestMode]);
 
@@ -1425,134 +1448,51 @@ export function Ticktask({ user, isGuestMode = false }) {
     }
   }, [tasks, frequentTemplates, runningTaskId, isGuestMode, user?.uid, guestData.tasks, guestData.frequentTemplates]);
 
-  // Bereinige completed Sets automatisch wenn sich Task-Listen ändern
-  useEffect(() => {
-    // Bereinige morningCompleted
-    setMorningCompleted((prev) => {
-      const currentMorningTasks = isGuestMode ? guestData.morningTasks : morningTasks;
-      // Prüfe ob sich die Größe geändert hat
-      const prevSize = prev.size;
-      const cleaned = new Set();
-      prev.forEach((task) => {
-        if (currentMorningTasks.includes(task)) {
-          cleaned.add(task);
-        }
-      });
-      if (cleaned.size !== prevSize) {
-        console.log(`Cleaned morningCompleted: ${prevSize} -> ${cleaned.size}, tasks: ${currentMorningTasks.length}`);
-      }
-      return cleaned;
-    });
-  }, [morningTasks, isGuestMode, guestData.morningTasks]);
+  // Bereinige completed Sets NUR wenn Tasks in Settings gelöscht werden
+  // Die Bereinigung passiert bereits in updateMorningTasks, updateAbendTasks, etc.
+  // Diese Hooks sind nicht mehr nötig, da die Bereinigung direkt in den update-Funktionen passiert
 
   useEffect(() => {
-    // Bereinige abendCompleted
-    setAbendCompleted((prev) => {
-      const currentAbendTasks = isGuestMode ? guestData.abendTasks : abendTasks;
-      const prevSize = prev.size;
-      const cleaned = new Set();
-      prev.forEach((task) => {
-        if (currentAbendTasks.includes(task)) {
-          cleaned.add(task);
-        }
-      });
-      if (cleaned.size !== prevSize) {
-        console.log(`Cleaned abendCompleted: ${prevSize} -> ${cleaned.size}, tasks: ${currentAbendTasks.length}`);
-      }
-      return cleaned;
-    });
-  }, [abendTasks, isGuestMode, guestData.abendTasks]);
-
-  useEffect(() => {
-    // Bereinige dailyCompleted
-    setDailyCompleted((prev) => {
-      const currentDailyTasks = isGuestMode ? guestData.dailyTasks : dailyTasks;
-      const prevSize = prev.size;
-      const cleaned = new Set();
-      prev.forEach((task) => {
-        if (currentDailyTasks.includes(task)) {
-          cleaned.add(task);
-        }
-      });
-      if (cleaned.size !== prevSize) {
-        console.log(`Cleaned dailyCompleted: ${prevSize} -> ${cleaned.size}, tasks: ${currentDailyTasks.length}`);
-      }
-      return cleaned;
-    });
-  }, [dailyTasks, isGuestMode, guestData.dailyTasks]);
-
-  useEffect(() => {
-    // Bereinige weeklyCompleted
-    setWeeklyCompleted((prev) => {
-      const currentWeeklyTasks = isGuestMode ? guestData.weeklyTasks : weeklyTasks;
-      // Sammle alle Tasks aus allen Tagen
-      const allWeeklyTasks = new Set();
-      Object.values(currentWeeklyTasks).forEach((dayTasks) => {
-        if (Array.isArray(dayTasks)) {
-          dayTasks.forEach((task) => allWeeklyTasks.add(task));
-        }
-      });
-      const prevSize = prev.size;
-      const cleaned = new Set();
-      prev.forEach((task) => {
-        if (allWeeklyTasks.has(task)) {
-          cleaned.add(task);
-        }
-      });
-      if (cleaned.size !== prevSize) {
-        console.log(`Cleaned weeklyCompleted: ${prevSize} -> ${cleaned.size}`);
-      }
-      return cleaned;
-    });
-  }, [weeklyTasks, isGuestMode, guestData.weeklyTasks]);
-
-  useEffect(() => {
-    if (user?.uid && !isGuestMode) {
-      try {
-        // Weekly completed tasks - tagesspezifisch speichern
-        const today = new Date();
-        const dayNames = [
-          "sunday",
-          "monday",
-          "tuesday",
-          "wednesday",
-          "thursday",
-          "friday",
-          "saturday",
-        ];
-        const currentDay = dayNames[today.getDay()];
-        const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}_${currentDay}`;
-        const weeklyCompletedArray = Array.from(weeklyCompleted);
-        console.log(
-          "Ticktask: Saving weekly completed for day:",
-          currentDay,
-          "key:",
-          weeklyCompletedKey,
-          "data:",
-          weeklyCompletedArray
-        );
-        localStorage.setItem(
-          weeklyCompletedKey,
-          JSON.stringify(weeklyCompletedArray)
-        );
-      } catch (e) {
-        console.error("Failed to save weekly completed tasks", e);
-      }
+    if (!hasLoadedCompletedStates.current) return;
+    if (!user?.uid || isGuestMode) return;
+    
+    try {
+      // Weekly completed tasks - tagesspezifisch speichern
+      const today = new Date();
+      const dayNames = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+      ];
+      const currentDay = dayNames[today.getDay()];
+      const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}_${currentDay}`;
+      const weeklyCompletedArray = Array.from(weeklyCompleted);
+      localStorage.setItem(
+        weeklyCompletedKey,
+        JSON.stringify(weeklyCompletedArray)
+      );
+    } catch (e) {
+      console.error("Failed to save weekly completed tasks", e);
     }
   }, [weeklyCompleted, user?.uid, isGuestMode]);
 
   useEffect(() => {
-    if (user?.uid && !isGuestMode) {
-      try {
-        const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
-        const dailyCompletedArray = Array.from(dailyCompleted);
-        localStorage.setItem(
-          dailyCompletedKey,
-          JSON.stringify(dailyCompletedArray)
-        );
-      } catch (e) {
-        console.error("Failed to save daily completed tasks", e);
-      }
+    if (!hasLoadedCompletedStates.current) return;
+    if (!user?.uid || isGuestMode) return;
+    
+    try {
+      const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
+      const dailyCompletedArray = Array.from(dailyCompleted);
+      localStorage.setItem(
+        dailyCompletedKey,
+        JSON.stringify(dailyCompletedArray)
+      );
+    } catch (e) {
+      console.error("Failed to save daily completed tasks", e);
     }
   }, [dailyCompleted, user?.uid, isGuestMode]);
 
