@@ -72,7 +72,7 @@ export default function Main({
         </div>
       </div>
       <div className={styles.WeekCalendarContainer}>
-        <WeekCalendar />
+        <WeekCalendar user={user} />
       </div>
     </div>
   );

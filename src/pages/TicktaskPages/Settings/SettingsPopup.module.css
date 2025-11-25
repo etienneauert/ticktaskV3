@@ -326,6 +326,43 @@
   border-color: #d5ff05 !important;
 }
 
+/* Time Select Styles */
+.timeSelect {
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 8px 30px 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+}
+
+.timeSelect:hover {
+  border-color: #777;
+}
+
+.timeSelect:focus {
+  outline: none;
+  border-color: #555;
+  box-shadow: none;
+}
+
+.timeSelect option {
+  background-color: #161616;
+  color: #fff;
+}
+
 /* Mobile Styles for General Tab */
 @media (max-width: 768px) {
   .generalSection {
@@ -369,6 +406,12 @@
     font-size: 11px;
     min-width: 70px;
   }
+
+  .timeSelect {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 90px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -408,5 +451,11 @@
     padding: 4px 8px;
     font-size: 10px;
     min-width: 60px;
+  }
+
+  .timeSelect {
+    padding: 5px 8px;
+    font-size: 11px;
+    min-width: 80px;
   }
 }
