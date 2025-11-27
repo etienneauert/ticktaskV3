@@ -327,6 +327,19 @@ export default function WeekCalendar({ user, tasks = [] }) {
                     2,
                     "0"
                   )}:${String(minutes).padStart(2, "0")}`;
+                  const taskText = (task.text || "Task").trim() || "Task";
+                  const approxWidthPx = Math.max(
+                    100,
+                    (positioning.width ?? 140) - 40
+                  ); // subtract time/gap
+                  const approxCharWidthPx = 6.5;
+                  const estimatedTextWidth =
+                    taskText.length * approxCharWidthPx;
+                  const shouldScroll = estimatedTextWidth > approxWidthPx;
+                  const scrollDurationSeconds = Math.min(
+                    24,
+                    Math.max(8, (estimatedTextWidth - approxWidthPx) / 4)
+                  );
 
                   return (
                     <div
@@ -345,8 +358,24 @@ export default function WeekCalendar({ user, tasks = [] }) {
                       <span className={styles.ScheduledTaskTime}>
                         {formattedTime}
                       </span>
-                      <span className={styles.ScheduledTaskText}>
-                        {task.text || "Task"}
+                      <span
+                        className={`${styles.ScheduledTaskText} ${
+                          shouldScroll ? styles.ScheduledTaskTextScrollable : ""
+                        }`}
+                      >
+                        {shouldScroll ? (
+                          <span
+                            className={styles.ScheduledTaskTextInner}
+                            style={{
+                              animationDuration: `${scrollDurationSeconds}s`,
+                            }}
+                          >
+                            <span>{taskText}</span>
+                            <span aria-hidden="true">{taskText}</span>
+                          </span>
+                        ) : (
+                          taskText
+                        )}
                       </span>
                     </div>
                   );

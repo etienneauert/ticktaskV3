@@ -9,6 +9,7 @@ import plusSign from "../../assets/plus-sign.png";
 import playgrey from "../../assets/play-grey.png";
 import trashgrey from "../../assets/trash-grey.png";
 import reloadneon from "../../assets/reloadneon.png";
+import arrowDown from "../../assets/arrowdown-yellow.png";
 
 const DAY_OPTIONS = [
   { value: "", label: "Bitte wählen" },
@@ -82,7 +83,9 @@ function TransparentSelect({
         onClick={() => setOpen((prev) => !prev)}
       >
         <span>{selectedLabel}</span>
-        <span className={styles.selectArrow}>⌄</span>
+        <span className={styles.selectArrow}>
+          <img src={arrowDown} alt="" className={styles.selectArrowIcon} />
+        </span>
       </button>
       {open && (
         <div className={styles.selectDropdown}>
