@@ -120,7 +120,8 @@
   gap: 0;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
 }
 
 .CalendarRow {
@@ -141,6 +142,48 @@
 
 .CalendarCell:hover {
   background-color: #1f1f1f;
+}
+
+.TasksOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  padding: 4px;
+}
+
+.ScheduledTask {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(213, 255, 5, 0.4);
+  background-color: rgba(213, 255, 5, 0.15);
+  color: #fff;
+  font-size: 11px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.ScheduledTaskTime {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #d5ff05;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.ScheduledTaskText {
+  font-size: 12px;
+  color: #fff;
+  word-break: break-word;
 }
 
 .LeftBar {

@@ -24,6 +24,92 @@ import {
   getDoc,
 } from "firebase/firestore";
 
+const WEEK_DAY_ORDER = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
+
+const EMPTY_SCHEDULE = {
+  scheduledDayOption: null,
+  scheduledHour: null,
+  scheduledMinute: null,
+  scheduledDateTime: null,
+};
+
+const getStartOfCurrentWeek = (referenceDate = new Date()) => {
+  const date = new Date(referenceDate);
+  const currentDay = date.getDay();
+  const diff = currentDay === 0 ? -6 : 1 - currentDay;
+  date.setDate(date.getDate() + diff);
+  date.setHours(0, 0, 0, 0);
+  return date;
+};
+
+const resolveDateForDayOption = (dayOption) => {
+  if (!dayOption) return null;
+  const normalized = dayOption.toLowerCase();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (normalized === "today") {
+    return new Date(today);
+  }
+
+  if (normalized === "tomorrow") {
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  }
+
+  const targetIndex = WEEK_DAY_ORDER.indexOf(normalized);
+  if (targetIndex !== -1) {
+    const weekStart = getStartOfCurrentWeek(today);
+    const target = new Date(weekStart);
+    target.setDate(weekStart.getDate() + targetIndex);
+    return target;
+  }
+
+  return null;
+};
+
+const buildScheduledMetadata = (dayOption, hour, minute) => {
+  const normalizedOption = (dayOption || "").toLowerCase();
+  const hourValue =
+    hour === null || hour === undefined ? "" : String(hour).padStart(2, "0");
+  const minuteValue =
+    minute === null || minute === undefined
+      ? ""
+      : String(minute).padStart(2, "0");
+
+  if (!normalizedOption || hourValue === "" || minuteValue === "") {
+    return { ...EMPTY_SCHEDULE };
+  }
+
+  const hourNum = parseInt(hourValue, 10);
+  const minuteNum = parseInt(minuteValue, 10);
+  if (Number.isNaN(hourNum) || Number.isNaN(minuteNum)) {
+    return { ...EMPTY_SCHEDULE };
+  }
+
+  const scheduledDate = resolveDateForDayOption(normalizedOption);
+  if (!scheduledDate) {
+    return { ...EMPTY_SCHEDULE };
+  }
+
+  scheduledDate.setHours(hourNum, minuteNum, 0, 0);
+  return {
+    scheduledDayOption: normalizedOption,
+    scheduledHour: hourNum,
+    scheduledMinute: minuteNum,
+    scheduledDateTime: scheduledDate.toISOString(),
+  };
+};
+
 export function Ticktask({ user, isGuestMode = false }) {
   const isInitialLoad = useRef(true);
 
@@ -313,15 +399,20 @@ export function Ticktask({ user, isGuestMode = false }) {
     // If there's already a running task, validate if it's actually running
     if (runningTaskId && runningTaskId !== taskId) {
       console.log("Checking timer state for runningTaskId:", runningTaskId);
-      
+
       // First, check if the task still exists in the list
       const currentTasks = isGuestMode ? guestData.tasks : tasks;
-      const currentFrequentTemplates = isGuestMode ? guestData.frequentTemplates : frequentTemplates;
-      const taskExists = currentTasks.some(task => task.id === runningTaskId) || 
-                         currentFrequentTemplates.some(task => task.id === runningTaskId);
-      
+      const currentFrequentTemplates = isGuestMode
+        ? guestData.frequentTemplates
+        : frequentTemplates;
+      const taskExists =
+        currentTasks.some((task) => task.id === runningTaskId) ||
+        currentFrequentTemplates.some((task) => task.id === runningTaskId);
+
       if (!taskExists) {
-        console.log("Running task no longer exists in list, clearing runningTaskId");
+        console.log(
+          "Running task no longer exists in list, clearing runningTaskId"
+        );
         setRunningTaskId(null);
         if (!isGuestMode && user?.uid) {
           localStorage.removeItem(`ticktask_running_task_${user.uid}`);
@@ -333,7 +424,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           const timerKey = `timer_${runningTaskId}`;
           const timerState = localStorage.getItem(timerKey);
           console.log("Timer state for", runningTaskId, ":", timerState);
-          
+
           if (timerState) {
             const parsed = JSON.parse(timerState);
             console.log("Parsed timer state:", parsed);
@@ -344,7 +435,14 @@ export function Ticktask({ user, isGuestMode = false }) {
               return false;
             } else {
               // Timer is not actually running, clear the runningTaskId and continue
-              console.log("Timer is not actually running, clearing runningTaskId. isRunning:", parsed.isRunning, "isPaused:", parsed.isPaused, "isCompleted:", parsed.isCompleted);
+              console.log(
+                "Timer is not actually running, clearing runningTaskId. isRunning:",
+                parsed.isRunning,
+                "isPaused:",
+                parsed.isPaused,
+                "isCompleted:",
+                parsed.isCompleted
+              );
               setRunningTaskId(null);
               if (!isGuestMode && user?.uid) {
                 localStorage.removeItem(`ticktask_running_task_${user.uid}`);
@@ -441,7 +539,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           prev[d].forEach((task) => allOtherDaysTasks.add(task));
         }
       });
-      
+
       const newTasks = {
         ...prev,
         [day]: tasks,
@@ -476,8 +574,10 @@ export function Ticktask({ user, isGuestMode = false }) {
           cleaned.add(task);
         }
       });
-      console.log(`updateWeeklyTasks: Cleaned weeklyCompleted from ${prevCompleted.size} to ${cleaned.size}, day: ${day}, tasks: ${tasks.length}`);
-      
+      console.log(
+        `updateWeeklyTasks: Cleaned weeklyCompleted from ${prevCompleted.size} to ${cleaned.size}, day: ${day}, tasks: ${tasks.length}`
+      );
+
       // Speichere sofort in localStorage (wenn nicht im Gast-Modus)
       // Weekly completed tasks sind tagesspezifisch
       if (!isGuestMode && user?.uid) {
@@ -495,12 +595,15 @@ export function Ticktask({ user, isGuestMode = false }) {
           const currentDay = dayNames[today.getDay()];
           const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}_${currentDay}`;
           const cleanedArray = Array.from(cleaned);
-          localStorage.setItem(weeklyCompletedKey, JSON.stringify(cleanedArray));
+          localStorage.setItem(
+            weeklyCompletedKey,
+            JSON.stringify(cleanedArray)
+          );
         } catch (e) {
           console.error("Failed to save cleaned weekly completed tasks", e);
         }
       }
-      
+
       return cleaned;
     });
 
@@ -533,22 +636,27 @@ export function Ticktask({ user, isGuestMode = false }) {
           cleaned.add(task);
         }
       });
-      console.log(`updateMorningTasks: Cleaned morningCompleted from ${prev.size} to ${cleaned.size}, tasks: ${tasks.length}`);
-      
+      console.log(
+        `updateMorningTasks: Cleaned morningCompleted from ${prev.size} to ${cleaned.size}, tasks: ${tasks.length}`
+      );
+
       // Speichere sofort in localStorage (wenn nicht im Gast-Modus)
       if (!isGuestMode && user?.uid) {
         try {
           const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
           const cleanedArray = Array.from(cleaned);
-          localStorage.setItem(morningCompletedKey, JSON.stringify(cleanedArray));
+          localStorage.setItem(
+            morningCompletedKey,
+            JSON.stringify(cleanedArray)
+          );
         } catch (e) {
           console.error("Failed to save cleaned morning completed tasks", e);
         }
       }
-      
+
       return cleaned;
     });
-    
+
     setMorningTasks(tasks);
 
     // Im Gast-Modus: Gast-Daten aktualisieren
@@ -589,8 +697,10 @@ export function Ticktask({ user, isGuestMode = false }) {
           cleaned.add(task);
         }
       });
-      console.log(`updateAbendTasks: Cleaned abendCompleted from ${prev.size} to ${cleaned.size}, tasks: ${tasks.length}`);
-      
+      console.log(
+        `updateAbendTasks: Cleaned abendCompleted from ${prev.size} to ${cleaned.size}, tasks: ${tasks.length}`
+      );
+
       // Speichere sofort in localStorage (wenn nicht im Gast-Modus)
       if (!isGuestMode && user?.uid) {
         try {
@@ -601,10 +711,10 @@ export function Ticktask({ user, isGuestMode = false }) {
           console.error("Failed to save cleaned abend completed tasks", e);
         }
       }
-      
+
       return cleaned;
     });
-    
+
     setAbendTasks(tasks);
 
     // Im Gast-Modus: Gast-Daten aktualisieren
@@ -645,8 +755,10 @@ export function Ticktask({ user, isGuestMode = false }) {
           cleaned.add(task);
         }
       });
-      console.log(`updateDailyTasks: Cleaned dailyCompleted from ${prev.size} to ${cleaned.size}, tasks: ${tasks.length}`);
-      
+      console.log(
+        `updateDailyTasks: Cleaned dailyCompleted from ${prev.size} to ${cleaned.size}, tasks: ${tasks.length}`
+      );
+
       // Speichere sofort in localStorage (wenn nicht im Gast-Modus)
       if (!isGuestMode && user?.uid) {
         try {
@@ -657,10 +769,10 @@ export function Ticktask({ user, isGuestMode = false }) {
           console.error("Failed to save cleaned daily completed tasks", e);
         }
       }
-      
+
       return cleaned;
     });
-    
+
     setDailyTasks(tasks);
 
     // Im Gast-Modus: Gast-Daten aktualisieren
@@ -698,6 +810,11 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   const handleAdd = async (task) => {
     if (!user?.uid && !isGuestMode) return;
+    const scheduleMeta = buildScheduledMetadata(
+      task.scheduledDayOption,
+      task.scheduledHour,
+      task.scheduledMinute
+    );
 
     // Im Gast-Modus: Gast-Daten aktualisieren
     if (isGuestMode) {
@@ -709,6 +826,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         taskDuration: parseInt(task.taskDuration) || 0,
         createdAt: { seconds: Math.floor(Date.now() / 1000) },
         frequent: !!task.frequent,
+        ...scheduleMeta,
       };
       updateGuestData({
         tasks: [...guestData.tasks, newTask],
@@ -727,6 +845,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         taskDuration: parseInt(task.taskDuration) || 0,
         createdAt: serverTimestamp(),
         frequent: !!task.frequent,
+        ...scheduleMeta,
       });
       console.log("✅ Task added to Firebase with ID:", docRef.id);
     } catch (e) {
@@ -740,6 +859,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         taskDuration: parseInt(task.taskDuration) || 0,
         createdAt: { seconds: Math.floor(Date.now() / 1000) },
         frequent: !!task.frequent,
+        ...scheduleMeta,
       };
       setTasks((prev) => [...prev, newTask]);
     }
@@ -870,6 +990,16 @@ export function Ticktask({ user, isGuestMode = false }) {
       actualTimeUsed: undefined,
       plannedTime: undefined,
       completedAt: undefined,
+      scheduledDayOption: taskToCopy.scheduledDayOption || null,
+      scheduledHour:
+        taskToCopy.scheduledHour !== undefined
+          ? taskToCopy.scheduledHour
+          : null,
+      scheduledMinute:
+        taskToCopy.scheduledMinute !== undefined
+          ? taskToCopy.scheduledMinute
+          : null,
+      scheduledDateTime: taskToCopy.scheduledDateTime || null,
     };
 
     // Sofort lokal hinzufügen
@@ -893,6 +1023,10 @@ export function Ticktask({ user, isGuestMode = false }) {
         done: copiedTask.done,
         taskDuration: copiedTask.taskDuration,
         createdAt: serverTimestamp(),
+        scheduledDayOption: copiedTask.scheduledDayOption,
+        scheduledHour: copiedTask.scheduledHour,
+        scheduledMinute: copiedTask.scheduledMinute,
+        scheduledDateTime: copiedTask.scheduledDateTime,
       });
     } catch (e) {
       console.error("Failed to add copied task to Firestore", e);
@@ -1261,7 +1395,7 @@ export function Ticktask({ user, isGuestMode = false }) {
       } catch (e) {
         console.error("Failed to load daily completed tasks", e);
       }
-      
+
       // Markiere dass States geladen wurden (nach kurzer Verzögerung, damit setState durch ist)
       setTimeout(() => {
         hasLoadedCompletedStates.current = true;
@@ -1396,12 +1530,12 @@ export function Ticktask({ user, isGuestMode = false }) {
   // Save completed states to localStorage whenever they change
   // WICHTIG: Nur speichern wenn States wirklich geändert wurden (nicht beim ersten Laden)
   const hasLoadedCompletedStates = useRef(false);
-  
+
   useEffect(() => {
     // Warte bis States aus localStorage geladen wurden
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
-    
+
     try {
       const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
       const morningCompletedArray = Array.from(morningCompleted);
@@ -1417,7 +1551,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
-    
+
     try {
       const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
       const abendCompletedArray = Array.from(abendCompleted);
@@ -1434,19 +1568,33 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (runningTaskId) {
       const currentTasks = isGuestMode ? guestData.tasks : tasks;
-      const currentFrequentTemplates = isGuestMode ? guestData.frequentTemplates : frequentTemplates;
-      const taskExists = currentTasks.some(task => task.id === runningTaskId) || 
-                         currentFrequentTemplates.some(task => task.id === runningTaskId);
-      
+      const currentFrequentTemplates = isGuestMode
+        ? guestData.frequentTemplates
+        : frequentTemplates;
+      const taskExists =
+        currentTasks.some((task) => task.id === runningTaskId) ||
+        currentFrequentTemplates.some((task) => task.id === runningTaskId);
+
       if (!taskExists) {
-        console.log("Running task no longer exists in list, clearing runningTaskId:", runningTaskId);
+        console.log(
+          "Running task no longer exists in list, clearing runningTaskId:",
+          runningTaskId
+        );
         setRunningTaskId(null);
         if (!isGuestMode && user?.uid) {
           localStorage.removeItem(`ticktask_running_task_${user.uid}`);
         }
       }
     }
-  }, [tasks, frequentTemplates, runningTaskId, isGuestMode, user?.uid, guestData.tasks, guestData.frequentTemplates]);
+  }, [
+    tasks,
+    frequentTemplates,
+    runningTaskId,
+    isGuestMode,
+    user?.uid,
+    guestData.tasks,
+    guestData.frequentTemplates,
+  ]);
 
   // Bereinige completed Sets NUR wenn Tasks in Settings gelöscht werden
   // Die Bereinigung passiert bereits in updateMorningTasks, updateAbendTasks, etc.
@@ -1455,7 +1603,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
-    
+
     try {
       // Weekly completed tasks - tagesspezifisch speichern
       const today = new Date();
@@ -1483,7 +1631,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
-    
+
     try {
       const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
       const dailyCompletedArray = Array.from(dailyCompleted);

@@ -1,5 +1,5 @@
 import styles from "./popup.module.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import close2 from "../../assets/close-2.png";
 import dot3 from "../../assets/dot-3.png";
 import starWhite from "../../assets/star-white.png";
@@ -10,11 +10,111 @@ import playgrey from "../../assets/play-grey.png";
 import trashgrey from "../../assets/trash-grey.png";
 import reloadneon from "../../assets/reloadneon.png";
 
+const DAY_OPTIONS = [
+  { value: "", label: "Bitte wählen" },
+  { value: "today", label: "Heute" },
+  { value: "tomorrow", label: "Morgen" },
+  { value: "monday", label: "Montag" },
+  { value: "tuesday", label: "Dienstag" },
+  { value: "wednesday", label: "Mittwoch" },
+  { value: "thursday", label: "Donnerstag" },
+  { value: "friday", label: "Freitag" },
+  { value: "saturday", label: "Samstag" },
+  { value: "sunday", label: "Sonntag" },
+];
+
+const HOUR_OPTIONS = [
+  { value: "", label: "Stunde" },
+  ...Array.from({ length: 24 }, (_, i) => {
+    const value = String(i).padStart(2, "0");
+    return { value, label: value };
+  }),
+];
+
+const MINUTE_OPTIONS = [
+  { value: "", label: "Minute" },
+  ...[0, 15, 30, 45].map((min) => {
+    const value = String(min).padStart(2, "0");
+    return { value, label: value };
+  }),
+];
+
+function TransparentSelect({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+  className = "",
+}) {
+  const [open, setOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedLabel = useMemo(() => {
+    const match = options.find((option) => option.value === value);
+    return match ? match.label : placeholder;
+  }, [options, placeholder, value]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={`${styles.transparentSelect} ${className}`}
+    >
+      {label && <span className={styles.scheduleLabel}>{label}</span>}
+      <button
+        type="button"
+        className={`${styles.selectDisplay} ${
+          open ? styles.selectDisplayOpen : ""
+        }`}
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <span>{selectedLabel}</span>
+        <span className={styles.selectArrow}>⌄</span>
+      </button>
+      {open && (
+        <div className={styles.selectDropdown}>
+          {options.map((option) => (
+            <button
+              type="button"
+              key={option.value || "__empty"}
+              className={`${styles.selectOption} ${
+                option.value === value ? styles.selectOptionActive : ""
+              }`}
+              onClick={() => {
+                onChange(option.value);
+                setOpen(false);
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function Popup({ open, onConfirm, onCancel, taskText }) {
   const [urgent, setUrgent] = useState(false);
   const [taskDuration, setTaskDuration] = useState(0);
   const [frequent, setFrequent] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
+  const [selectedDay, setSelectedDay] = useState("");
+  const [selectedHour, setSelectedHour] = useState("");
+  const [selectedMinute, setSelectedMinute] = useState("");
 
   // Reset state when popup opens
   useEffect(() => {
@@ -23,6 +123,9 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
       setTaskDuration(0);
       setFrequent(false);
       setIsRotating(false);
+      setSelectedDay("");
+      setSelectedHour("");
+      setSelectedMinute("");
     }
   }, [open]);
 
@@ -132,6 +235,44 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
             />
           </div>
         </div>
+        {taskDuration > 0 && (
+          <div className={styles.scheduleSection}>
+            <h2>
+              An welchem Tag und zu welcher Uhrzeit soll dieser Task ausgeführt
+              werden?
+            </h2>
+            <div className={styles.scheduleInputs}>
+              <TransparentSelect
+                label="Tag:"
+                value={selectedDay}
+                onChange={setSelectedDay}
+                options={DAY_OPTIONS}
+                placeholder="Bitte wählen"
+              />
+              <div className={styles.scheduleInput}>
+                <label className={styles.scheduleLabel}>Uhrzeit:</label>
+                <div className={styles.timeInputs}>
+                  <TransparentSelect
+                    value={selectedHour}
+                    onChange={setSelectedHour}
+                    options={HOUR_OPTIONS}
+                    placeholder="Stunde"
+                    className={styles.timeSelect}
+                  />
+                  <span className={styles.timeSeparator}>:</span>
+                  <TransparentSelect
+                    value={selectedMinute}
+                    onChange={setSelectedMinute}
+                    options={MINUTE_OPTIONS}
+                    placeholder="Minute"
+                    className={styles.timeSelect}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className={styles.checkboxes}>
           {taskDuration > 0 && (
             <>
@@ -165,7 +306,16 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
         {taskDuration > 0 && (
           <div className={styles.actions}>
             <button
-              onClick={() => onConfirm({ urgent, taskDuration, frequent })}
+              onClick={() =>
+                onConfirm({
+                  urgent,
+                  taskDuration,
+                  frequent,
+                  scheduledDayOption: selectedDay,
+                  scheduledHour: selectedHour,
+                  scheduledMinute: selectedMinute,
+                })
+              }
               className={styles.addButton}
             >
               Submit

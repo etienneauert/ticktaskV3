@@ -1,9 +1,13 @@
 import styles from "./WeekCalendar.module.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { db } from "../../firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
-export default function WeekCalendar({ user }) {
+const CELL_HEIGHT = 50;
+const BAR_HEIGHT = 1;
+const PX_PER_MINUTE = CELL_HEIGHT / 60;
+
+export default function WeekCalendar({ user, tasks = [] }) {
   const weekDays = [
     "Montag",
     "Dienstag",
@@ -92,10 +96,14 @@ export default function WeekCalendar({ user }) {
   };
 
   // Berechne Stunden basierend auf Einstellung
-  const hours = Array.from(
-    { length: endHour - startHour + 1 },
-    (_, i) => i + startHour
+  const hours = useMemo(
+    () =>
+      Array.from({ length: endHour - startHour + 1 }, (_, i) => i + startHour),
+    [startHour, endHour]
   );
+
+  const totalDayHeight =
+    hours.length * CELL_HEIGHT + Math.max(0, hours.length - 1) * BAR_HEIGHT;
 
   const getWeekDates = () => {
     const today = new Date();
@@ -174,6 +182,53 @@ export default function WeekCalendar({ user }) {
 
   const timePosition = getCurrentTimePosition();
 
+  const scheduledTasksByDay = useMemo(() => {
+    if (!Array.isArray(tasks)) return {};
+
+    return tasks
+      .filter((task) => task?.scheduledDateTime)
+      .map((task) => ({
+        ...task,
+        scheduledDate: new Date(task.scheduledDateTime),
+      }))
+      .filter((task) => !Number.isNaN(task.scheduledDate.getTime()))
+      .reduce((acc, task) => {
+        const key = task.scheduledDate.toDateString();
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(task);
+        return acc;
+      }, {});
+  }, [tasks]);
+
+  const getTaskPosition = (task) => {
+    if (!task?.scheduledDate) return null;
+    const taskHour = task.scheduledDate.getHours();
+    const taskMinute = task.scheduledDate.getMinutes();
+
+    if (taskHour < startHour || taskHour > endHour) {
+      return null;
+    }
+
+    const hourOffset = taskHour - startHour;
+    const startOffset =
+      hourOffset * (CELL_HEIGHT + BAR_HEIGHT) + taskMinute * PX_PER_MINUTE;
+
+    const durationMinutes = parseInt(task.taskDuration, 10) || 0;
+    const minHeight = CELL_HEIGHT * 0.5;
+    const durationPx =
+      durationMinutes > 0 ? durationMinutes * PX_PER_MINUTE : minHeight;
+    const availableSpace = totalDayHeight - startOffset;
+
+    if (availableSpace <= 0) {
+      return null;
+    }
+
+    return {
+      top: startOffset,
+      height: Math.max(Math.min(durationPx, availableSpace), minHeight),
+    };
+  };
+
   return (
     <div className={styles.WeekCalendar}>
       <div className={styles.CalendarHeader}>
@@ -240,18 +295,66 @@ export default function WeekCalendar({ user }) {
             );
           })}
         </div>
-        {weekDays.map((day) => (
-          <div key={day} className={styles.DayColumn}>
-            {hours.map((hour, index) => (
-              <div key={`${day}-${hour}`} className={styles.CalendarRow}>
-                <div className={styles.CalendarCell}></div>
-                {index < hours.length - 1 && (
-                  <div className={styles.HorizontalBar}></div>
-                )}
+        {weekDays.map((day, dayIndex) => {
+          const dayKey = weekDates[dayIndex].toDateString();
+          const tasksForDay = scheduledTasksByDay[dayKey] || [];
+          const sortedTasks = tasksForDay
+            .slice()
+            .sort(
+              (a, b) =>
+                a.scheduledDate - b.scheduledDate ||
+                (a.text || "").localeCompare(b.text || "")
+            );
+
+          return (
+            <div key={day} className={styles.DayColumn}>
+              {hours.map((hour, index) => (
+                <div key={`${day}-${hour}`} className={styles.CalendarRow}>
+                  <div className={styles.CalendarCell}></div>
+                  {index < hours.length - 1 && (
+                    <div className={styles.HorizontalBar}></div>
+                  )}
+                </div>
+              ))}
+              <div className={styles.TasksOverlay}>
+                {sortedTasks.map((task) => {
+                  const positioning = getTaskPosition(task);
+                  if (!positioning) return null;
+
+                  const hour = task.scheduledDate.getHours();
+                  const minutes = task.scheduledDate.getMinutes();
+                  const formattedTime = `${String(hour).padStart(
+                    2,
+                    "0"
+                  )}:${String(minutes).padStart(2, "0")}`;
+
+                  return (
+                    <div
+                      key={
+                        task.id ||
+                        `${formattedTime}-${task.text ?? "task"}-${
+                          task.scheduledDateTime ?? ""
+                        }`
+                      }
+                      className={styles.ScheduledTask}
+                      style={{
+                        top: `${positioning.top}px`,
+                        height: `${positioning.height}px`,
+                      }}
+                    >
+                      <span className={styles.ScheduledTaskTime}>
+                        {formattedTime}
+                      </span>
+                      <span className={styles.ScheduledTaskText}>
+                        {task.text || "Task"}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
-        ))}
+            </div>
+          );
+        })}
         <div className={styles.RightBarColumn}>
           {hours.map((hour, index) => (
             <div key={hour} className={styles.RightBarRow}>

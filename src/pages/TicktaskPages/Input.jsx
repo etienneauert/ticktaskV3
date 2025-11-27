@@ -25,6 +25,9 @@ export default function Input({ onAdd }) {
       urgent: data.urgent,
       taskDuration: data.taskDuration,
       frequent: data.frequent,
+      scheduledDayOption: data.scheduledDayOption || "",
+      scheduledHour: data.scheduledHour || "",
+      scheduledMinute: data.scheduledMinute || "",
     });
     setValue("");
     setOpen(false);
