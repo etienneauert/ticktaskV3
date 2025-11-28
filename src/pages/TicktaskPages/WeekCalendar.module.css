@@ -383,3 +383,89 @@
     padding: 2px;
   }
 }
+
+.AddButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.AddButton:hover {
+  transform: scale(1.1);
+}
+
+.AddButton img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+
+.ScheduledAppointment {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border-radius: 6px;
+  border: 1px solid rgba(160, 160, 160, 0.6);
+  background-color: rgba(15, 15, 15, 0.95);
+  color: #fff;
+  font-size: 11px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 3px 10px 6px 10px;
+  box-shadow: none;
+  pointer-events: auto;
+  text-align: left;
+  overflow: hidden;
+  transition: background-color 0.2s ease;
+}
+
+.ScheduledAppointment:hover .AppointmentDeleteButton {
+  opacity: 1;
+  visibility: visible;
+}
+
+.ScheduledAppointmentTime {
+  font-weight: 700;
+  flex-shrink: 0;
+  line-height: 1.2;
+  margin-top: 0;
+}
+
+.ScheduledAppointmentText {
+  flex: 1;
+  line-height: 1.2;
+  margin-top: 0;
+  background-color: transparent;
+}
+
+.AppointmentDeleteButton {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(255, 0, 0, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 5;
+}
+
+.AppointmentDeleteButton img {
+  width: 10px;
+  height: 10px;
+  object-fit: contain;
+}

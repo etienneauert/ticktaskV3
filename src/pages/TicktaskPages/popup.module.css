@@ -491,6 +491,23 @@
   font-size: 16px;
 }
 
+.appointmentInput {
+  background: rgba(15, 15, 15, 0.35);
+  border: 1px solid rgba(160, 160, 160, 0.35);
+  border-radius: 18px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 14px;
+  width: 240px;
+  box-sizing: border-box;
+}
+
+.appointmentInput:focus {
+  outline: none;
+  border-color: rgba(200, 200, 200, 0.6);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+}
+
 /* Icon und Text beim Hover beide sichtbar halten */
 .durationButtons .durationBtn:hover {
   background-image: none !important;
