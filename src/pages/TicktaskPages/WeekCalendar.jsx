@@ -411,6 +411,44 @@ export default function WeekCalendar({ user, tasks = [] }) {
     }
   }, [user?.uid]);
 
+  // Verhindere Scrollen im Hintergrund, wenn Popup geöffnet ist
+  useEffect(() => {
+    if (popupOpen) {
+      // Speichere die aktuelle Scroll-Position
+      const scrollY = window.scrollY;
+      // Verhindere Scrollen auf body und html
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.documentElement.style.overflow = "hidden";
+    } else {
+      // Stelle Scrollen wieder her
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.documentElement.style.overflow = "";
+      // Stelle die Scroll-Position wieder her
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || "0") * -1);
+      }
+    }
+    // Cleanup: Stelle overflow wieder her, wenn Komponente unmountet
+    return () => {
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.documentElement.style.overflow = "";
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || "0") * -1);
+      }
+    };
+  }, [popupOpen]);
+
   const appointmentsByDay = useMemo(() => {
     if (!Array.isArray(appointments)) return {};
 
@@ -682,6 +720,8 @@ export default function WeekCalendar({ user, tasks = [] }) {
                     Math.max(8, (estimatedTextWidth - approxWidthPx) / 4)
                   );
 
+                  const isDoneTask = task.done === true;
+
                   return (
                     <div
                       key={
@@ -690,7 +730,9 @@ export default function WeekCalendar({ user, tasks = [] }) {
                           task.scheduledDateTime ?? ""
                         }`
                       }
-                      className={styles.ScheduledTask}
+                      className={`${styles.ScheduledTask} ${
+                        isDoneTask ? styles.ScheduledTaskDone : ""
+                      }`}
                       style={{
                         top: `${positioning.top}px`,
                         height: `${positioning.height}px`,
