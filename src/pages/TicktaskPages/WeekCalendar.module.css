@@ -190,6 +190,20 @@
   text-decoration: line-through;
 }
 
+.ScheduledTaskRunning {
+  background-color: #d5ff05;
+  border-color: #d5ff05;
+}
+
+.ScheduledTaskRunning .ScheduledTaskTime {
+  color: #000;
+  font-weight: 700;
+}
+
+.ScheduledTaskRunning .ScheduledTaskText {
+  color: #000;
+}
+
 .ScheduledTaskTime {
   font-size: 10px;
   text-transform: uppercase;
@@ -446,11 +460,27 @@
   visibility: visible;
 }
 
+.ScheduledAppointmentActive {
+  background-color: #515151;
+  animation: appointmentPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes appointmentPulse {
+  0%,
+  100% {
+    background-color: rgb(100, 100, 100);
+  }
+  50% {
+    background-color: rgb(127, 127, 127);
+  }
+}
+
 .ScheduledAppointmentTime {
   font-weight: 700;
   flex-shrink: 0;
   line-height: 1.2;
   margin-top: 0;
+  background-color: transparent;
 }
 
 .ScheduledAppointmentText {

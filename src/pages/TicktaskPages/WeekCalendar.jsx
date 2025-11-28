@@ -120,7 +120,11 @@ function TransparentSelect({
   );
 }
 
-export default function WeekCalendar({ user, tasks = [] }) {
+export default function WeekCalendar({
+  user,
+  tasks = [],
+  runningTaskId = null,
+}) {
   const weekDays = [
     "Montag",
     "Dienstag",
@@ -720,7 +724,9 @@ export default function WeekCalendar({ user, tasks = [] }) {
                     Math.max(8, (estimatedTextWidth - approxWidthPx) / 4)
                   );
 
-                  const isDoneTask = task.done === true;
+                  const isRunningTask =
+                    runningTaskId && task.id === runningTaskId;
+                  const isDoneTask = task.done === true && !isRunningTask;
 
                   return (
                     <div
@@ -732,7 +738,7 @@ export default function WeekCalendar({ user, tasks = [] }) {
                       }
                       className={`${styles.ScheduledTask} ${
                         isDoneTask ? styles.ScheduledTaskDone : ""
-                      }`}
+                      } ${isRunningTask ? styles.ScheduledTaskRunning : ""}`}
                       style={{
                         top: `${positioning.top}px`,
                         height: `${positioning.height}px`,
@@ -786,10 +792,22 @@ export default function WeekCalendar({ user, tasks = [] }) {
                     const appointmentName =
                       (appointment.name || "Termin").trim() || "Termin";
 
+                    // Prüfe, ob die aktuelle Zeit innerhalb des Zeitraums liegt
+                    const now = currentTime;
+                    const startDate = appointment.scheduledDate;
+                    const endDate = appointment.endDate;
+                    const isActive =
+                      endDate &&
+                      now >= startDate &&
+                      now <= endDate &&
+                      startDate.toDateString() === now.toDateString();
+
                     return (
                       <div
                         key={appointment.id || appointment.scheduledDateTime}
-                        className={styles.ScheduledAppointment}
+                        className={`${styles.ScheduledAppointment} ${
+                          isActive ? styles.ScheduledAppointmentActive : ""
+                        }`}
                         style={{
                           top: `${positioning.top}px`,
                           height: `${positioning.height}px`,

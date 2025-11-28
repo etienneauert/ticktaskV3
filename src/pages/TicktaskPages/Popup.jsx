@@ -12,9 +12,6 @@ import reloadneon from "../../assets/reloadneon.png";
 import arrowDown from "../../assets/arrowdown-yellow.png";
 
 const DAY_OPTIONS = [
-  { value: "", label: "Bitte wählen" },
-  { value: "today", label: "Heute" },
-  { value: "tomorrow", label: "Morgen" },
   { value: "monday", label: "Montag" },
   { value: "tuesday", label: "Dienstag" },
   { value: "wednesday", label: "Mittwoch" },
@@ -24,21 +21,15 @@ const DAY_OPTIONS = [
   { value: "sunday", label: "Sonntag" },
 ];
 
-const HOUR_OPTIONS = [
-  { value: "", label: "Stunde" },
-  ...Array.from({ length: 24 }, (_, i) => {
-    const value = String(i).padStart(2, "0");
-    return { value, label: value };
-  }),
-];
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => {
+  const value = String(i).padStart(2, "0");
+  return { value, label: value };
+});
 
-const MINUTE_OPTIONS = [
-  { value: "", label: "Minute" },
-  ...[0, 15, 30, 45].map((min) => {
-    const value = String(min).padStart(2, "0");
-    return { value, label: value };
-  }),
-];
+const MINUTE_OPTIONS = [0, 15, 30, 45].map((min) => {
+  const value = String(min).padStart(2, "0");
+  return { value, label: value };
+});
 
 function TransparentSelect({
   label,
@@ -118,6 +109,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // Reset state when popup opens
   useEffect(() => {
@@ -132,6 +124,21 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
     }
   }, [open]);
 
+  // Aktualisiere die aktuelle Uhrzeit jede Minute
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(new Date());
+    };
+
+    // Sofort aktualisieren
+    updateTime();
+
+    // Dann jede Minute aktualisieren
+    const interval = setInterval(updateTime, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const handleReload = () => {
     setTaskDuration(0);
     setIsRotating(true);
@@ -145,7 +152,10 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.modalcloseandinfo}>
-          <p></p>
+          <p className={styles.currentTimeDisplay}>
+            {String(currentTime.getHours()).padStart(2, "0")}:
+            {String(currentTime.getMinutes()).padStart(2, "0")}
+          </p>
           <img
             onClick={onCancel}
             className={styles.close}
@@ -238,93 +248,79 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
             />
           </div>
         </div>
-        {taskDuration > 0 && (
-          <div className={styles.scheduleSection}>
-            <h2>
-              An welchem Tag und zu welcher Uhrzeit soll dieser Task ausgeführt
-              werden?
-            </h2>
-            <div className={styles.scheduleInputs}>
-              <TransparentSelect
-                label="Tag:"
-                value={selectedDay}
-                onChange={setSelectedDay}
-                options={DAY_OPTIONS}
-                placeholder="Bitte wählen"
-              />
-              <div className={styles.scheduleInput}>
-                <label className={styles.scheduleLabel}>Uhrzeit:</label>
-                <div className={styles.timeInputs}>
-                  <TransparentSelect
-                    value={selectedHour}
-                    onChange={setSelectedHour}
-                    options={HOUR_OPTIONS}
-                    placeholder="Stunde"
-                    className={styles.timeSelect}
-                  />
-                  <span className={styles.timeSeparator}>:</span>
-                  <TransparentSelect
-                    value={selectedMinute}
-                    onChange={setSelectedMinute}
-                    options={MINUTE_OPTIONS}
-                    placeholder="Minute"
-                    className={styles.timeSelect}
-                  />
-                </div>
-              </div>
-            </div>
+        <div className={styles.scheduleSection}>
+          <h2>
+            An welchem Tag und zu welcher Uhrzeit soll dieser Task ausgeführt
+            werden?
+          </h2>
+          <div className={styles.scheduleInputs}>
+            <TransparentSelect
+              value={selectedDay}
+              onChange={setSelectedDay}
+              options={DAY_OPTIONS}
+              placeholder="Tag wählen"
+            />
+            <TransparentSelect
+              value={selectedHour}
+              onChange={setSelectedHour}
+              options={HOUR_OPTIONS}
+              placeholder="Stunde"
+              className={styles.timeSelect}
+            />
+            <span className={styles.timeSeparator}>:</span>
+            <TransparentSelect
+              value={selectedMinute}
+              onChange={setSelectedMinute}
+              options={MINUTE_OPTIONS}
+              placeholder="Minute"
+              className={styles.timeSelect}
+            />
           </div>
-        )}
-
-        <div className={styles.checkboxes}>
-          {taskDuration > 0 && (
-            <>
-              <div className={styles.Priority}>
-                <label className={styles.checkboxRow}>
-                  <input
-                    type="checkbox"
-                    checked={urgent}
-                    onChange={(e) => setUrgent(e.target.checked)}
-                    className={styles.checkboxInput}
-                  />
-                  <span className={styles.grey}>Urgent</span>
-                </label>
-              </div>
-
-              <div className={styles.Recurring}>
-                <label className={styles.checkboxRow}>
-                  <input
-                    type="checkbox"
-                    checked={frequent}
-                    onChange={(e) => setFrequent(e.target.checked)}
-                    className={styles.checkboxInput}
-                  />
-                  <span className={styles.grey}>Reccuring</span>
-                </label>
-              </div>
-            </>
-          )}
         </div>
 
-        {taskDuration > 0 && (
-          <div className={styles.actions}>
-            <button
-              onClick={() =>
-                onConfirm({
-                  urgent,
-                  taskDuration,
-                  frequent,
-                  scheduledDayOption: selectedDay,
-                  scheduledHour: selectedHour,
-                  scheduledMinute: selectedMinute,
-                })
-              }
-              className={styles.addButton}
-            >
-              Submit
-            </button>
+        <div className={styles.checkboxes}>
+          <div className={styles.Priority}>
+            <label className={styles.checkboxRow}>
+              <input
+                type="checkbox"
+                checked={urgent}
+                onChange={(e) => setUrgent(e.target.checked)}
+                className={styles.checkboxInput}
+              />
+              <span className={styles.grey}>Urgent</span>
+            </label>
           </div>
-        )}
+
+          <div className={styles.Recurring}>
+            <label className={styles.checkboxRow}>
+              <input
+                type="checkbox"
+                checked={frequent}
+                onChange={(e) => setFrequent(e.target.checked)}
+                className={styles.checkboxInput}
+              />
+              <span className={styles.grey}>Reccuring</span>
+            </label>
+          </div>
+        </div>
+
+        <div className={styles.actions}>
+          <button
+            onClick={() =>
+              onConfirm({
+                urgent,
+                taskDuration,
+                frequent,
+                scheduledDayOption: selectedDay,
+                scheduledHour: selectedHour,
+                scheduledMinute: selectedMinute,
+              })
+            }
+            className={styles.addButton}
+          >
+            Submit
+          </button>
+        </div>
       </div>
     </div>
   );

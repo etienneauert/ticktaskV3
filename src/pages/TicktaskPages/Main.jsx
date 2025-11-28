@@ -72,7 +72,7 @@ export default function Main({
         </div>
       </div>
       <div className={styles.WeekCalendarContainer}>
-        <WeekCalendar user={user} tasks={tasks} />
+        <WeekCalendar user={user} tasks={tasks} runningTaskId={runningTaskId} />
       </div>
     </div>
   );
