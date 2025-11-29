@@ -136,6 +136,7 @@
   font-size: 16px;
   display: flex;
   align-items: center;
+  background-color: transparent;
 }
 .overlay {
   position: fixed;
@@ -424,7 +425,7 @@
 }
 
 .selectDisplay {
-  background: rgba(15, 15, 15, 0.35);
+  background: transparent;
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
   padding: 12px 16px;
@@ -516,6 +517,7 @@
   font-size: 16px;
   display: flex;
   align-items: center;
+  background-color: transparent;
 }
 
 .appointmentInputs {
@@ -1048,4 +1050,8 @@
   80% {
     transform: translateX(4px);
   }
+}
+
+.selectDisplay span {
+  background-color: transparent;
 }

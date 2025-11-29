@@ -10,7 +10,7 @@
 .CalendarHeader {
   display: grid;
   grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 1px;
+  gap: 0.8px;
   margin-bottom: 1px;
   background-color: #333;
   border-radius: 4px 4px 0 0;
@@ -61,7 +61,7 @@
 .CalendarBody {
   display: grid;
   grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 1px;
+  gap: 0.8px;
   background-color: #333;
   border-radius: 0;
   position: relative;
@@ -325,7 +325,7 @@
 .BottomBar {
   display: grid;
   grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 1px;
+  gap: 0.8px;
   background-color: #333;
   margin-top: 0;
   border-radius: 0 0 4px 4px;
@@ -395,6 +395,31 @@
 @media (max-width: 480px) {
   .WeekCalendar {
     padding: 5px;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .CalendarHeader {
+    grid-template-columns: 1px 60px 1fr 1px;
+    width: 100%;
+  }
+
+  .CalendarBody {
+    grid-template-columns: 1px 60px 1fr 1px;
+    width: 100%;
+  }
+
+  .BottomBar {
+    grid-template-columns: 1px 60px 1fr 1px;
+    width: 100%;
+  }
+
+  .DayHeaderHidden {
+    display: none;
+  }
+
+  .DayColumnHidden {
+    display: none;
   }
 
   .TimeColumn {
@@ -418,6 +443,10 @@
     font-size: 9px;
     min-height: 35px;
     padding: 4px;
+  }
+
+  .CurrentTimeIndicator {
+    grid-column: 3 / 4 !important;
   }
 
   .CalendarCell {
@@ -526,4 +555,41 @@
   width: 14px;
   height: 14px;
   object-fit: contain;
+}
+
+.Legend {
+  display: flex;
+  gap: 24px;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 0px;
+  margin-left: 20px;
+  padding: 16px 0;
+}
+
+.LegendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.LegendBoxTasks {
+  width: 24px;
+  height: 16px;
+  background-color: #0f1206;
+  border: 1px solid #d5ff05;
+  border-radius: 4px;
+}
+
+.LegendBoxRoutines {
+  width: 24px;
+  height: 16px;
+  background-color: #0f0f0f;
+  border: 2px solid #323232;
+  border-radius: 4px;
+}
+
+.LegendText {
+  color: white;
+  font-size: 14px;
 }

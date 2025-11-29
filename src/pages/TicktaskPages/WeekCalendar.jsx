@@ -35,6 +35,8 @@ const DAY_OPTIONS = [
 ];
 
 const APPOINTMENT_DAY_OPTIONS = [
+  { value: "everyday", label: "Jeden Tag" },
+  { value: "weekdays", label: "Montag bis Freitag" },
   { value: "monday", label: "Montag" },
   { value: "tuesday", label: "Dienstag" },
   { value: "wednesday", label: "Mittwoch" },
@@ -465,27 +467,62 @@ export default function WeekCalendar({
   const appointmentsByDay = useMemo(() => {
     if (!Array.isArray(appointments)) return {};
 
-    return appointments
+    const weekDates = getWeekDates();
+    const result = {};
+
+    appointments
       .filter((appointment) => appointment?.scheduledDateTime)
-      .map((appointment) => ({
-        ...appointment,
-        scheduledDate: new Date(appointment.scheduledDateTime),
-        endDate: appointment.endDateTime
+      .forEach((appointment) => {
+        const scheduledDate = new Date(appointment.scheduledDateTime);
+        const endDate = appointment.endDateTime
           ? new Date(appointment.endDateTime)
-          : null,
-      }))
-      .filter(
-        (appointment) =>
-          !Number.isNaN(appointment.scheduledDate.getTime()) &&
-          appointment.endDate &&
-          !Number.isNaN(appointment.endDate.getTime())
-      )
-      .reduce((acc, appointment) => {
-        const key = appointment.scheduledDate.toDateString();
-        if (!acc[key]) acc[key] = [];
-        acc[key].push(appointment);
-        return acc;
-      }, {});
+          : null;
+
+        if (
+          Number.isNaN(scheduledDate.getTime()) ||
+          !endDate ||
+          Number.isNaN(endDate.getTime())
+        ) {
+          return;
+        }
+
+        const dayOption = appointment.scheduledDayOption;
+        const hour = parseInt(appointment.scheduledHour) || 0;
+        const minute = parseInt(appointment.scheduledMinute) || 0;
+        const endHour = parseInt(appointment.endHour) || 0;
+        const endMinute = parseInt(appointment.endMinute) || 0;
+
+        let daysToShow = [];
+
+        if (dayOption === "everyday") {
+          // Zeige an allen 7 Tagen
+          daysToShow = weekDates;
+        } else if (dayOption === "weekdays") {
+          // Zeige nur an Wochentagen (Montag-Freitag)
+          daysToShow = weekDates.slice(0, 5);
+        } else {
+          // Normale Logik: Zeige nur am ausgewählten Tag
+          daysToShow = [scheduledDate];
+        }
+
+        daysToShow.forEach((date) => {
+          const dateKey = date.toDateString();
+          if (!result[dateKey]) result[dateKey] = [];
+
+          // Erstelle eine Kopie des Termins für diesen Tag
+          const appointmentForDay = {
+            ...appointment,
+            scheduledDate: new Date(date),
+            endDate: new Date(date),
+          };
+          appointmentForDay.scheduledDate.setHours(hour, minute, 0, 0);
+          appointmentForDay.endDate.setHours(endHour, endMinute, 0, 0);
+
+          result[dateKey].push(appointmentForDay);
+        });
+      });
+
+    return result;
   }, [appointments]);
 
   const getAppointmentPosition = (appointment) => {
@@ -626,20 +663,23 @@ export default function WeekCalendar({
             <img src={plusSign} alt="Add" />
           </button>
         </div>
-        {weekDays.map((day, index) => (
-          <div
-            key={day}
-            className={`${styles.DayHeader} ${
-              isToday(weekDates[index]) ? styles.DayHeaderToday : ""
-            }`}
-          >
-            <div className={styles.DayName}>{day}</div>
-            <div className={styles.DayDate}>
-              {weekDates[index].getDate()}.
-              {String(weekDates[index].getMonth() + 1).padStart(2, "0")}
+        {weekDays.map((day, index) => {
+          const isTodayDay = isToday(weekDates[index]);
+          return (
+            <div
+              key={day}
+              className={`${styles.DayHeader} ${
+                isTodayDay ? styles.DayHeaderToday : ""
+              } ${!isTodayDay ? styles.DayHeaderHidden : ""}`}
+            >
+              <div className={styles.DayName}>{day}</div>
+              <div className={styles.DayDate}>
+                {weekDates[index].getDate()}.
+                {String(weekDates[index].getMonth() + 1).padStart(2, "0")}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         <div className={styles.RightBar}></div>
       </div>
       <div className={styles.CalendarBody}>
@@ -648,7 +688,7 @@ export default function WeekCalendar({
             className={styles.CurrentTimeIndicator}
             style={{
               top: `${timePosition.top}px`,
-              gridColumn: `3 / 10`, // Spannt über alle 7 Tag-Spalten (Spalten 3-9)
+              gridColumn: `3 / 4`, // Spannt nur über die heutige Tag-Spalte
             }}
           />
         )}
@@ -697,9 +737,15 @@ export default function WeekCalendar({
                 a.scheduledDate - b.scheduledDate ||
                 (a.text || "").localeCompare(b.text || "")
             );
+          const isTodayDay = isToday(weekDates[dayIndex]);
 
           return (
-            <div key={day} className={styles.DayColumn}>
+            <div
+              key={day}
+              className={`${styles.DayColumn} ${
+                !isTodayDay ? styles.DayColumnHidden : ""
+              }`}
+            >
               {hours.map((hour, index) => (
                 <div key={`${day}-${hour}`} className={styles.CalendarRow}>
                   <div className={styles.CalendarCell}></div>
