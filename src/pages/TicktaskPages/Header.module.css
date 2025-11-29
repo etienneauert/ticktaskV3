@@ -176,6 +176,10 @@
   .fireIcon {
     width: 32px;
   }
+
+  .currentTimeHeader {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -224,5 +228,9 @@
 
   .fireIcon {
     width: 28px;
+  }
+
+  .currentTimeHeader {
+    display: none;
   }
 }

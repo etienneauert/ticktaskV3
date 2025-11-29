@@ -44,53 +44,9 @@
   gap: 8px;
 }
 
-.DayHeaderContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-}
-
 .DayHeaderToday {
   border: 2px solid #d5ff05;
   box-shadow: 0 0 8px rgba(213, 255, 5, 0.3);
-}
-
-.DayNavigationButton {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-}
-
-.DayNavigationButton:hover {
-  transform: scale(1.1);
-  opacity: 0.8;
-}
-
-.DayNavigationButton:active {
-  transform: scale(0.95);
-}
-
-.DayNavigationArrowLeft {
-  width: 16px;
-  height: 16px;
-  transform: rotate(180deg);
-  filter: brightness(0) invert(1);
-}
-
-.DayNavigationArrowRight {
-  width: 16px;
-  height: 16px;
-  filter: brightness(0) invert(1);
 }
 
 .DayName {
@@ -103,6 +59,37 @@
   font-size: 12px;
   color: white;
   opacity: 0.7;
+}
+
+.DayHeaderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.DayNavigationButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.DayNavigationButton:hover {
+  transform: scale(1.1);
+}
+
+.DayNavigationButton:active {
+  transform: scale(0.95);
+}
+
+.DayNavigationArrow {
+  width: 16px;
+  height: 16px;
 }
 
 .CalendarBody {
@@ -450,23 +437,7 @@
 
   .TimeColumn {
     padding: 5px;
-    font-size: 10px;
-  }
-
-  .DayHeader {
-    gap: 6px;
-  }
-
-  .DayNavigationButton {
-    width: 22px;
-    height: 22px;
-    padding: 3px;
-  }
-
-  .DayNavigationArrowLeft,
-  .DayNavigationArrowRight {
-    width: 15px;
-    height: 15px;
+    font-size: 12px;
   }
 
   .DayName {
@@ -478,12 +449,22 @@
   }
 
   .TimeSlot {
-    font-size: 10px;
+    font-size: 12px;
     min-height: 40px;
   }
 
   .CalendarCell {
     min-height: 40px;
+  }
+
+  .DayNavigationButton {
+    display: flex;
+    padding: 8px 12px;
+  }
+
+  .DayNavigationArrow {
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -522,24 +503,12 @@
 
   .TimeColumn {
     padding: 5px;
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .DayHeader {
     padding: 5px;
     gap: 4px;
-  }
-
-  .DayNavigationButton {
-    width: 20px;
-    height: 20px;
-    padding: 2px;
-  }
-
-  .DayNavigationArrowLeft,
-  .DayNavigationArrowRight {
-    width: 14px;
-    height: 14px;
   }
 
   .DayName {
@@ -550,8 +519,18 @@
     font-size: 9px;
   }
 
+  .DayNavigationButton {
+    display: flex;
+    padding: 8px 35px;
+  }
+
+  .DayNavigationArrow {
+    width: 36px;
+    height: 33px;
+  }
+
   .TimeSlot {
-    font-size: 9px;
+    font-size: 12px;
     min-height: 35px;
     padding: 4px;
   }

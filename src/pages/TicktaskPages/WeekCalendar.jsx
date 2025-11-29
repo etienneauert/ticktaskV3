@@ -16,7 +16,8 @@ import popupStyles from "./popup.module.css";
 import trashBin from "../../assets/trash-bin.png";
 import close2 from "../../assets/close-2.png";
 import arrowDown from "../../assets/arrowdown-yellow.png";
-import rightArrow from "../../assets/right-arrow-2.png";
+import leftArrow from "../../assets/left-arrow-4.png";
+import rightArrow from "../../assets/right-arrow-4.png";
 
 const CELL_HEIGHT = 50;
 const BAR_HEIGHT = 1;
@@ -159,7 +160,7 @@ export default function WeekCalendar({
   const [appointmentEndMinute, setAppointmentEndMinute] = useState("");
   const [appointments, setAppointments] = useState([]);
   const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
-    // Initialisiere mit dem Index des heutigen Tages
+    // Initialisiere mit dem heutigen Tag
     const today = new Date();
     const currentDay = today.getDay();
     return currentDay === 0 ? 6 : currentDay - 1; // Montag = 0, Sonntag = 6
@@ -680,7 +681,7 @@ export default function WeekCalendar({
         </div>
         {weekDays.map((day, index) => {
           const isTodayDay = isToday(weekDates[index]);
-          const isSelectedDay = selectedDayIndex === index;
+          const isSelectedDay = index === selectedDayIndex;
           return (
             <div
               key={day}
@@ -694,9 +695,9 @@ export default function WeekCalendar({
                 aria-label="Vorheriger Tag"
               >
                 <img
-                  src={rightArrow}
-                  alt="Vorheriger Tag"
-                  className={styles.DayNavigationArrowLeft}
+                  src={leftArrow}
+                  alt=""
+                  className={styles.DayNavigationArrow}
                 />
               </button>
               <div className={styles.DayHeaderContent}>
@@ -713,8 +714,8 @@ export default function WeekCalendar({
               >
                 <img
                   src={rightArrow}
-                  alt="Nächster Tag"
-                  className={styles.DayNavigationArrowRight}
+                  alt=""
+                  className={styles.DayNavigationArrow}
                 />
               </button>
             </div>
@@ -723,15 +724,17 @@ export default function WeekCalendar({
         <div className={styles.RightBar}></div>
       </div>
       <div className={styles.CalendarBody}>
-        {timePosition && selectedDayIndex === timePosition.dayIndex && (
-          <div
-            className={styles.CurrentTimeIndicator}
-            style={{
-              top: `${timePosition.top}px`,
-              gridColumn: `3 / 4`, // Spannt nur über die ausgewählte Tag-Spalte
-            }}
-          />
-        )}
+        {timePosition &&
+          isToday(weekDates[selectedDayIndex]) &&
+          timePosition.dayIndex === selectedDayIndex && (
+            <div
+              className={styles.CurrentTimeIndicator}
+              style={{
+                top: `${timePosition.top}px`,
+                gridColumn: `3 / 4`, // Spannt nur über die ausgewählte Tag-Spalte
+              }}
+            />
+          )}
         <div className={styles.LeftBarColumn}>
           {hours.map((hour, index) => (
             <div key={hour}>
@@ -777,7 +780,8 @@ export default function WeekCalendar({
                 a.scheduledDate - b.scheduledDate ||
                 (a.text || "").localeCompare(b.text || "")
             );
-          const isSelectedDay = selectedDayIndex === dayIndex;
+          const isTodayDay = isToday(weekDates[dayIndex]);
+          const isSelectedDay = dayIndex === selectedDayIndex;
 
           return (
             <div
