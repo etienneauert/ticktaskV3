@@ -16,6 +16,7 @@ import popupStyles from "./popup.module.css";
 import trashBin from "../../assets/trash-bin.png";
 import close2 from "../../assets/close-2.png";
 import arrowDown from "../../assets/arrowdown-yellow.png";
+import rightArrow from "../../assets/right-arrow-2.png";
 
 const CELL_HEIGHT = 50;
 const BAR_HEIGHT = 1;
@@ -157,6 +158,12 @@ export default function WeekCalendar({
   const [appointmentEndHour, setAppointmentEndHour] = useState("");
   const [appointmentEndMinute, setAppointmentEndMinute] = useState("");
   const [appointments, setAppointments] = useState([]);
+  const [selectedDayIndex, setSelectedDayIndex] = useState(() => {
+    // Initialisiere mit dem Index des heutigen Tages
+    const today = new Date();
+    const currentDay = today.getDay();
+    return currentDay === 0 ? 6 : currentDay - 1; // Montag = 0, Sonntag = 6
+  });
 
   useEffect(() => {
     if (!user?.uid) {
@@ -650,6 +657,14 @@ export default function WeekCalendar({
     }
   };
 
+  const handlePreviousDay = () => {
+    setSelectedDayIndex((prev) => (prev > 0 ? prev - 1 : 6));
+  };
+
+  const handleNextDay = () => {
+    setSelectedDayIndex((prev) => (prev < 6 ? prev + 1 : 0));
+  };
+
   return (
     <div className={styles.WeekCalendar}>
       <div className={styles.CalendarHeader}>
@@ -665,30 +680,55 @@ export default function WeekCalendar({
         </div>
         {weekDays.map((day, index) => {
           const isTodayDay = isToday(weekDates[index]);
+          const isSelectedDay = selectedDayIndex === index;
           return (
             <div
               key={day}
               className={`${styles.DayHeader} ${
                 isTodayDay ? styles.DayHeaderToday : ""
-              } ${!isTodayDay ? styles.DayHeaderHidden : ""}`}
+              } ${!isSelectedDay ? styles.DayHeaderHidden : ""}`}
             >
-              <div className={styles.DayName}>{day}</div>
-              <div className={styles.DayDate}>
-                {weekDates[index].getDate()}.
-                {String(weekDates[index].getMonth() + 1).padStart(2, "0")}
+              <button
+                className={styles.DayNavigationButton}
+                onClick={handlePreviousDay}
+                aria-label="Vorheriger Tag"
+              >
+                <img
+                  src={rightArrow}
+                  alt="Vorheriger Tag"
+                  className={styles.DayNavigationArrowLeft}
+                />
+              </button>
+              <div className={styles.DayHeaderContent}>
+                <div className={styles.DayName}>{day}</div>
+                <div className={styles.DayDate}>
+                  {weekDates[index].getDate()}.
+                  {String(weekDates[index].getMonth() + 1).padStart(2, "0")}
+                </div>
               </div>
+              <button
+                className={styles.DayNavigationButton}
+                onClick={handleNextDay}
+                aria-label="Nächster Tag"
+              >
+                <img
+                  src={rightArrow}
+                  alt="Nächster Tag"
+                  className={styles.DayNavigationArrowRight}
+                />
+              </button>
             </div>
           );
         })}
         <div className={styles.RightBar}></div>
       </div>
       <div className={styles.CalendarBody}>
-        {timePosition && (
+        {timePosition && selectedDayIndex === timePosition.dayIndex && (
           <div
             className={styles.CurrentTimeIndicator}
             style={{
               top: `${timePosition.top}px`,
-              gridColumn: `3 / 4`, // Spannt nur über die heutige Tag-Spalte
+              gridColumn: `3 / 4`, // Spannt nur über die ausgewählte Tag-Spalte
             }}
           />
         )}
@@ -737,13 +777,13 @@ export default function WeekCalendar({
                 a.scheduledDate - b.scheduledDate ||
                 (a.text || "").localeCompare(b.text || "")
             );
-          const isTodayDay = isToday(weekDates[dayIndex]);
+          const isSelectedDay = selectedDayIndex === dayIndex;
 
           return (
             <div
               key={day}
               className={`${styles.DayColumn} ${
-                !isTodayDay ? styles.DayColumnHidden : ""
+                !isSelectedDay ? styles.DayColumnHidden : ""
               }`}
             >
               {hours.map((hour, index) => (

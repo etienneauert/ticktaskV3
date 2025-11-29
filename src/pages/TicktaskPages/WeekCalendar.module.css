@@ -5,6 +5,7 @@
   padding: 20px;
   background-color: #161616;
   border-radius: 8px;
+  overflow-x: hidden;
 }
 
 .CalendarHeader {
@@ -36,14 +37,60 @@
   border: 1px solid #333;
   height: 60px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   box-sizing: border-box;
+  gap: 8px;
+}
+
+.DayHeaderContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 }
 
 .DayHeaderToday {
   border: 2px solid #d5ff05;
   box-shadow: 0 0 8px rgba(213, 255, 5, 0.3);
+}
+
+.DayNavigationButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.DayNavigationButton:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.DayNavigationButton:active {
+  transform: scale(0.95);
+}
+
+.DayNavigationArrowLeft {
+  width: 16px;
+  height: 16px;
+  transform: rotate(180deg);
+  filter: brightness(0) invert(1);
+}
+
+.DayNavigationArrowRight {
+  width: 16px;
+  height: 16px;
+  filter: brightness(0) invert(1);
 }
 
 .DayName {
@@ -360,18 +407,66 @@
 @media (max-width: 1024px) {
   .WeekCalendar {
     padding: 15px;
-    overflow-x: auto;
+    overflow-x: hidden;
   }
 
   .CalendarHeader,
   .CalendarBody {
-    min-width: 800px;
+    width: 100%;
   }
 }
 
 @media (max-width: 768px) {
   .WeekCalendar {
     padding: 10px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-x: hidden;
+  }
+
+  .CalendarHeader {
+    grid-template-columns: 1px 50px 1fr 1px;
+    width: 100%;
+  }
+
+  .CalendarBody {
+    grid-template-columns: 1px 50px 1fr 1px;
+    width: 100%;
+  }
+
+  .BottomBar {
+    grid-template-columns: 1px 50px 1fr 1px;
+    width: 100%;
+  }
+
+  .DayHeaderHidden {
+    display: none;
+  }
+
+  .DayColumnHidden {
+    display: none;
+  }
+
+  .TimeColumn {
+    padding: 5px;
+    font-size: 10px;
+  }
+
+  .DayHeader {
+    gap: 6px;
+  }
+
+  .DayNavigationButton {
+    width: 22px;
+    height: 22px;
+    padding: 3px;
+  }
+
+  .DayNavigationArrowLeft,
+  .DayNavigationArrowRight {
+    width: 15px;
+    height: 15px;
   }
 
   .DayName {
@@ -395,8 +490,11 @@
 @media (max-width: 480px) {
   .WeekCalendar {
     padding: 5px;
-    max-width: 100%;
+    max-width: 400px;
     width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow-x: hidden;
   }
 
   .CalendarHeader {
@@ -429,6 +527,19 @@
 
   .DayHeader {
     padding: 5px;
+    gap: 4px;
+  }
+
+  .DayNavigationButton {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+  }
+
+  .DayNavigationArrowLeft,
+  .DayNavigationArrowRight {
+    width: 14px;
+    height: 14px;
   }
 
   .DayName {
