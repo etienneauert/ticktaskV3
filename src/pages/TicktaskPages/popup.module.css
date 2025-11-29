@@ -165,6 +165,18 @@
   background-color: rgba(10, 10, 10, 0.95);
 }
 
+.taskModal {
+  width: 850px;
+  height: auto;
+  min-height: 500px;
+}
+
+.appointmentModal {
+  width: 500px;
+  height: auto;
+  min-height: 400px;
+}
+
 .modalcloseandinfo {
   display: flex;
   justify-content: space-between;
@@ -318,8 +330,8 @@
 
 .durationButtons button {
   padding: 10px 15px;
-  color: rgb(213, 255, 5);
-  border: 2px solid rgb(213, 255, 5);
+  color: rgba(160, 160, 160, 0.8);
+  border: 2px solid rgba(160, 160, 160, 0.6);
   font-size: 14px;
   border-radius: 20px;
   cursor: pointer;
@@ -344,6 +356,7 @@
 
 .durationButtons button:hover {
   scale: 1.02;
+  border-color: rgb(213, 255, 5) !important;
   background-color: rgb(213, 255, 5) !important;
   color: black !important;
 }
@@ -505,14 +518,27 @@
   align-items: center;
 }
 
+.appointmentInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  width: 100%;
+  background-color: transparent;
+}
+
+.appointmentSection h2 {
+  font-size: 24px !important;
+}
+
 .appointmentInput {
   background: rgba(15, 15, 15, 0.35);
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
-  padding: 12px 16px;
+  padding: 14px 18px;
   color: white;
-  font-size: 14px;
-  width: 240px;
+  font-size: 16px;
+  width: 400px;
   box-sizing: border-box;
 }
 
@@ -997,5 +1023,29 @@
 
   .modal h1 {
     background-color: transparent !important;
+  }
+}
+
+.shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
   }
 }

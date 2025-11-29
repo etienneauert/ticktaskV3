@@ -79,7 +79,7 @@
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: none;
   min-width: 150px;
   justify-content: center;
   background-color: transparent;
@@ -96,7 +96,7 @@
 }
 
 .completeButton:hover {
-  transform: translateY(-1px);
+  transform: none;
 }
 
 .addTimeButton {
@@ -107,7 +107,7 @@
 
 .addTimeButton:hover {
   background-color: transparent !important;
-  transform: translateY(-2px);
+  transform: none;
 }
 
 .completeButton img,

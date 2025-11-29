@@ -122,6 +122,13 @@
   color: #666;
 }
 
+.currentTimeHeader {
+  color: rgb(213, 255, 5);
+  font-size: 22px;
+  font-weight: 600;
+  background-color: transparent;
+}
+
 /* Mobile Media Queries */
 @media (max-width: 768px) {
   .headerContainer {

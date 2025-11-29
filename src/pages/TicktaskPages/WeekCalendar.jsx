@@ -34,6 +34,16 @@ const DAY_OPTIONS = [
   { value: "sunday", label: "Sonntag" },
 ];
 
+const APPOINTMENT_DAY_OPTIONS = [
+  { value: "monday", label: "Montag" },
+  { value: "tuesday", label: "Dienstag" },
+  { value: "wednesday", label: "Mittwoch" },
+  { value: "thursday", label: "Donnerstag" },
+  { value: "friday", label: "Freitag" },
+  { value: "saturday", label: "Samstag" },
+  { value: "sunday", label: "Sonntag" },
+];
+
 const HOUR_OPTIONS = [
   { value: "", label: "Stunde" },
   ...Array.from({ length: 24 }, (_, i) => {
@@ -42,13 +52,12 @@ const HOUR_OPTIONS = [
   }),
 ];
 
-const MINUTE_OPTIONS = [
-  { value: "", label: "Minute" },
-  ...[0, 15, 30, 45].map((min) => {
+const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5).map(
+  (min) => {
     const value = String(min).padStart(2, "0");
     return { value, label: value };
-  }),
-];
+  }
+);
 
 function TransparentSelect({
   label,
@@ -858,7 +867,9 @@ export default function WeekCalendar({
 
       {popupOpen && (
         <div className={popupStyles.overlay}>
-          <div className={popupStyles.modal}>
+          <div
+            className={`${popupStyles.modal} ${popupStyles.appointmentModal}`}
+          >
             <div className={popupStyles.modalcloseandinfo}>
               <p></p>
               <img
@@ -868,9 +879,11 @@ export default function WeekCalendar({
                 alt=""
               />
             </div>
-            <div className={popupStyles.scheduleSection}>
+            <div
+              className={`${popupStyles.scheduleSection} ${popupStyles.appointmentSection}`}
+            >
               <h2>Alltagstermin hinzufügen</h2>
-              <div className={popupStyles.scheduleInputs}>
+              <div className={popupStyles.appointmentInputs}>
                 <div className={popupStyles.scheduleInput}>
                   <label className={popupStyles.scheduleLabel}>Name:</label>
                   <input
@@ -885,8 +898,8 @@ export default function WeekCalendar({
                   label="Tag:"
                   value={selectedDay}
                   onChange={setSelectedDay}
-                  options={DAY_OPTIONS}
-                  placeholder="Bitte wählen"
+                  options={APPOINTMENT_DAY_OPTIONS}
+                  placeholder="Tag wählen"
                 />
                 <div className={popupStyles.scheduleInput}>
                   <label className={popupStyles.scheduleLabel}>

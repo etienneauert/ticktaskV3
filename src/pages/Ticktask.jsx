@@ -1712,7 +1712,12 @@ export function Ticktask({ user, isGuestMode = false }) {
           isGuestMode={true}
           showErrorMessage={showErrorMessage}
         />
-        <Input onAdd={handleAdd} task={task} tasks={guestData.tasks} />
+        <Input
+          onAdd={handleAdd}
+          task={task}
+          tasks={guestData.tasks}
+          user={null}
+        />
         <Main
           tasks={guestData.tasks}
           frequentTemplates={guestData.frequentTemplates}
@@ -1778,7 +1783,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         increaseStreak={increaseStreak}
         showErrorMessage={showErrorMessage}
       ></Header>
-      <Input onAdd={handleAdd} task={task} tasks={tasks}></Input>
+      <Input onAdd={handleAdd} task={task} tasks={tasks} user={user}></Input>
       <Main
         tasks={tasks}
         frequentTemplates={frequentTemplates}

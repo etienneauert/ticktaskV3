@@ -1,5 +1,7 @@
 import styles from "./popup.module.css";
 import { useState, useEffect, useMemo, useRef } from "react";
+import { db } from "../../firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import close2 from "../../assets/close-2.png";
 import dot3 from "../../assets/dot-3.png";
 import starWhite from "../../assets/star-white.png";
@@ -21,15 +23,12 @@ const DAY_OPTIONS = [
   { value: "sunday", label: "Sonntag" },
 ];
 
-const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => {
-  const value = String(i).padStart(2, "0");
-  return { value, label: value };
-});
-
-const MINUTE_OPTIONS = [0, 15, 30, 45].map((min) => {
-  const value = String(min).padStart(2, "0");
-  return { value, label: value };
-});
+const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5).map(
+  (min) => {
+    const value = String(min).padStart(2, "0");
+    return { value, label: value };
+  }
+);
 
 function TransparentSelect({
   label,
@@ -101,7 +100,7 @@ function TransparentSelect({
   );
 }
 
-export default function Popup({ open, onConfirm, onCancel, taskText }) {
+export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
   const [urgent, setUrgent] = useState(false);
   const [taskDuration, setTaskDuration] = useState(0);
   const [frequent, setFrequent] = useState(false);
@@ -110,6 +109,9 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [startHour, setStartHour] = useState(5);
+  const [endHour, setEndHour] = useState(23);
+  const [isShaking, setIsShaking] = useState(false);
 
   // Reset state when popup opens
   useEffect(() => {
@@ -121,8 +123,59 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
       setSelectedDay("");
       setSelectedHour("");
       setSelectedMinute("");
+      setIsShaking(false);
     }
   }, [open]);
+
+  // Lade Kalender-Einstellungen
+  useEffect(() => {
+    const loadCalendarSettings = async () => {
+      if (!user?.uid) {
+        // Im Gast-Modus: Standard verwenden
+        setStartHour(5);
+        setEndHour(23);
+        return;
+      }
+
+      try {
+        // Versuche zuerst localStorage
+        const localSettings = localStorage.getItem(
+          `ticktask_calendar_hours_${user.uid}`
+        );
+        if (localSettings) {
+          const [start, end] = localSettings.split("-").map(Number);
+          setStartHour(start);
+          setEndHour(end);
+        }
+
+        // Dann Firebase
+        const settingsDoc = doc(db, "users", user.uid, "settings", "calendar");
+        const settingsSnap = await getDoc(settingsDoc);
+
+        if (settingsSnap.exists()) {
+          const data = settingsSnap.data();
+          const hours = data.hours || "5-23";
+          const [start, end] = hours.split("-").map(Number);
+          setStartHour(start);
+          setEndHour(end);
+          localStorage.setItem(`ticktask_calendar_hours_${user.uid}`, hours);
+        }
+      } catch (e) {
+        console.error("Failed to load calendar settings", e);
+      }
+    };
+
+    loadCalendarSettings();
+  }, [user?.uid]);
+
+  // Generiere Stundenoptionen basierend auf Kalender-Einstellungen
+  const HOUR_OPTIONS = useMemo(() => {
+    return Array.from({ length: endHour - startHour + 1 }, (_, i) => {
+      const hour = i + startHour;
+      const value = String(hour).padStart(2, "0");
+      return { value, label: value };
+    });
+  }, [startHour, endHour]);
 
   // Aktualisiere die aktuelle Uhrzeit jede Minute
   useEffect(() => {
@@ -146,11 +199,27 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
     setTimeout(() => setIsRotating(false), 500);
   };
 
+  const handleSubmit = () => {
+    if (taskDuration === 0) {
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
+      return;
+    }
+    onConfirm({
+      urgent,
+      taskDuration,
+      frequent,
+      scheduledDayOption: selectedDay,
+      scheduledHour: selectedHour,
+      scheduledMinute: selectedMinute,
+    });
+  };
+
   if (!open) return null;
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.modal}>
+      <div className={`${styles.modal} ${styles.taskModal}`}>
         <div className={styles.modalcloseandinfo}>
           <p className={styles.currentTimeDisplay}>
             {String(currentTime.getHours()).padStart(2, "0")}:
@@ -198,7 +267,11 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
         <div className={styles.Duration}>
           <h2>How much time do you need to complete the task?</h2>
 
-          <div className={styles.durationButtons}>
+          <div
+            className={`${styles.durationButtons} ${
+              isShaking ? styles.shake : ""
+            }`}
+          >
             <button
               type="button"
               className={styles.durationBtn}
@@ -305,19 +378,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText }) {
         </div>
 
         <div className={styles.actions}>
-          <button
-            onClick={() =>
-              onConfirm({
-                urgent,
-                taskDuration,
-                frequent,
-                scheduledDayOption: selectedDay,
-                scheduledHour: selectedHour,
-                scheduledMinute: selectedMinute,
-              })
-            }
-            className={styles.addButton}
-          >
+          <button onClick={handleSubmit} className={styles.addButton}>
             Submit
           </button>
         </div>

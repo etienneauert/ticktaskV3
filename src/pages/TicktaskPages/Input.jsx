@@ -4,15 +4,20 @@ import styles from "./Input.module.css";
 import rightArrow2 from "../../assets/right-arrow-2.png";
 import { useLanguage } from "../../contexts/LanguageContext";
 
-export default function Input({ onAdd }) {
+export default function Input({ onAdd, user }) {
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
   const { t } = useLanguage();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const trimmed = value.trim();
-    if (!trimmed) return;
+    if (!trimmed) {
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
+      return;
+    }
     console.log("Submitting:", trimmed);
     setOpen(true);
   };
@@ -44,6 +49,7 @@ export default function Input({ onAdd }) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={t("addTaskPlaceholder")}
+          className={isShaking ? styles.shake : ""}
         />
         <button
           type="submit"
@@ -59,6 +65,7 @@ export default function Input({ onAdd }) {
         onConfirm={confirmAdd}
         onCancel={cancelAdd}
         taskText={value}
+        user={user}
       />
     </>
   );

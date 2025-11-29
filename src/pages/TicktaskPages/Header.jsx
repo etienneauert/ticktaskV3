@@ -35,7 +35,23 @@ export default function Header({
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const { t } = useLanguage();
+
+  // Aktualisiere die aktuelle Uhrzeit jede Minute
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(new Date());
+    };
+
+    // Sofort aktualisieren
+    updateTime();
+
+    // Dann jede Minute aktualisieren
+    const interval = setInterval(updateTime, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Finish Day Button Logik
   const handleFinishDay = () => {
@@ -76,28 +92,24 @@ export default function Header({
       if (!morningOk) {
         const completed = morningCompleted.size;
         const total = morningTasks.length;
-        const missing = total - completed;
-        missingItems.push(`Morgenroutine: ${missing}/${total}`);
+        missingItems.push(`Morgenroutine: ${completed}/${total}`);
       }
       if (!abendOk) {
         const completed = abendCompleted.size;
         const total = abendTasks.length;
-        const missing = total - completed;
-        missingItems.push(`Abendroutine: ${missing}/${total}`);
+        missingItems.push(`Abendroutine: ${completed}/${total}`);
       }
       if (!dailyOk) {
         const completed = dailyCompleted.size;
         const total = dailyTasks.length;
-        const missing = total - completed;
-        missingItems.push(`Tägliche: ${missing}/${total}`);
+        missingItems.push(`Tägliche: ${completed}/${total}`);
       }
       if (!allTodayTasksCompleted) {
         const completed = todayTasks.filter((task) =>
           weeklyCompleted.has(task)
         ).length;
         const total = todayTasks.length;
-        const missing = total - completed;
-        missingItems.push(`Wöchentliche: ${missing}/${total}`);
+        missingItems.push(`Wöchentliche: ${completed}/${total}`);
       }
 
       const errorMessage = `Tag noch nicht fertig!\n\n${missingItems.join(
@@ -193,6 +205,10 @@ export default function Header({
         >
           {t("finishDay")}
         </button>
+        <div className={styles.currentTimeHeader}>
+          {String(currentTime.getHours()).padStart(2, "0")}:
+          {String(currentTime.getMinutes()).padStart(2, "0")}
+        </div>
       </div>
       <div className={styles.buttonsRight}>
         <button

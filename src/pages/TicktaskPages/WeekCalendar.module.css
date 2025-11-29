@@ -1,7 +1,7 @@
 .WeekCalendar {
   width: 100%;
   max-width: 1400px;
-  margin: 40px auto 0;
+  margin: 40px auto 110px;
   padding: 20px;
   background-color: #161616;
   border-radius: 8px;
@@ -10,7 +10,7 @@
 .CalendarHeader {
   display: grid;
   grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 0.5px;
+  gap: 1px;
   margin-bottom: 1px;
   background-color: #333;
   border-radius: 4px 4px 0 0;
@@ -61,7 +61,7 @@
 .CalendarBody {
   display: grid;
   grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 0.5px;
+  gap: 1px;
   background-color: #333;
   border-radius: 0;
   position: relative;
@@ -172,6 +172,7 @@
   pointer-events: auto;
   text-align: left;
   overflow: hidden;
+  z-index: 10;
 }
 
 .ScheduledTaskDone {
@@ -193,6 +194,17 @@
 .ScheduledTaskRunning {
   background-color: #d5ff05;
   border-color: #d5ff05;
+  animation: taskPulse 2s ease-in-out infinite;
+}
+
+@keyframes taskPulse {
+  0%,
+  100% {
+    background-color: #d5ff05;
+  }
+  50% {
+    background-color: rgba(213, 255, 5, 0.7);
+  }
 }
 
 .ScheduledTaskRunning .ScheduledTaskTime {
@@ -313,7 +325,7 @@
 .BottomBar {
   display: grid;
   grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 0.5px;
+  gap: 1px;
   background-color: #333;
   margin-top: 0;
   border-radius: 0 0 4px 4px;
@@ -453,6 +465,7 @@
   text-align: left;
   overflow: hidden;
   transition: background-color 0.2s ease;
+  z-index: 5;
 }
 
 .ScheduledAppointment:hover .AppointmentDeleteButton {
