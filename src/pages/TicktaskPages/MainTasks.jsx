@@ -99,18 +99,27 @@ export default function MainTasks({
     return bTime - aTime;
   });
 
+  // Prüfe ob alle Listen leer sind
+  const isEmpty = activeTasks.length === 0 && doneTasks.length === 0 && frequentTasks.length === 0;
+
   return (
     <div>
-      <Task
-        tasks={sortedActiveTasks}
-        onDelete={onDelete}
-        onTaskDone={onTaskDone}
-        runningTaskId={runningTaskId}
-        onTaskStart={onTaskStart}
-        onTaskStop={onTaskStop}
-      ></Task>
+      {isEmpty ? (
+        <div className={styles.emptyMessage}>Die Task liste ist leer</div>
+      ) : (
+        <>
+          <Task
+            tasks={sortedActiveTasks}
+            onDelete={onDelete}
+            onTaskDone={onTaskDone}
+            runningTaskId={runningTaskId}
+            onTaskStart={onTaskStart}
+            onTaskStop={onTaskStop}
+          ></Task>
       {doneTasks.length > 0 && (
-        <div className={`${styles.DoneTasks} ${showDoneTasks ? styles.DoneTasksExpanded : ""}`}>
+        <div className={`${styles.DoneTasks} ${
+          activeTasks.length === 0 ? styles.noMarginTop : ""
+        } ${showDoneTasks ? styles.DoneTasksExpanded : ""}`}>
           <div
             className={styles.DoneTasksHeader}
             onClick={() => setShowDoneTasks(!showDoneTasks)}
@@ -231,6 +240,8 @@ export default function MainTasks({
             ></Task>
           )}
         </div>
+      )}
+        </>
       )}
     </div>
   );

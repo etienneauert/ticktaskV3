@@ -55,6 +55,17 @@
   margin-top: 0px !important;
 }
 
+.emptyMessage {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  padding: 80px 20px 40px 20px;
+  width: 650px;
+  min-width: 650px;
+  max-width: 650px;
+  margin-top: 80px;
+}
+
 .FrequentTasks img {
   width: 25px;
   background-color: inherit;
@@ -185,6 +196,14 @@
 
 /* Mobile Media Queries */
 @media (max-width: 768px) {
+  .emptyMessage {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    font-size: 12px;
+    padding: 60px 15px 30px 15px;
+  }
+
   .DoneTasks,
   .FrequentTasks {
     width: 100% !important;
@@ -234,6 +253,14 @@
 }
 
 @media (max-width: 480px) {
+  .emptyMessage {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    font-size: 11px;
+    padding: 50px 10px 20px 10px;
+  }
+
   .DoneTasks,
   .FrequentTasks {
     min-width: 100% !important;
