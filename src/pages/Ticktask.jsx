@@ -9,6 +9,7 @@ import Header from "./TicktaskPages/Header.jsx";
 import Input from "./TicktaskPages/Input.jsx";
 import Main from "./TicktaskPages/Main.jsx";
 import ErrorMessage from "./TicktaskPages/ErrorMessage.jsx";
+import ScheduleConfirmPopup from "./TicktaskPages/ScheduleConfirmPopup.jsx";
 import { useGuestData } from "../hooks/useGuestData.js";
 import { useEffect, useState, useRef } from "react";
 import guestStyles from "./TicktaskPages/GuestBanner.module.css";
@@ -975,31 +976,101 @@ export function Ticktask({ user, isGuestMode = false }) {
     }
   };
 
-  const handleCopyTask = async (taskToCopy) => {
+  const handleCopyTask = async (taskToCopyParam) => {
     if (!user?.uid) return;
+
+    // Zeige zuerst das Bestätigungs-Popup
+    setTaskToCopy(taskToCopyParam);
+    setScheduleConfirmOpen(true);
+  };
+
+  const handleScheduleConfirm = async (shouldSchedule, scheduleData) => {
+    if (!user?.uid || !taskToCopy) return;
+
+    setScheduleConfirmOpen(false);
+
+    if (shouldSchedule && scheduleData) {
+      // Füge Task mit Schedule hinzu
+      await addCopiedTask(
+        taskToCopy,
+        scheduleData.scheduledDayOption,
+        scheduleData.scheduledHour,
+        scheduleData.scheduledMinute,
+        null
+      );
+    } else {
+      // Füge Task ohne Schedule hinzu
+      await addCopiedTask(taskToCopy, null, null, null, null);
+    }
+    setTaskToCopy(null);
+  };
+
+  const handleScheduleCancel = () => {
+    setScheduleConfirmOpen(false);
+    setTaskToCopy(null);
+  };
+
+  const addCopiedTask = async (
+    taskToCopyParam,
+    scheduledDayOption,
+    scheduledHour,
+    scheduledMinute,
+    scheduledDateTime
+  ) => {
+    if (!user?.uid) return;
+
+    // Berechne scheduledDateTime falls Tag und Uhrzeit angegeben sind
+    let finalScheduledDateTime = scheduledDateTime;
+    if (
+      scheduledDayOption &&
+      scheduledHour !== null &&
+      scheduledMinute !== null
+    ) {
+      const today = new Date();
+      const currentDay = today.getDay();
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
+      monday.setHours(0, 0, 0, 0);
+
+      const dayMap = {
+        monday: 0,
+        tuesday: 1,
+        wednesday: 2,
+        thursday: 3,
+        friday: 4,
+        saturday: 5,
+        sunday: 6,
+      };
+      const dayIndex = dayMap[scheduledDayOption];
+      if (dayIndex !== undefined) {
+        const targetDate = new Date(monday);
+        targetDate.setDate(monday.getDate() + dayIndex);
+        targetDate.setHours(
+          parseInt(scheduledHour) || 0,
+          parseInt(scheduledMinute) || 0,
+          0,
+          0
+        );
+        finalScheduledDateTime = targetDate.toISOString();
+      }
+    }
 
     // Erstelle eine Kopie des Tasks mit neuer ID
     const copiedTask = {
       id: `local-${Date.now()}`, // Neue lokale ID
-      text: taskToCopy.text,
-      urgent: taskToCopy.urgent || false,
+      text: taskToCopyParam.text,
+      urgent: taskToCopyParam.urgent || false,
       done: false, // Als nicht abgeschlossen markieren
-      taskDuration: parseInt(taskToCopy.taskDuration) || 0,
+      taskDuration: parseInt(taskToCopyParam.taskDuration) || 0,
       createdAt: { seconds: Math.floor(Date.now() / 1000) },
       // Entferne alte Zeit-Daten
       actualTimeUsed: undefined,
       plannedTime: undefined,
       completedAt: undefined,
-      scheduledDayOption: taskToCopy.scheduledDayOption || null,
-      scheduledHour:
-        taskToCopy.scheduledHour !== undefined
-          ? taskToCopy.scheduledHour
-          : null,
-      scheduledMinute:
-        taskToCopy.scheduledMinute !== undefined
-          ? taskToCopy.scheduledMinute
-          : null,
-      scheduledDateTime: taskToCopy.scheduledDateTime || null,
+      scheduledDayOption: scheduledDayOption,
+      scheduledHour: scheduledHour,
+      scheduledMinute: scheduledMinute,
+      scheduledDateTime: finalScheduledDateTime,
     };
 
     // Sofort lokal hinzufügen
@@ -1122,6 +1193,8 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   const [tasks, setTasks] = useState([]);
   const [frequentTemplates, setFrequentTemplates] = useState([]);
+  const [scheduleConfirmOpen, setScheduleConfirmOpen] = useState(false);
+  const [taskToCopy, setTaskToCopy] = useState(null);
 
   // Lade Tasks beim Start
   useEffect(() => {
@@ -1815,6 +1888,13 @@ export function Ticktask({ user, isGuestMode = false }) {
         message={errorMessage}
         isVisible={showError}
         onClose={hideErrorMessage}
+      />
+
+      <ScheduleConfirmPopup
+        open={scheduleConfirmOpen}
+        onConfirm={handleScheduleConfirm}
+        onCancel={handleScheduleCancel}
+        taskText={taskToCopy?.text || ""}
       />
     </div>
   );

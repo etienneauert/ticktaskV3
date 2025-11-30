@@ -1,10 +1,31 @@
 import styles from "./Routine.module.css";
 import { useState } from "react";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import arrowDown from "../../../assets/arrow-down.png";
 
 export default function AbendRoutine({ tasks, onUpdateTasks }) {
   const [inputValue, setInputValue] = useState("");
   const { t } = useLanguage();
+
+  const handleMoveUp = (index) => {
+    if (index === 0) return; // Kann nicht weiter nach oben
+    
+    const newTasks = [...tasks];
+    const temp = newTasks[index];
+    newTasks[index] = newTasks[index - 1];
+    newTasks[index - 1] = temp;
+    onUpdateTasks(newTasks);
+  };
+
+  const handleMoveDown = (index) => {
+    if (index === tasks.length - 1) return; // Kann nicht weiter nach unten
+    
+    const newTasks = [...tasks];
+    const temp = newTasks[index];
+    newTasks[index] = newTasks[index + 1];
+    newTasks[index + 1] = temp;
+    onUpdateTasks(newTasks);
+  };
 
   return (
     <div className={styles.routineSection}>
@@ -20,6 +41,32 @@ export default function AbendRoutine({ tasks, onUpdateTasks }) {
             <div key={index} className={styles.taskItem}>
               <span className={styles.bulletPoint}>•</span>
               <span className={styles.taskText}>{task}</span>
+              <div className={styles.moveButtons}>
+                <button
+                  className={styles.moveButton}
+                  onClick={() => handleMoveUp(index)}
+                  disabled={index === 0}
+                  title="Nach oben"
+                >
+                  <img 
+                    src={arrowDown} 
+                    alt="↑" 
+                    className={styles.arrowUp}
+                  />
+                </button>
+                <button
+                  className={styles.moveButton}
+                  onClick={() => handleMoveDown(index)}
+                  disabled={index === tasks.length - 1}
+                  title="Nach unten"
+                >
+                  <img 
+                    src={arrowDown} 
+                    alt="↓" 
+                    className={styles.arrowDown}
+                  />
+                </button>
+              </div>
               <button
                 className={styles.deleteButton}
                 onClick={() => {

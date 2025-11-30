@@ -153,11 +153,6 @@ li.running .countdown {
   background-color: inherit;
   width: 25px;
   cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.delete:hover {
-  scale: 1.05;
 }
 
 .neonplus {

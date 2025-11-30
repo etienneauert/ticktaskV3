@@ -91,6 +91,7 @@
   overflow-y: auto;
   padding-bottom: 10px;
   background-color: transparent;
+  position: relative;
 }
 
 .taskItem {
@@ -99,7 +100,55 @@
   gap: 8px;
   padding: 5px 0;
   background-color: transparent;
+  cursor: default;
+  user-select: none;
 }
+
+.moveButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: auto;
+  margin-right: 8px;
+  background-color: transparent;
+}
+
+.moveButton {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.moveButton:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.moveButton:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.moveButton img {
+  width: 12px;
+  height: 12px;
+  background-color: transparent;
+}
+
+.arrowUp {
+  transform: rotate(180deg);
+}
+
+.arrowDown {
+  transform: rotate(0deg);
+}
+
 
 .bulletPoint {
   color: #d5ff05;
@@ -112,6 +161,52 @@
   color: #fff;
   font-size: 14px;
   background-color: transparent;
+}
+
+.moveButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-right: 8px;
+  background-color: transparent;
+}
+
+.moveButton {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  width: 16px;
+  height: 16px;
+}
+
+.moveButton:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.moveButton:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.moveButton img {
+  width: 12px;
+  height: 12px;
+  background-color: transparent;
+}
+
+.arrowUp {
+  transform: rotate(180deg);
+}
+
+.arrowDown {
+  transform: rotate(0deg);
 }
 
 .deleteButton {
