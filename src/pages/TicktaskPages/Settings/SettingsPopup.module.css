@@ -235,6 +235,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
   max-width: 400px;
+  margin-top: 15px;
 }
 
 .currentStreak {
@@ -270,6 +271,25 @@
   border-radius: 8px;
 }
 
+.calendarToggleButton {
+  background-color: transparent;
+  color: #ababab;
+  border: 1px solid #555;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.calendarToggleButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #d0d0d0;
+  border-color: #777;
+  border-radius: 8px;
+}
+
 /* Language Settings */
 .languageRow {
   display: flex;
@@ -283,6 +303,10 @@
   width: 100%;
   max-width: 400px;
   margin-top: 15px;
+}
+
+.generalSection .languageRow:first-child {
+  margin-top: 30px;
 }
 
 .languageLabel {
@@ -361,6 +385,23 @@
 .timeSelect option {
   background-color: #161616;
   color: #fff;
+}
+
+/* Checkbox Styles */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #d5ff05;
+  background-color: transparent;
 }
 
 /* Mobile Styles for General Tab */

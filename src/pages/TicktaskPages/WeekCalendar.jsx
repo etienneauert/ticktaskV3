@@ -731,7 +731,7 @@ export default function WeekCalendar({
               className={styles.CurrentTimeIndicator}
               style={{
                 top: `${timePosition.top}px`,
-                gridColumn: `3 / 4`, // Spannt nur über die ausgewählte Tag-Spalte
+                gridColumn: `3 / 10`, // Spannt über alle 7 Tage
               }}
             />
           )}

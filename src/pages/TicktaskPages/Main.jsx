@@ -3,6 +3,9 @@ import MainRoutine from "./MainRoutine";
 import Checklist from "./Checklist/Checklist";
 import WeekCalendar from "./WeekCalendar";
 import styles from "./Main.module.css";
+import { useState, useEffect } from "react";
+import { db } from "../../firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Main({
   tasks,
@@ -30,6 +33,65 @@ export default function Main({
   onTaskStop,
   onClearAllDone,
 }) {
+  const [isCalendarHidden, setIsCalendarHidden] = useState(false);
+
+  useEffect(() => {
+    if (!user?.uid) {
+      // Im Gast-Modus: Standard verwenden
+      setIsCalendarHidden(false);
+      return;
+    }
+    loadCalendarVisibility();
+
+    // Höre auf Änderungen der Kalender-Einstellungen
+    const handleSettingsChange = (event) => {
+      const { hidden } = event.detail;
+      if (hidden !== undefined) {
+        setIsCalendarHidden(hidden);
+      }
+    };
+
+    window.addEventListener("calendarSettingsChanged", handleSettingsChange);
+
+    return () => {
+      window.removeEventListener(
+        "calendarSettingsChanged",
+        handleSettingsChange
+      );
+    };
+  }, [user?.uid]);
+
+  const loadCalendarVisibility = async () => {
+    if (!user?.uid) return;
+
+    try {
+      // Versuche zuerst localStorage
+      const localHidden = localStorage.getItem(
+        `ticktask_calendar_hidden_${user.uid}`
+      );
+      if (localHidden === "true") {
+        setIsCalendarHidden(true);
+      }
+
+      // Dann Firebase
+      const settingsDoc = doc(db, "users", user.uid, "settings", "calendar");
+      const settingsSnap = await getDoc(settingsDoc);
+
+      if (settingsSnap.exists()) {
+        const data = settingsSnap.data();
+        if (data.hidden !== undefined) {
+          setIsCalendarHidden(data.hidden);
+          localStorage.setItem(
+            `ticktask_calendar_hidden_${user.uid}`,
+            String(data.hidden)
+          );
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load calendar visibility", e);
+    }
+  };
+
   return (
     <div className={styles.Main}>
       <div className={styles.MainContent}>
@@ -71,9 +133,15 @@ export default function Main({
           ></Checklist>
         </div>
       </div>
-      <div className={styles.WeekCalendarContainer}>
-        <WeekCalendar user={user} tasks={tasks} runningTaskId={runningTaskId} />
-      </div>
+      {!isCalendarHidden && (
+        <div className={styles.WeekCalendarContainer}>
+          <WeekCalendar
+            user={user}
+            tasks={tasks}
+            runningTaskId={runningTaskId}
+          />
+        </div>
+      )}
     </div>
   );
 }

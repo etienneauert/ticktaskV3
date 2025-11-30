@@ -6,6 +6,7 @@ import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
 export default function CalendarTab({ user }) {
   const [startHour, setStartHour] = useState(5); // Default: 05:00
   const [endHour, setEndHour] = useState(23); // Default: 23:00
+  const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -20,10 +21,16 @@ export default function CalendarTab({ user }) {
       const localSettings = localStorage.getItem(
         `ticktask_calendar_hours_${user.uid}`
       );
+      const localHidden = localStorage.getItem(
+        `ticktask_calendar_hidden_${user.uid}`
+      );
       if (localSettings) {
         const [start, end] = localSettings.split("-").map(Number);
         setStartHour(start);
         setEndHour(end);
+      }
+      if (localHidden === "true") {
+        setIsHidden(true);
       }
 
       // Dann Firebase
@@ -37,17 +44,26 @@ export default function CalendarTab({ user }) {
         setStartHour(start);
         setEndHour(end);
         localStorage.setItem(`ticktask_calendar_hours_${user.uid}`, hours);
+
+        if (data.hidden !== undefined) {
+          setIsHidden(data.hidden);
+          localStorage.setItem(
+            `ticktask_calendar_hidden_${user.uid}`,
+            String(data.hidden)
+          );
+        }
       }
     } catch (e) {
       console.error("Failed to load calendar settings", e);
     }
   };
 
-  const saveCalendarSettings = async (newStartHour, newEndHour) => {
+  const saveCalendarSettings = async (newStartHour, newEndHour, newHidden) => {
     if (!user?.uid) return;
 
     const start = newStartHour !== undefined ? newStartHour : startHour;
     const end = newEndHour !== undefined ? newEndHour : endHour;
+    const hidden = newHidden !== undefined ? newHidden : isHidden;
 
     if (start >= end) {
       alert("Die Startzeit muss vor der Endzeit liegen!");
@@ -59,6 +75,10 @@ export default function CalendarTab({ user }) {
     // Speichere in localStorage
     try {
       localStorage.setItem(`ticktask_calendar_hours_${user.uid}`, hours);
+      localStorage.setItem(
+        `ticktask_calendar_hidden_${user.uid}`,
+        String(hidden)
+      );
     } catch (e) {
       console.error("Failed to save calendar settings locally", e);
     }
@@ -68,13 +88,16 @@ export default function CalendarTab({ user }) {
       const settingsDoc = doc(db, "users", user.uid, "settings", "calendar");
       await setDoc(settingsDoc, {
         hours: hours,
+        hidden: hidden,
         lastUpdated: serverTimestamp(),
       });
-      console.log("Saved calendar settings to Firebase:", hours);
+      console.log("Saved calendar settings to Firebase:", { hours, hidden });
 
       // Dispatch Event für automatische Aktualisierung
       window.dispatchEvent(
-        new CustomEvent("calendarSettingsChanged", { detail: { hours } })
+        new CustomEvent("calendarSettingsChanged", {
+          detail: { hours, hidden },
+        })
       );
     } catch (e) {
       console.error("Failed to save calendar settings to Firebase", e);
@@ -89,6 +112,12 @@ export default function CalendarTab({ user }) {
   const handleEndHourChange = (newEndHour) => {
     setEndHour(newEndHour);
     saveCalendarSettings(startHour, newEndHour);
+  };
+
+  const handleHiddenToggle = () => {
+    const newHidden = !isHidden;
+    setIsHidden(newHidden);
+    saveCalendarSettings(undefined, undefined, newHidden);
   };
 
   const hours = Array.from({ length: 25 }, (_, i) => i); // 0-24 für 00:00 bis 24:00
@@ -124,6 +153,16 @@ export default function CalendarTab({ user }) {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className={styles.streakRow}>
+          <span className={styles.languageLabel}>Sichtbarkeit:</span>
+          <button
+            className={styles.calendarToggleButton}
+            onClick={handleHiddenToggle}
+          >
+            {isHidden ? "Einblenden" : "Ausblenden"}
+          </button>
         </div>
       </div>
     </div>
