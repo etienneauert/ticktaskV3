@@ -1,7 +1,7 @@
 .GoalsContainer {
   width: 100%;
-  margin-top: 40px;
-  margin-bottom: 80px;
+  max-width: 1400px;
+  margin: 40px auto 80px;
   padding: 0 20px;
   display: flex;
   flex-direction: column;
@@ -207,12 +207,26 @@
   background-color: transparent;
 }
 
+.GoalTextContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  background-color: transparent;
+}
+
+.GoalPriorityIcon {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  flex-shrink: 0;
+}
+
 .GoalText {
   color: #ffffff;
   font-size: 16px;
   font-weight: 500;
   background-color: transparent;
-  flex: 1;
 }
 
 .GoalDeleteButton {
@@ -240,11 +254,162 @@
   background-color: transparent;
 }
 
+/* Delete Confirmation Popup */
+.deleteConfirmOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.deleteConfirmModal {
+  background-color: rgba(10, 10, 10, 0.95);
+  border-radius: 12px;
+  padding: 24px;
+  width: 500px;
+  max-width: 90vw;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 -20px 40px rgba(0, 0, 0, 0.7),
+    20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7),
+    0 0 0 4px rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.deleteConfirmHeader {
+  display: flex;
+  justify-content: flex-end;
+  background-color: transparent;
+}
+
+.deleteConfirmClose {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+  background-color: transparent;
+}
+
+.deleteConfirmClose:hover {
+  opacity: 1;
+}
+
+.deleteConfirmContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: transparent;
+}
+
+.deleteConfirmContent h2 {
+  color: #ffffff;
+  font-size: 20px;
+  margin: 0;
+  background-color: transparent;
+}
+
+.deleteConfirmContent p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  background-color: transparent;
+}
+
+.deleteConfirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: transparent;
+}
+
+.deleteConfirmCancelButton {
+  background-color: transparent;
+  color: #ababab;
+  border: 1px solid #555;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteConfirmCancelButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #777;
+}
+
+.deleteConfirmDeleteButton {
+  background-color: transparent;
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteConfirmDeleteButton:hover {
+  background-color: rgba(255, 68, 68, 0.15);
+  border-color: #ff6666;
+}
+
 .GoalProgressContainer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   background-color: transparent;
+}
+
+.GoalProgressInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  background-color: transparent;
+}
+
+.GoalDatesContainer {
+  display: flex;
+  gap: 20px;
+  background-color: transparent;
+}
+
+.GoalDate {
+  display: flex;
+  gap: 6px;
+  background-color: transparent;
+}
+
+.GoalDateLabel {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  background-color: transparent;
+}
+
+.GoalDateValue {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  background-color: transparent;
+}
+
+.GoalDaysRemaining {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  margin-left: 12px;
+  background-color: transparent;
+}
+
+.GoalDaysRemainingUrgent {
+  color: #ff4444;
 }
 
 .GoalProgressBar {

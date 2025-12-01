@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./Goals.module.css";
 import rightArrow2 from "../../assets/right-arrow-2.png";
 import close3 from "../../assets/close-3.png";
+import starWhite from "../../assets/star-white.png";
 import GoalsPopup from "./GoalsPopup";
 import { db } from "../../firebase/firebase";
 import {
@@ -18,6 +19,8 @@ export default function Goals({ user, tasks = [] }) {
   const [isShaking, setIsShaking] = useState(false);
   const [open, setOpen] = useState(false);
   const [goals, setGoals] = useState([]);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [goalToDelete, setGoalToDelete] = useState(null);
 
   // Debug: Log tasks when they change
   useEffect(() => {
@@ -75,6 +78,7 @@ export default function Goals({ user, tasks = [] }) {
         targetDate: data.targetDate || null,
         priority: data.priority || "low",
         hoursNeeded: data.hoursNeeded || null,
+        timeSpent: 0, // Zeit in Minuten, initialisiert mit 0
         createdAt: serverTimestamp(),
       };
 
@@ -101,17 +105,23 @@ export default function Goals({ user, tasks = [] }) {
     setOpen(false);
   };
 
-  // Lösche ein Goal
-  const handleDeleteGoal = async (goalId) => {
-    if (!user?.uid || !goalId) return;
+  // Öffne Delete-Bestätigungs-Popup
+  const handleDeleteClick = (goal) => {
+    setGoalToDelete(goal);
+    setDeleteConfirmOpen(true);
+  };
+
+  // Lösche ein Goal nach Bestätigung
+  const handleDeleteGoal = async () => {
+    if (!user?.uid || !goalToDelete) return;
 
     try {
-      const goalDoc = doc(db, "users", user.uid, "goals", goalId);
+      const goalDoc = doc(db, "users", user.uid, "goals", goalToDelete.id);
       await deleteDoc(goalDoc);
-      console.log("Goal gelöscht:", goalId);
+      console.log("Goal gelöscht:", goalToDelete.id);
 
       // Aktualisiere die Goals-Liste
-      setGoals((prev) => prev.filter((goal) => goal.id !== goalId));
+      setGoals((prev) => prev.filter((goal) => goal.id !== goalToDelete.id));
 
       // Dispatch Event für automatische Aktualisierung im Popup
       window.dispatchEvent(
@@ -119,9 +129,21 @@ export default function Goals({ user, tasks = [] }) {
           detail: { action: "deleted" },
         })
       );
+
+      // Schließe das Popup
+      setDeleteConfirmOpen(false);
+      setGoalToDelete(null);
     } catch (e) {
       console.error("Failed to delete goal", e);
+      setDeleteConfirmOpen(false);
+      setGoalToDelete(null);
     }
+  };
+
+  // Abbrechen beim Delete-Popup
+  const handleDeleteCancel = () => {
+    setDeleteConfirmOpen(false);
+    setGoalToDelete(null);
   };
 
   // Lade Goals aus Firebase
@@ -159,67 +181,67 @@ export default function Goals({ user, tasks = [] }) {
     };
   }, [user?.uid]);
 
-  // Berechne die bereits gearbeitete Zeit für jedes Goal
-  const calculateTimeSpent = (goalId) => {
-    if (!goalId || !tasks || tasks.length === 0) {
-      console.log(
-        `[Goals] calculateTimeSpent: No goalId or no tasks. goalId=${goalId}, tasks.length=${
-          tasks?.length || 0
-        }`
-      );
-      return 0;
+  // Lese die gespeicherte Zeit für ein Goal (aus dem Goal-Dokument)
+  const getTimeSpent = (goal) => {
+    // timeSpent ist in Minuten im Goal-Dokument gespeichert
+    const timeSpentMinutes = goal.timeSpent || 0;
+    // Konvertiere zu Stunden
+    return timeSpentMinutes / 60;
+  };
+
+  // Formatiere Datum für Anzeige
+  const formatDate = (dateValue) => {
+    if (!dateValue) return null;
+
+    // Wenn es ein Timestamp-Objekt ist (von Firebase)
+    if (dateValue.seconds) {
+      const date = new Date(dateValue.seconds * 1000);
+      return date.toLocaleDateString("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
     }
 
-    // Filtere alle Tasks, die diesem Goal zugewiesen sind und erledigt wurden
-    // Verwende String-Vergleich für goalId, da es möglicherweise als String gespeichert wird
-    const goalTasks = tasks.filter((task) => {
-      const taskGoalId = task.goalId ? String(task.goalId) : null;
-      const targetGoalId = String(goalId);
-      const matches =
-        taskGoalId === targetGoalId &&
-        task.done === true &&
-        task.taskDuration !== undefined &&
-        task.taskDuration !== null;
-
-      if (task.goalId && !matches) {
-        console.log(
-          `[Goals] Task ${task.id} doesn't match: task.goalId="${taskGoalId}", target="${targetGoalId}", done=${task.done}, taskDuration=${task.taskDuration}`
-        );
-      }
-
-      return matches;
-    });
-
-    // Debug: Log für Troubleshooting
-    if (goalTasks.length > 0) {
-      console.log(
-        `[Goals] Goal ${goalId} - Found ${goalTasks.length} completed tasks:`,
-        goalTasks.map((t) => ({
-          id: t.id,
-          text: t.text,
-          goalId: t.goalId,
-          done: t.done,
-          taskDuration: t.taskDuration,
-        }))
-      );
+    // Wenn es ein String ist (ISO-Format)
+    if (typeof dateValue === "string") {
+      const date = new Date(dateValue);
+      return date.toLocaleDateString("de-DE", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
     }
 
-    // Summiere alle taskDuration Werte (in Minuten)
-    const totalMinutes = goalTasks.reduce((sum, task) => {
-      // taskDuration ist in Minuten gespeichert
-      const timeUsed = parseInt(task.taskDuration) || 0;
-      console.log(
-        `[Goals] Task ${task.id}: taskDuration = ${task.taskDuration}, parsed = ${timeUsed} minutes`
-      );
-      return sum + timeUsed;
-    }, 0);
+    return null;
+  };
 
-    // Konvertiere zu Stunden (1 Stunde = 60 Minuten)
-    const hours = totalMinutes / 60;
-    console.log(
-      `[Goals] Goal ${goalId}: Total = ${totalMinutes} minutes = ${hours} hours`
-    );
-    return hours;
+  // Formatiere Erstellungsdatum
+  const formatCreatedDate = (goal) => {
+    if (!goal.createdAt) return null;
+    return formatDate(goal.createdAt);
+  };
+
+  // Berechne verbleibende Tage bis zum Zieldatum
+  const getDaysUntilTarget = (goal) => {
+    if (!goal.targetDate) return null;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let targetDate;
+    if (typeof goal.targetDate === "string") {
+      targetDate = new Date(goal.targetDate);
+    } else {
+      return null;
+    }
+
+    targetDate.setHours(0, 0, 0, 0);
+
+    const diffTime = targetDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    return diffDays;
   };
 
   return (
@@ -247,7 +269,7 @@ export default function Goals({ user, tasks = [] }) {
         {/* Goals Liste */}
         <div className={styles.GoalsList}>
           {goals.map((goal) => {
-            const timeSpent = calculateTimeSpent(goal.id);
+            const timeSpent = getTimeSpent(goal);
             const maxHours = goal.hoursNeeded || 0;
             const progress =
               maxHours > 0 ? Math.min((timeSpent / maxHours) * 100, 100) : 0;
@@ -259,10 +281,19 @@ export default function Goals({ user, tasks = [] }) {
             return (
               <div key={goal.id} className={styles.GoalItem}>
                 <div className={styles.GoalItemHeader}>
-                  <div className={styles.GoalText}>{goal.text}</div>
+                  <div className={styles.GoalTextContainer}>
+                    {goal.priority === "high" && (
+                      <img
+                        src={starWhite}
+                        alt=""
+                        className={styles.GoalPriorityIcon}
+                      />
+                    )}
+                    <div className={styles.GoalText}>{goal.text}</div>
+                  </div>
                   <button
                     className={styles.GoalDeleteButton}
-                    onClick={() => handleDeleteGoal(goal.id)}
+                    onClick={() => handleDeleteClick(goal)}
                   >
                     <img src={close3} alt="Delete" />
                   </button>
@@ -276,11 +307,51 @@ export default function Goals({ user, tasks = [] }) {
                       />
                     )}
                   </div>
-                  {maxHours > 0 && (
-                    <div className={styles.GoalProgressText}>
-                      {timeSpent.toFixed(1)}h / {maxHours}h
+                  <div className={styles.GoalProgressInfo}>
+                    <div className={styles.GoalDatesContainer}>
+                      {formatCreatedDate(goal) && (
+                        <div className={styles.GoalDate}>
+                          <span className={styles.GoalDateLabel}>
+                            Erstellt:
+                          </span>
+                          <span className={styles.GoalDateValue}>
+                            {formatCreatedDate(goal)}
+                          </span>
+                        </div>
+                      )}
+                      {goal.targetDate && (
+                        <div className={styles.GoalDate}>
+                          <span className={styles.GoalDateLabel}>Ziel:</span>
+                          <span className={styles.GoalDateValue}>
+                            {formatDate(goal.targetDate)}
+                          </span>
+                          {getDaysUntilTarget(goal) !== null && (
+                            <span
+                              className={`${styles.GoalDaysRemaining} ${
+                                getDaysUntilTarget(goal) > 0 &&
+                                getDaysUntilTarget(goal) <= 10
+                                  ? styles.GoalDaysRemainingUrgent
+                                  : ""
+                              }`}
+                            >
+                              {getDaysUntilTarget(goal) > 0
+                                ? `${getDaysUntilTarget(goal)} Tage verbleibend`
+                                : getDaysUntilTarget(goal) === 0
+                                ? "Heute"
+                                : `${Math.abs(
+                                    getDaysUntilTarget(goal)
+                                  )} Tage überfällig`}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  )}
+                    {maxHours > 0 && (
+                      <div className={styles.GoalProgressText}>
+                        {timeSpent.toFixed(1)}h / {maxHours}h
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             );
@@ -294,6 +365,49 @@ export default function Goals({ user, tasks = [] }) {
         goalText={value}
         user={user}
       />
+
+      {/* Delete Confirmation Popup */}
+      {deleteConfirmOpen && goalToDelete && (
+        <div
+          className={styles.deleteConfirmOverlay}
+          onClick={handleDeleteCancel}
+        >
+          <div
+            className={styles.deleteConfirmModal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.deleteConfirmHeader}>
+              <img
+                onClick={handleDeleteCancel}
+                className={styles.deleteConfirmClose}
+                src={close3}
+                alt=""
+              />
+            </div>
+            <div className={styles.deleteConfirmContent}>
+              <h2>Goal löschen?</h2>
+              <p>
+                Möchtest du das Goal "{goalToDelete.text}" wirklich löschen?
+                Diese Aktion kann nicht rückgängig gemacht werden.
+              </p>
+            </div>
+            <div className={styles.deleteConfirmActions}>
+              <button
+                onClick={handleDeleteCancel}
+                className={styles.deleteConfirmCancelButton}
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={handleDeleteGoal}
+                className={styles.deleteConfirmDeleteButton}
+              >
+                Löschen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

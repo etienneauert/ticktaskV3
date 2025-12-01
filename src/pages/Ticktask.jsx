@@ -23,6 +23,7 @@ import {
   updateDoc,
   setDoc,
   getDoc,
+  increment,
 } from "firebase/firestore";
 
 const WEEK_DAY_ORDER = [
@@ -964,6 +965,27 @@ export function Ticktask({ user, isGuestMode = false }) {
         }
         await updateDoc(taskDoc, updateData);
         console.log("✅ Task updated in Firebase");
+
+        // Wenn der Task ein Goal hat, füge die Zeit zum Goal hinzu
+        if (taskToComplete.goalId && taskDuration > 0) {
+          try {
+            const goalDoc = doc(
+              db,
+              "users",
+              user.uid,
+              "goals",
+              taskToComplete.goalId
+            );
+            await updateDoc(goalDoc, {
+              timeSpent: increment(taskDuration), // taskDuration ist in Minuten
+            });
+            console.log(
+              `✅ Added ${taskDuration} minutes to goal ${taskToComplete.goalId}`
+            );
+          } catch (e) {
+            console.error("❌ Failed to update goal time", e);
+          }
+        }
       } catch (e) {
         console.error("❌ Failed to update task in Firestore", e);
         // Fallback: Lokal aktualisieren
