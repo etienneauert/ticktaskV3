@@ -4,17 +4,17 @@
   margin: 40px auto 110px;
   padding: 20px;
   background-color: #161616;
-  border-radius: 8px;
   overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .CalendarHeader {
   display: grid;
-  grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 0.8px;
+  grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
+  gap: 1px;
   margin-bottom: 1px;
   background-color: #333;
-  border-radius: 4px 4px 0 0;
+  overflow: hidden;
 }
 
 .TimeColumn {
@@ -35,7 +35,7 @@
   color: white;
   position: relative;
   border: 1px solid #333;
-  border-right: 0.8px solid #333;
+  border-right: 0.5px solid #333;
   height: 60px;
   display: flex;
   flex-direction: row;
@@ -99,11 +99,11 @@
 
 .CalendarBody {
   display: grid;
-  grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 0.8px;
+  grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
+  gap: 1px;
   background-color: #333;
-  border-radius: 0;
   position: relative;
+  overflow: hidden;
 }
 
 .CalendarBody .TimeColumn {
@@ -161,7 +161,7 @@
   padding: 0;
   overflow: visible;
   position: relative;
-  border-right: 0.8px solid #333;
+  border-right: 0.2px solid #333;
 }
 
 .DayColumn:last-child {
@@ -368,11 +368,10 @@
 
 .BottomBar {
   display: grid;
-  grid-template-columns: 1px 80px repeat(7, 1fr) 1px;
-  gap: 0.8px;
+  grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
+  gap: 1px;
   background-color: #333;
   margin-top: 0;
-  border-radius: 0 0 4px 4px;
   height: 1px;
   width: 100%;
 }
