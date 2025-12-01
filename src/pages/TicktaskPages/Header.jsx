@@ -4,7 +4,8 @@ import setting from "../../assets/setting.png";
 import info from "../../assets/info.png";
 import SettingsPopup from "./Settings/SettingsPopup";
 import InfoPopup from "./Info/InfoPopup";
-import { useState, useEffect } from "react";
+import ErrorMessage from "./ErrorMessage";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function Header({
@@ -36,6 +37,9 @@ export default function Header({
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showError, setShowError] = useState(false);
+  const finishDayButtonRef = useRef(null);
   const { t } = useLanguage();
 
   // Aktualisiere die aktuelle Uhrzeit jede Minute
@@ -116,7 +120,8 @@ export default function Header({
         "\n\n"
       )}`;
 
-      showErrorMessage(errorMessage);
+      setErrorMessage(errorMessage);
+      setShowError(true);
       return;
     }
 
@@ -197,14 +202,25 @@ export default function Header({
           <p className={styles.counter}>{streak}</p>
           <img className={styles.fireIcon} src={fire} alt="" />
         </div>
-        <button
-          className={`${styles.finishDayButton} ${
-            isFinishDayDisabled() ? styles.disabled : ""
-          }`}
-          onClick={handleFinishDay}
-        >
-          {t("finishDay")}
-        </button>
+        <div className={styles.finishDayContainer}>
+          <button
+            ref={finishDayButtonRef}
+            className={`${styles.finishDayButton} ${
+              isFinishDayDisabled() ? styles.disabled : ""
+            }`}
+            onClick={handleFinishDay}
+          >
+            {t("finishDay")}
+          </button>
+          {showError && (
+            <ErrorMessage
+              message={errorMessage}
+              isVisible={showError}
+              onClose={() => setShowError(false)}
+              buttonRef={finishDayButtonRef}
+            />
+          )}
+        </div>
         <div className={styles.currentTimeHeader}>
           {String(currentTime.getHours()).padStart(2, "0")}:
           {String(currentTime.getMinutes()).padStart(2, "0")}

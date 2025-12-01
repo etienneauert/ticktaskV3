@@ -2,6 +2,7 @@ import MainTasks from "./MainTasks";
 import MainRoutine from "./MainRoutine";
 import Checklist from "./Checklist/Checklist";
 import WeekCalendar from "./WeekCalendar";
+import Goals from "./Goals";
 import styles from "./Main.module.css";
 import { useState, useEffect } from "react";
 import { db } from "../../firebase/firebase";
@@ -142,6 +143,9 @@ export default function Main({
           />
         </div>
       )}
+      <div className={styles.GoalsContainer}>
+        <Goals user={user} />
+      </div>
     </div>
   );
 }

@@ -94,6 +94,11 @@
   color: rgb(213, 255, 5);
 }
 
+.finishDayContainer {
+  position: relative;
+  display: inline-block;
+}
+
 .finishDayButton {
   font-size: 14px;
   background-color: transparent;

@@ -1,11 +1,11 @@
 .scheduleSection {
-  margin-top: 40px;
-  padding: 24px;
+  margin-top: 20px;
+  padding: 16px;
   border-radius: 16px;
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 12px;
   align-items: center;
 }
 
@@ -167,9 +167,9 @@
 }
 
 .taskModal {
-  width: 850px;
+  width: 600px;
   height: auto;
-  min-height: 500px;
+  min-height: 400px;
 }
 
 .appointmentModal {
@@ -239,7 +239,7 @@
   margin: 20px 0;
   padding: 0;
   background-color: transparent;
-  margin-top: 70px;
+  margin-top: 40px;
 }
 
 .demoTask {
@@ -372,13 +372,13 @@
 }
 
 .scheduleSection {
-  margin-top: 40px;
-  padding: 24px;
+  margin-top: 20px;
+  padding: 16px;
   border-radius: 16px;
   background-color: transparent;
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 12px;
   align-items: center;
 }
 
@@ -692,7 +692,7 @@
   border-radius: 20px;
   border: 2px solid rgb(213, 255, 5);
   font-size: 20px;
-  margin-top: 60px;
+  margin-top: 30px;
   background-color: transparent;
   cursor: pointer;
   transition: 0.3s ease;
@@ -702,6 +702,186 @@
   scale: 1.03;
   background-color: rgb(213, 255, 5) !important;
   color: black !important;
+}
+
+.goalDescription {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px 16px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #fff;
+  font-size: 14px;
+  font-family: monospace;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+  transition: border-color 0.3s ease;
+}
+
+.goalDescription:focus {
+  border-color: #d5ff05;
+}
+
+.dateInput {
+  padding: 16px 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #fff;
+  font-size: 18px;
+  font-family: monospace;
+  outline: none;
+  transition: border-color 0.3s ease;
+  min-width: 250px;
+  cursor: pointer;
+}
+
+.dateInput:focus {
+  border-color: #d5ff05;
+}
+
+.dateInput::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  padding: 4px;
+}
+
+/* Styling für den Kalender-Dropdown (Webkit-Browser) */
+.dateInput::-webkit-datetime-edit {
+  color: #fff;
+  padding: 0;
+}
+
+.dateInput::-webkit-datetime-edit-fields-wrapper {
+  background-color: transparent;
+}
+
+.dateInput::-webkit-datetime-edit-text {
+  color: #fff;
+  padding: 0 4px;
+}
+
+.dateInput::-webkit-datetime-edit-month-field,
+.dateInput::-webkit-datetime-edit-day-field,
+.dateInput::-webkit-datetime-edit-year-field {
+  color: #fff;
+  background-color: transparent;
+}
+
+/* Custom Date Picker */
+.customDatePicker {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  background-color: transparent;
+}
+
+.datePickerDisplay {
+  width: 100%;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 16px 20px;
+  color: #fff;
+  font-size: 18px;
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  min-height: 56px;
+}
+
+.datePickerDisplay:hover {
+  border-color: #555;
+}
+
+.datePickerDisplayOpen {
+  border-color: #d5ff05;
+}
+
+.datePickerArrow {
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+}
+
+.datePickerArrowIcon {
+  width: 18px;
+  height: 18px;
+  background-color: transparent;
+}
+
+.datePickerDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 8px 0;
+  max-height: 200px; /* Etwa 4 Einträge sichtbar (14px padding + 16px font + 14px padding = ~44px pro Eintrag) */
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  z-index: 100;
+}
+
+.datePickerOption {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  text-align: left;
+  font-size: 16px;
+  font-family: monospace;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.datePickerOption:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.datePickerOptionActive {
+  background: rgba(213, 255, 5, 0.15) !important;
+  color: #d5ff05 !important;
+}
+
+.priorityButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  background-color: transparent;
+}
+
+.priorityButton {
+  padding: 8px 20px;
+  border: 1px solid #333;
+  border-radius: 20px;
+  background-color: transparent;
+  color: #ababab;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.priorityButton:hover {
+  border-color: #555;
+  color: #fff;
+}
+
+.priorityButtonActive {
+  border-color: #d5ff05 !important;
+  background-color: rgba(213, 255, 5, 0.1) !important;
+  color: #d5ff05 !important;
 }
 
 .checkboxes {
