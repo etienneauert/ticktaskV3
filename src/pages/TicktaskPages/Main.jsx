@@ -144,7 +144,7 @@ export default function Main({
         </div>
       )}
       <div className={styles.GoalsContainer}>
-        <Goals user={user} />
+        <Goals user={user} tasks={tasks} />
       </div>
     </div>
   );

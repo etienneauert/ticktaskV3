@@ -2,6 +2,7 @@ import styles from "./Weekly.module.css";
 import { useState, useEffect } from "react";
 import { useLanguage } from "../../../../contexts/LanguageContext";
 import arrowDown from "../../../../assets/arrow-down.png";
+import close3 from "../../../../assets/close-3.png";
 
 export default function Wednesday({ tasks, onUpdateTasks }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -87,7 +88,7 @@ export default function Wednesday({ tasks, onUpdateTasks }) {
                   onUpdateTasks(tasks.filter((_, i) => i !== index));
                 }}
               >
-                ×
+                <img src={close3} alt="Delete" />
               </button>
             </div>
           ))

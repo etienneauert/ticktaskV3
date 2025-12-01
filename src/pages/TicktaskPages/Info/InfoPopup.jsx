@@ -1,5 +1,5 @@
 import styles from "./InfoPopup.module.css";
-import close from "../../../assets/close-2.png";
+import close from "../../../assets/close-3.png";
 import { useState, useEffect, useRef } from "react";
 
 export default function InfoPopup({ open, onClose }) {

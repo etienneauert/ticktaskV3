@@ -33,6 +33,7 @@ export default function Input({ onAdd, user }) {
       scheduledDayOption: data.scheduledDayOption || "",
       scheduledHour: data.scheduledHour || "",
       scheduledMinute: data.scheduledMinute || "",
+      goalId: data.goalId || null,
     });
     setValue("");
     setOpen(false);

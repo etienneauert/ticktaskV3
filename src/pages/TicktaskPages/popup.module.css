@@ -13,6 +13,7 @@
   color: rgb(171, 171, 171);
   font-size: 14px;
   margin: 0;
+  margin-bottom: 20px;
   text-align: center;
   background-color: transparent;
 }
@@ -25,6 +26,14 @@
   align-items: center;
   width: 100%;
   background-color: transparent;
+}
+
+.scheduleInputs .timeSelect {
+  margin-right: 0;
+}
+
+.scheduleInputs .timeSeparator {
+  margin: 0 -16px;
 }
 
 .scheduleInput {
@@ -97,7 +106,7 @@
   padding: 10px 18px;
   border: none;
   background: transparent;
-  color: white;
+  color: #d5ff05;
   text-align: left;
   font-size: 14px;
   cursor: pointer;
@@ -151,6 +160,10 @@
   touch-action: none;
 }
 
+.overlay:has(.taskModal) {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .modal {
   color: #fff;
   padding: 32px;
@@ -167,9 +180,9 @@
 }
 
 .taskModal {
-  width: 600px;
+  width: 750px;
   height: auto;
-  min-height: 400px;
+  min-height: 500px;
 }
 
 .appointmentModal {
@@ -386,6 +399,7 @@
   color: rgb(171, 171, 171);
   font-size: 14px;
   margin: 0;
+  margin-bottom: 20px;
   text-align: center;
   background-color: transparent;
 }
@@ -488,7 +502,7 @@
   padding: 10px 18px;
   border: none;
   background: transparent;
-  color: white;
+  color: #d5ff05;
   text-align: left;
   font-size: 14px;
   cursor: pointer;
@@ -738,6 +752,18 @@
   cursor: pointer;
 }
 
+.dateInput[type="number"]::-webkit-inner-spin-button,
+.dateInput[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.dateInput[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 .dateInput:focus {
   border-color: #d5ff05;
 }
@@ -891,6 +917,44 @@
   flex-direction: row;
   gap: 40px;
   background-color: transparent;
+}
+
+.goalSection {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background-color: transparent;
+  width: 100%;
+}
+
+.goalSection h2 {
+  color: rgb(171, 171, 171);
+  font-size: 14px;
+  margin: 0;
+  text-align: center;
+  background-color: transparent;
+}
+
+.goalSection .transparentSelect {
+  width: 100%;
+  max-width: 500px;
+}
+
+.goalSection .selectDisplay {
+  width: 100%;
+  max-width: 500px;
+}
+
+.goalSection .selectDropdown {
+  background: rgba(12, 12, 12, 1);
+  opacity: 1;
+}
+
+.goalSection .selectOption {
+  color: #ffffff;
 }
 
 .settingsContent {

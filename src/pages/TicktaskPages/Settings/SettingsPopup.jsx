@@ -1,6 +1,6 @@
 import styles from "./SettingsPopup.module.css";
 import { useState, useEffect, useRef } from "react";
-import close2 from "../../../assets/close-2.png";
+import close3 from "../../../assets/close-3.png";
 import RoutineTab from "./RoutineTab";
 import TasksTab from "./TasksTab";
 import DailyTab from "./DailyTab";
@@ -97,7 +97,7 @@ export default function SettingsPopup({
       >
         <div className={styles.modalcloseandinfo}>
           <p></p>
-          <img onClick={onClose} className={styles.close} src={close2} alt="" />
+          <img onClick={onClose} className={styles.close} src={close3} alt="" />
         </div>
 
         {/* Settings Content mit Custom Tabs */}

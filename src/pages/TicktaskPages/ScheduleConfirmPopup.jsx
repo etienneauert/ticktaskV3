@@ -1,6 +1,6 @@
 import styles from "./popup.module.css";
 import { useState, useEffect, useRef, useMemo } from "react";
-import close2 from "../../assets/close-2.png";
+import close3 from "../../assets/close-3.png";
 import arrowDown from "../../assets/arrowdown-yellow.png";
 
 const DAY_OPTIONS = [
@@ -107,18 +107,43 @@ export default function ScheduleConfirmPopup({
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
+  const [shakeDay, setShakeDay] = useState(false);
+  const [shakeHour, setShakeHour] = useState(false);
+  const [shakeMinute, setShakeMinute] = useState(false);
 
   useEffect(() => {
     if (open) {
       setSelectedDay("");
       setSelectedHour("");
       setSelectedMinute("");
+      setShakeDay(false);
+      setShakeHour(false);
+      setShakeMinute(false);
     }
   }, [open]);
 
   if (!open) return null;
 
+  const isAllFieldsFilled = selectedDay && selectedHour && selectedMinute;
+
   const handleWithSchedule = () => {
+    if (!isAllFieldsFilled) {
+      // Shake animation für nicht ausgefüllte Felder
+      if (!selectedDay) {
+        setShakeDay(true);
+        setTimeout(() => setShakeDay(false), 500);
+      }
+      if (!selectedHour) {
+        setShakeHour(true);
+        setTimeout(() => setShakeHour(false), 500);
+      }
+      if (!selectedMinute) {
+        setShakeMinute(true);
+        setTimeout(() => setShakeMinute(false), 500);
+      }
+      return;
+    }
+
     onConfirm(true, {
       scheduledDayOption: selectedDay || null,
       scheduledHour: selectedHour || null,
@@ -138,7 +163,7 @@ export default function ScheduleConfirmPopup({
       >
         <div className={styles.modalcloseandinfo}>
           <p></p>
-          <img onClick={onCancel} className={styles.close} src={close2} alt="" />
+          <img onClick={onCancel} className={styles.close} src={close3} alt="" />
         </div>
         <div className={styles.modalHeader}>
           <h1>{taskText}</h1>
@@ -154,13 +179,14 @@ export default function ScheduleConfirmPopup({
               onChange={setSelectedDay}
               options={DAY_OPTIONS}
               placeholder="Tag wählen"
+              className={shakeDay ? styles.shake : ""}
             />
             <TransparentSelect
               value={selectedHour}
               onChange={setSelectedHour}
               options={HOUR_OPTIONS}
               placeholder="Stunde"
-              className={styles.timeSelect}
+              className={`${styles.timeSelect} ${shakeHour ? styles.shake : ""}`}
             />
             <span className={styles.timeSeparator}>:</span>
             <TransparentSelect
@@ -168,37 +194,39 @@ export default function ScheduleConfirmPopup({
               onChange={setSelectedMinute}
               options={MINUTE_OPTIONS}
               placeholder="Minute"
-              className={styles.timeSelect}
+              className={`${styles.timeSelect} ${shakeMinute ? styles.shake : ""}`}
             />
           </div>
         </div>
         <div className={styles.actions}>
-          <button
-            onClick={handleWithSchedule}
-            className={styles.addButton}
-            disabled={!selectedDay || !selectedHour}
-          >
-            Mit Zeitplan hinzufügen
-          </button>
-          <button
-            onClick={handleWithoutSchedule}
-            className={styles.addButton}
-            style={{
-              backgroundColor: "transparent",
-              color: "#ababab",
-              borderColor: "#555",
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
-              e.target.style.color = "#d0d0d0";
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = "transparent";
-              e.target.style.color = "#ababab";
-            }}
-          >
-            Ohne Zeitplan hinzufügen
-          </button>
+          {selectedDay || selectedHour || selectedMinute ? (
+            <button
+              onClick={handleWithSchedule}
+              className={styles.addButton}
+            >
+              Mit Zeitplan hinzufügen
+            </button>
+          ) : (
+            <button
+              onClick={handleWithoutSchedule}
+              className={styles.addButton}
+              style={{
+                backgroundColor: "transparent",
+                color: "#ababab",
+                borderColor: "#555",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                e.target.style.color = "#d0d0d0";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = "transparent";
+                e.target.style.color = "#ababab";
+              }}
+            >
+              Ohne Zeitplan hinzufügen
+            </button>
+          )}
         </div>
       </div>
     </div>

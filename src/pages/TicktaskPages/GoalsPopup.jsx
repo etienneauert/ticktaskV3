@@ -1,6 +1,6 @@
 import styles from "./popup.module.css";
 import { useState, useEffect, useRef } from "react";
-import close2 from "../../assets/close-2.png";
+import close3 from "../../assets/close-3.png";
 import arrowDown from "../../assets/arrow-down.png";
 import { db } from "../../firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
@@ -240,7 +240,7 @@ export default function GoalsPopup({
           <img
             onClick={onCancel}
             className={styles.close}
-            src={close2}
+            src={close3}
             alt=""
           />
         </div>

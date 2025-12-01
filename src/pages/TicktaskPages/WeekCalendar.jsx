@@ -14,7 +14,7 @@ import {
 import plusSign from "../../assets/plus-sign.png";
 import popupStyles from "./popup.module.css";
 import trashBin from "../../assets/trash-bin.png";
-import close2 from "../../assets/close-2.png";
+import close3 from "../../assets/close-3.png";
 import arrowDown from "../../assets/arrowdown-yellow.png";
 import leftArrow from "../../assets/left-arrow-4.png";
 import rightArrow from "../../assets/right-arrow-4.png";
@@ -965,7 +965,7 @@ export default function WeekCalendar({
               <img
                 onClick={handlePopupCancel}
                 className={popupStyles.close}
-                src={close2}
+                src={close3}
                 alt=""
               />
             </div>

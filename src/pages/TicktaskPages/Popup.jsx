@@ -1,8 +1,8 @@
 import styles from "./popup.module.css";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { db } from "../../firebase/firebase";
-import { doc, getDoc } from "firebase/firestore";
-import close2 from "../../assets/close-2.png";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import close3 from "../../assets/close-3.png";
 import dot3 from "../../assets/dot-3.png";
 import starWhite from "../../assets/star-white.png";
 import _play from "../../assets/play.png";
@@ -112,6 +112,8 @@ export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
   const [startHour, setStartHour] = useState(5);
   const [endHour, setEndHour] = useState(23);
   const [isShaking, setIsShaking] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState("");
+  const [goals, setGoals] = useState([]);
 
   // Reset state when popup opens
   useEffect(() => {
@@ -124,8 +126,61 @@ export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
       setSelectedHour("");
       setSelectedMinute("");
       setIsShaking(false);
+      setSelectedGoal("");
     }
   }, [open]);
+
+  // Lade Goals aus Firebase
+  useEffect(() => {
+    const loadGoals = async () => {
+      if (!user?.uid) {
+        setGoals([]);
+        return;
+      }
+
+      try {
+        // Versuche zuerst localStorage
+        const localGoals = localStorage.getItem(`ticktask_goals_${user.uid}`);
+        if (localGoals) {
+          const parsedGoals = JSON.parse(localGoals);
+          setGoals(parsedGoals);
+        }
+
+        // Dann Firebase
+        const goalsCol = collection(db, "users", user.uid, "goals");
+        const goalsSnapshot = await getDocs(goalsCol);
+        const goalsList = goalsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (goalsList.length > 0) {
+          setGoals(goalsList);
+          localStorage.setItem(
+            `ticktask_goals_${user.uid}`,
+            JSON.stringify(goalsList)
+          );
+        } else {
+          setGoals([]);
+          localStorage.removeItem(`ticktask_goals_${user.uid}`);
+        }
+      } catch (e) {
+        console.error("Failed to load goals", e);
+      }
+    };
+
+    loadGoals();
+
+    // Höre auf Goals-Änderungen
+    const handleGoalsChanged = () => {
+      loadGoals();
+    };
+
+    window.addEventListener("goalsChanged", handleGoalsChanged);
+    return () => {
+      window.removeEventListener("goalsChanged", handleGoalsChanged);
+    };
+  }, [user?.uid, open]);
 
   // Lade Kalender-Einstellungen
   useEffect(() => {
@@ -212,8 +267,20 @@ export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
       scheduledDayOption: selectedDay,
       scheduledHour: selectedHour,
       scheduledMinute: selectedMinute,
+      goalId: selectedGoal || null,
     });
   };
+
+  // Generiere Goal-Optionen für das Dropdown
+  const GOAL_OPTIONS = useMemo(() => {
+    return [
+      { value: "", label: "Kein Goal" },
+      ...goals.map((goal) => ({
+        value: goal.id,
+        label: goal.text || goal.name || "Unbenanntes Goal",
+      })),
+    ];
+  }, [goals]);
 
   if (!open) return null;
 
@@ -228,7 +295,7 @@ export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
           <img
             onClick={onCancel}
             className={styles.close}
-            src={close2}
+            src={close3}
             alt=""
           />
         </div>
@@ -349,6 +416,16 @@ export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
               className={styles.timeSelect}
             />
           </div>
+        </div>
+
+        <div className={styles.goalSection}>
+          <h2>Goal zuweisen</h2>
+          <TransparentSelect
+            value={selectedGoal}
+            onChange={setSelectedGoal}
+            options={GOAL_OPTIONS}
+            placeholder="Goal auswählen"
+          />
         </div>
 
         <div className={styles.checkboxes}>

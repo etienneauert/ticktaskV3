@@ -3,6 +3,7 @@ import dailyStyles from "./Daily.module.css";
 import { useState } from "react";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import arrowDown from "../../../assets/arrow-down.png";
+import close3 from "../../../assets/close-3.png";
 
 export default function DailyTab({ dailyTasks, onUpdateDailyTasks }) {
   const [inputValue, setInputValue] = useState("");
@@ -78,7 +79,7 @@ export default function DailyTab({ dailyTasks, onUpdateDailyTasks }) {
                       );
                     }}
                   >
-                    ×
+                    <img src={close3} alt="Delete" />
                   </button>
                 </div>
               ))

@@ -827,6 +827,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         taskDuration: parseInt(task.taskDuration) || 0,
         createdAt: { seconds: Math.floor(Date.now() / 1000) },
         frequent: !!task.frequent,
+        goalId: task.goalId || null,
         ...scheduleMeta,
       };
       updateGuestData({
@@ -846,6 +847,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         taskDuration: parseInt(task.taskDuration) || 0,
         createdAt: serverTimestamp(),
         frequent: !!task.frequent,
+        goalId: task.goalId || null,
         ...scheduleMeta,
       });
       console.log("✅ Task added to Firebase with ID:", docRef.id);
@@ -860,6 +862,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         taskDuration: parseInt(task.taskDuration) || 0,
         createdAt: { seconds: Math.floor(Date.now() / 1000) },
         frequent: !!task.frequent,
+        goalId: task.goalId || null,
         ...scheduleMeta,
       };
       setTasks((prev) => [...prev, newTask]);
@@ -949,12 +952,17 @@ export function Ticktask({ user, isGuestMode = false }) {
       try {
         console.log("🔄 Updating task in Firebase:", taskToComplete.id);
         const taskDoc = doc(db, "users", user.uid, "tasks", taskToComplete.id);
-        await updateDoc(taskDoc, {
+        const updateData = {
           done: true,
           completedAt: serverTimestamp(),
           actualTimeUsed: actualTime,
           plannedTime: taskDuration,
-        });
+        };
+        // Behalte goalId wenn es bereits existiert
+        if (taskToComplete.goalId) {
+          updateData.goalId = taskToComplete.goalId;
+        }
+        await updateDoc(taskDoc, updateData);
         console.log("✅ Task updated in Firebase");
       } catch (e) {
         console.error("❌ Failed to update task in Firestore", e);
@@ -968,6 +976,7 @@ export function Ticktask({ user, isGuestMode = false }) {
                   completedAt: { seconds: Math.floor(Date.now() / 1000) },
                   actualTimeUsed: actualTime,
                   plannedTime: taskDuration,
+                  goalId: task.goalId || taskToComplete.goalId || null,
                 }
               : task
           )

@@ -1,6 +1,6 @@
 import styles from "./popup.module.css";
 import { useState } from "react";
-import close2 from "../../assets/close-2.png";
+import close3 from "../../assets/close-3.png";
 
 export default function SettingsPopup({ open, onClose }) {
   if (!open) return null;
@@ -10,7 +10,7 @@ export default function SettingsPopup({ open, onClose }) {
       <div className={styles.modal}>
         <div className={styles.modalcloseandinfo}>
           <p></p>
-          <img onClick={onClose} className={styles.close} src={close2} alt="" />
+          <img onClick={onClose} className={styles.close} src={close3} alt="" />
         </div>
         <div className={styles.modalHeader}>
           <h1>Settings</h1>

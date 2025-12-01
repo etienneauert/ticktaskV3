@@ -2,6 +2,7 @@ import styles from "./Routine.module.css";
 import { useState } from "react";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import arrowDown from "../../../assets/arrow-down.png";
+import close3 from "../../../assets/close-3.png";
 
 export default function AbendRoutine({ tasks, onUpdateTasks }) {
   const [inputValue, setInputValue] = useState("");
@@ -73,7 +74,7 @@ export default function AbendRoutine({ tasks, onUpdateTasks }) {
                   onUpdateTasks(tasks.filter((_, i) => i !== index));
                 }}
               >
-                ×
+                <img src={close3} alt="Delete" />
               </button>
             </div>
           ))
