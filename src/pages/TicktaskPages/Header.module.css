@@ -23,19 +23,10 @@
 
 .headerAboutButton {
   border: none;
-  transition: 0.2s ease;
 }
 
-.headerAboutButton:hover {
-  scale: 1.04;
-}
 .headerSettingsButton {
   border: none;
-  transition: 0.2s ease;
-}
-
-.headerSettingsButton:hover {
-  scale: 1.04;
 }
 
 .headerAboutButton img {

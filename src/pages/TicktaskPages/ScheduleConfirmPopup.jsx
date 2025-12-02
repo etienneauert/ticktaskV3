@@ -13,13 +13,10 @@ const DAY_OPTIONS = [
   { value: "sunday", label: "Sonntag" },
 ];
 
-const HOUR_OPTIONS = [
-  { value: "", label: "Stunde" },
-  ...Array.from({ length: 24 }, (_, i) => {
-    const value = String(i).padStart(2, "0");
-    return { value, label: value };
-  }),
-];
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => {
+  const value = String(i).padStart(2, "0");
+  return { value, label: value };
+});
 
 const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5).map(
   (min) => {
@@ -122,6 +119,27 @@ export default function ScheduleConfirmPopup({
     }
   }, [open]);
 
+  // Verhindere Body-Scroll, wenn das Popup offen ist
+  useEffect(() => {
+    if (open) {
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+
+      return () => {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [open]);
+
   if (!open) return null;
 
   const isAllFieldsFilled = selectedDay && selectedHour && selectedMinute;
@@ -214,14 +232,6 @@ export default function ScheduleConfirmPopup({
                 backgroundColor: "transparent",
                 color: "#ababab",
                 borderColor: "#555",
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
-                e.target.style.color = "#d0d0d0";
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = "transparent";
-                e.target.style.color = "#ababab";
               }}
             >
               Ohne Zeitplan hinzufügen

@@ -34,24 +34,7 @@ export function Login({ onSwitchToAuth, onGuestLogin }) {
       // Login successful - onAuthStateChanged in App.jsx will fire automatically
     } catch (error) {
       console.error("Login error:", error);
-
-      // Friendly error messages
-      switch (error.code) {
-        case "auth/user-not-found":
-          setError("No user found with this email");
-          break;
-        case "auth/wrong-password":
-          setError("Incorrect password");
-          break;
-        case "auth/invalid-email":
-          setError("Invalid email address");
-          break;
-        case "auth/too-many-requests":
-          setError("Too many failed attempts. Please wait a moment");
-          break;
-        default:
-          setError("An error occurred. Please try again.");
-      }
+      setError("Die eingegebenen Logindaten sind falsch");
     } finally {
       setLoading(false);
     }
@@ -114,7 +97,7 @@ export function Login({ onSwitchToAuth, onGuestLogin }) {
         </button>
       </form>
 
-      {error && <div>{error}</div>}
+      {error && <div className={styles.error}>{error}</div>}
 
       {/* Google Sign-In Button */}
       <div className={styles.googleSignIn}>

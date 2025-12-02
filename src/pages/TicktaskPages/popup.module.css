@@ -36,6 +36,14 @@
   margin: 0 -16px;
 }
 
+.scheduleInputs .transparentSelect .selectDropdown {
+  max-height: 120px;
+}
+
+.scheduleInputs .selectOption {
+  color: #d5ff05;
+}
+
 .scheduleInput {
   display: flex;
   flex-direction: column;
@@ -95,7 +103,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   padding: 8px 0;
-  max-height: 220px;
+  max-height: 120px;
   overflow-y: auto;
   box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5);
   z-index: 30;
@@ -182,7 +190,7 @@
 .taskModal {
   width: 750px;
   height: auto;
-  min-height: 500px;
+  min-height: 420px;
 }
 
 .appointmentModal {
@@ -195,6 +203,7 @@
   display: flex;
   justify-content: space-between;
   background-color: transparent;
+  position: relative;
 }
 
 .currentTimeDisplay {
@@ -209,7 +218,7 @@
   display: flex;
   justify-content: center;
   margin-top: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 15px;
   background-color: transparent;
 }
 
@@ -245,6 +254,9 @@
   width: 20px;
   cursor: pointer;
   background-color: transparent;
+  position: absolute;
+  top: -10px;
+  right: -10px;
 }
 
 /* Demo Preview Styles */

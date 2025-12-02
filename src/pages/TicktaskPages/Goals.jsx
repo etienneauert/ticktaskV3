@@ -12,6 +12,7 @@ import {
   getDocs,
   doc,
   deleteDoc,
+  onSnapshot,
 } from "firebase/firestore";
 
 export default function Goals({ user, tasks = [] }) {
@@ -146,37 +147,45 @@ export default function Goals({ user, tasks = [] }) {
     setGoalToDelete(null);
   };
 
-  // Lade Goals aus Firebase
+  // Lade Goals aus Firebase mit Echtzeit-Listener
   useEffect(() => {
-    const loadGoals = async () => {
-      if (!user?.uid) {
-        setGoals([]);
-        return;
-      }
+    if (!user?.uid) {
+      setGoals([]);
+      return;
+    }
 
-      try {
-        const goalsCol = collection(db, "users", user.uid, "goals");
-        const goalsSnapshot = await getDocs(goalsCol);
-        const goalsList = goalsSnapshot.docs.map((doc) => ({
+    const goalsCol = collection(db, "users", user.uid, "goals");
+
+    // Verwende onSnapshot für Echtzeit-Updates
+    const unsubscribe = onSnapshot(
+      goalsCol,
+      (snapshot) => {
+        const goalsList = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
         setGoals(goalsList);
-      } catch (e) {
-        console.error("Failed to load goals", e);
+        console.log(
+          "✅ Goals updated from Firebase:",
+          goalsList.length,
+          "goals"
+        );
+      },
+      (error) => {
+        console.error("Failed to subscribe to goals", error);
       }
-    };
+    );
 
-    loadGoals();
-
-    // Höre auf Goals-Änderungen
+    // Höre auch auf Custom Events für zusätzliche Updates (z.B. beim Hinzufügen/Löschen)
     const handleGoalsChanged = () => {
-      loadGoals();
+      // onSnapshot aktualisiert automatisch, aber wir können hier zusätzliche Logik hinzufügen
+      console.log("Goals changed event received");
     };
 
     window.addEventListener("goalsChanged", handleGoalsChanged);
+
     return () => {
+      unsubscribe();
       window.removeEventListener("goalsChanged", handleGoalsChanged);
     };
   }, [user?.uid]);

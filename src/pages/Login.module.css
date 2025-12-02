@@ -101,11 +101,11 @@
 }
 
 .Login .error {
-  color: #ff6b6b;
+  color: #ff4444;
   text-align: center;
-  margin-top: 10px;
+  margin-top: 25px;
   font-size: 14px;
-  text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+  background-color: transparent;
 }
 
 .Login .switchButton {

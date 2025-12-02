@@ -12,6 +12,8 @@ import ErrorMessage from "./TicktaskPages/ErrorMessage.jsx";
 import ScheduleConfirmPopup from "./TicktaskPages/ScheduleConfirmPopup.jsx";
 import { useGuestData } from "../hooks/useGuestData.js";
 import { useEffect, useState, useRef } from "react";
+import { Ring2 } from "ldrs/react";
+import "ldrs/react/Ring2.css";
 import guestStyles from "./TicktaskPages/GuestBanner.module.css";
 import {
   addDoc,
@@ -114,6 +116,14 @@ const buildScheduledMetadata = (dayOption, hour, minute) => {
 
 export function Ticktask({ user, isGuestMode = false }) {
   const isInitialLoad = useRef(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const dataLoadedRef = useRef({
+    tasks: false,
+    weekly: false,
+    routine: false,
+  });
+  const loadingStartTimeRef = useRef(null);
+  const minLoadingTimeRef = useRef(null);
 
   // Gast-Datenmanagement
   const { guestData, updateGuestData, clearGuestData } =
@@ -1227,8 +1237,46 @@ export function Ticktask({ user, isGuestMode = false }) {
   const [scheduleConfirmOpen, setScheduleConfirmOpen] = useState(false);
   const [taskToCopy, setTaskToCopy] = useState(null);
 
+  // Funktion zum Prüfen, ob alle Daten geladen wurden
+  const checkIfAllDataLoaded = () => {
+    if (
+      dataLoadedRef.current.tasks &&
+      dataLoadedRef.current.weekly &&
+      dataLoadedRef.current.routine
+    ) {
+      // Prüfe, ob mindestens 1.5 Sekunden vergangen sind
+      const elapsed = Date.now() - loadingStartTimeRef.current;
+      const minLoadingTime = 1500; // 1.5 Sekunden
+
+      if (elapsed >= minLoadingTime) {
+        // Mindestzeit erreicht, sofort ausblenden
+        setIsLoading(false);
+      } else {
+        // Mindestzeit noch nicht erreicht, Timer setzen
+        const remainingTime = minLoadingTime - elapsed;
+        if (minLoadingTimeRef.current) {
+          clearTimeout(minLoadingTimeRef.current);
+        }
+        minLoadingTimeRef.current = setTimeout(() => {
+          setIsLoading(false);
+        }, remainingTime);
+      }
+    }
+  };
+
   // Lade Tasks beim Start
   useEffect(() => {
+    // Reset loading state
+    setIsLoading(true);
+    loadingStartTimeRef.current = Date.now();
+    if (minLoadingTimeRef.current) {
+      clearTimeout(minLoadingTimeRef.current);
+    }
+    dataLoadedRef.current = {
+      tasks: false,
+      weekly: false,
+      routine: false,
+    };
     // Firebase Verbindungsüberwachung starten (nur für angemeldete Benutzer)
     if (user?.uid && !isGuestMode) {
       startConnectionMonitoring();
@@ -1240,6 +1288,7 @@ export function Ticktask({ user, isGuestMode = false }) {
     if (!user?.uid && !isGuestMode) {
       setTasks([]);
       setFrequentTemplates([]);
+      setIsLoading(false);
       return;
     }
 
@@ -1247,6 +1296,7 @@ export function Ticktask({ user, isGuestMode = false }) {
     if (isGuestMode) {
       setTasks([]);
       setFrequentTemplates([]);
+      setIsLoading(false);
       return;
     }
 
@@ -1340,6 +1390,9 @@ export function Ticktask({ user, isGuestMode = false }) {
           ...doc.data(),
         }));
         console.log("Server weekly tasks:", serverWeeklyTasks);
+
+        dataLoadedRef.current.weekly = true;
+        checkIfAllDataLoaded();
 
         if (serverWeeklyTasks.length > 0) {
           // Konvertiere Firebase-Daten zu unserem Format
@@ -1521,6 +1574,9 @@ export function Ticktask({ user, isGuestMode = false }) {
         }));
         console.log("Server routine tasks:", serverRoutineTasks);
 
+        dataLoadedRef.current.routine = true;
+        checkIfAllDataLoaded();
+
         // Morning Tasks aus Firebase laden
         const morningTask = serverRoutineTasks.find(
           (task) => task.type === "morning"
@@ -1601,6 +1657,8 @@ export function Ticktask({ user, isGuestMode = false }) {
 
         // Direkte Synchronisation mit Firebase für Echtzeit-Sync zwischen Geräten
         setTasks(serverTasks);
+        dataLoadedRef.current.tasks = true;
+        checkIfAllDataLoaded();
 
         // Speichere Firebase-Daten in localStorage für Offline-Zugriff
         try {
@@ -1628,6 +1686,10 @@ export function Ticktask({ user, isGuestMode = false }) {
       unsubscribeWeekly();
       // Verbindungsüberwachung stoppen beim Cleanup
       stopConnectionMonitoring();
+      // Timer aufräumen
+      if (minLoadingTimeRef.current) {
+        clearTimeout(minLoadingTimeRef.current);
+      }
     };
   }, [user?.uid]);
 
@@ -1856,6 +1918,41 @@ export function Ticktask({ user, isGuestMode = false }) {
           isVisible={showError}
           onClose={hideErrorMessage}
         />
+      </div>
+    );
+  }
+
+  if (isLoading && user?.uid && !isGuestMode) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+          backgroundColor: "#161616",
+          gap: "20px",
+        }}
+      >
+        <Ring2
+          size="40"
+          stroke="5"
+          strokeLength="0.25"
+          bgOpacity="0.1"
+          speed="0.8"
+          color="#d5ff05"
+        />
+        <p
+          style={{
+            color: "#d5ff05",
+            fontSize: "18px",
+            margin: 0,
+          }}
+        >
+          TickTask wird geladen
+        </p>
       </div>
     );
   }
