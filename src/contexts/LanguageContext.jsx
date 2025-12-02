@@ -84,7 +84,7 @@ export const LanguageProvider = ({ children }) => {
       signUpToSave: "Melde dich an, um deine Daten zu speichern",
 
       // Settings Tabs
-      general: "Allgemein",
+      general: "Einstellungen",
       routine: "Routine",
       weekly: "Wöchentlich",
       daily: "Täglich",

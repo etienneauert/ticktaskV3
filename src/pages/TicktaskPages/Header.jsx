@@ -286,7 +286,10 @@ export default function Header({
         </nav>
         <button
           className={styles.headerSettingsButton}
-          onClick={() => setSettingsOpen(true)}
+          onClick={() => {
+            localStorage.setItem("ticktask_settingsTab", "1"); // General Tab
+            setSettingsOpen(true);
+          }}
         >
           <img src={setting} alt="" />
         </button>

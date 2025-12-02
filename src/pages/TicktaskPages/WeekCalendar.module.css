@@ -204,7 +204,7 @@
   right: 4px;
   border-radius: 6px;
   border: 1px solid rgba(174, 200, 46, 0.557);
-  background-color: rgba(15, 18, 2, 0.962);
+  background-color: #aaaaaa;
   color: #fff;
   font-size: 11px;
   display: flex;
@@ -580,7 +580,7 @@
   right: 4px;
   border-radius: 6px;
   border: 1px solid rgba(160, 160, 160, 0.6);
-  background-color: rgba(15, 15, 15, 0.95);
+  background-color: #292929;
   color: #fff;
   font-size: 11px;
   display: flex;
@@ -635,7 +635,7 @@
   position: absolute;
   top: 2px;
   right: 2px;
-  background: transparent;
+  background-color: transparent;
   border: none;
   border-radius: 50%;
   width: 20px;
@@ -654,6 +654,7 @@
   width: 14px;
   height: 14px;
   object-fit: contain;
+  background-color: transparent;
 }
 
 .Legend {

@@ -6,7 +6,6 @@ import TasksTab from "./TasksTab";
 import DailyTab from "./DailyTab";
 import WeeklyTab from "./WeeklyTab";
 import GeneralTab from "./GeneralTab";
-import CalendarTab from "./CalendarTab";
 import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function SettingsPopup({
@@ -46,7 +45,6 @@ export default function SettingsPopup({
     { id: 0, label: t("routine") },
     { id: 3, label: t("weekly") },
     { id: 2, label: t("daily") },
-    { id: 4, label: "Kalender" },
   ];
 
   useEffect(() => {
@@ -138,7 +136,11 @@ export default function SettingsPopup({
                 />
               )}
               {activeTab === 1 && (
-                <GeneralTab streak={streak} onResetStreak={onResetStreak} />
+                <GeneralTab
+                  streak={streak}
+                  onResetStreak={onResetStreak}
+                  user={user}
+                />
               )}
               {activeTab === 2 && (
                 <DailyTab
@@ -158,7 +160,6 @@ export default function SettingsPopup({
                   />
                 </>
               )}
-              {activeTab === 4 && <CalendarTab user={user} />}
             </div>
           </div>
         </div>
