@@ -261,6 +261,22 @@ export default function Goals({ user, tasks = [] }) {
     setGoalReached(null);
   };
 
+  // Handler für "Ziel erreicht" Button
+  const handleGoalCompleted = async (goal) => {
+    if (!user?.uid || !goal) return;
+
+    try {
+      const goalDoc = doc(db, "users", user.uid, "goals", goal.id);
+      await updateDoc(goalDoc, {
+        completed: true,
+        completedAt: serverTimestamp(),
+      });
+      console.log("Goal marked as completed:", goal.id);
+    } catch (e) {
+      console.error("Failed to mark goal as completed", e);
+    }
+  };
+
   // Formatiere Datum für Anzeige
   const formatDate = (dateValue) => {
     if (!dateValue) return null;
@@ -422,31 +438,39 @@ export default function Goals({ user, tasks = [] }) {
                         )}
                       </div>
                       <div className={styles.GoalProgressRight}>
-                        <button
-                          className={styles.ShowTasksButton}
-                          onClick={() => {
-                            setExpandedGoalIds((prev) => {
-                              const newSet = new Set(prev);
-                              if (newSet.has(goal.id)) {
-                                newSet.delete(goal.id);
-                              } else {
-                                newSet.add(goal.id);
-                              }
-                              return newSet;
-                            });
-                          }}
-                        >
-                          Tasks anzeigen
-                          <img
-                            src={arrowDown}
-                            alt=""
-                            className={`${styles.ShowTasksArrow} ${
-                              expandedGoalIds.has(goal.id)
-                                ? styles.ShowTasksArrowUp
-                                : styles.ShowTasksArrowDown
-                            }`}
-                          />
-                        </button>
+                        <div className={styles.GoalActionButtons}>
+                          <button
+                            className={styles.GoalCompletedButton}
+                            onClick={() => handleGoalCompleted(goal)}
+                          >
+                            Ziel erreicht
+                          </button>
+                          <button
+                            className={styles.ShowTasksButton}
+                            onClick={() => {
+                              setExpandedGoalIds((prev) => {
+                                const newSet = new Set(prev);
+                                if (newSet.has(goal.id)) {
+                                  newSet.delete(goal.id);
+                                } else {
+                                  newSet.add(goal.id);
+                                }
+                                return newSet;
+                              });
+                            }}
+                          >
+                            Tasks anzeigen
+                            <img
+                              src={arrowDown}
+                              alt=""
+                              className={`${styles.ShowTasksArrow} ${
+                                expandedGoalIds.has(goal.id)
+                                  ? styles.ShowTasksArrowUp
+                                  : styles.ShowTasksArrowDown
+                              }`}
+                            />
+                          </button>
+                        </div>
                         {maxHours > 0 && (
                           <div className={styles.GoalProgressText}>
                             {timeSpent.toFixed(1)}h / {maxHours}h
