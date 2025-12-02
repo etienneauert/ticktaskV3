@@ -237,6 +237,38 @@ export default function Header({
         </div>
       </div>
       <div className={styles.buttonsRight}>
+        <nav className={styles.headerNav}>
+          <button
+            className={styles.navLink}
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+          >
+            Tasks
+          </button>
+          <button
+            className={styles.navLink}
+            onClick={() => {
+              const element = document.getElementById("calendar-section");
+              if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            }}
+          >
+            Kalender
+          </button>
+          <button
+            className={styles.navLink}
+            onClick={() => {
+              const element = document.getElementById("goals-section");
+              if (element) {
+                element.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            }}
+          >
+            Ziele
+          </button>
+        </nav>
         <button
           className={styles.headerSettingsButton}
           onClick={() => setSettingsOpen(true)}

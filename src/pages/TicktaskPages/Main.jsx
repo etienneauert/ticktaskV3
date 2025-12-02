@@ -107,7 +107,7 @@ export default function Main({
             setAbendCompleted={setAbendCompleted}
           ></MainRoutine>
         </div>
-        <div className={styles.MainTasks}>
+        <div id="tasks-section" className={styles.MainTasks}>
           <MainTasks
             tasks={tasks}
             frequentTemplates={frequentTemplates}
@@ -135,7 +135,7 @@ export default function Main({
         </div>
       </div>
       {!isCalendarHidden && (
-        <div className={styles.WeekCalendarContainer}>
+        <div id="calendar-section" className={styles.WeekCalendarContainer}>
           <WeekCalendar
             user={user}
             tasks={tasks}
@@ -143,7 +143,7 @@ export default function Main({
           />
         </div>
       )}
-      <div className={styles.GoalsContainer}>
+      <div id="goals-section" className={styles.GoalsContainer}>
         <Goals user={user} tasks={tasks} />
       </div>
     </div>

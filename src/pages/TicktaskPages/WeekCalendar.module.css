@@ -1,7 +1,7 @@
 .WeekCalendar {
   width: 100%;
   max-width: 1400px;
-  margin: 40px auto 110px;
+  margin: 40px auto 40px;
   padding: 20px;
   background-color: #161616;
   overflow-x: hidden;

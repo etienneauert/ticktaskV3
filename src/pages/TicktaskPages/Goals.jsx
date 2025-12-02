@@ -247,7 +247,6 @@ export default function Goals({ user, tasks = [] }) {
   return (
     <>
       <div className={styles.GoalsContainer}>
-        <h3 className={styles.GoalsTitle}>Goals</h3>
         <form className={styles.GoalsInputContainer} onSubmit={handleSubmit}>
           <input
             type="text"
