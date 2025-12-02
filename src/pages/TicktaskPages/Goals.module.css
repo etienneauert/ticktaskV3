@@ -313,6 +313,7 @@
   font-size: 20px;
   margin: 0;
   background-color: transparent;
+  text-align: center;
 }
 
 .deleteConfirmContent p {
@@ -325,9 +326,11 @@
 
 .deleteConfirmActions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 12px;
   background-color: transparent;
+  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
 .deleteConfirmCancelButton {
@@ -339,6 +342,8 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
 }
 
 .deleteConfirmCancelButton:hover {
@@ -355,11 +360,113 @@
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
 }
 
 .deleteConfirmDeleteButton:hover {
   background-color: rgba(255, 68, 68, 0.15);
   border-color: #ff6666;
+}
+
+/* Done Goals List */
+.DoneGoals {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 20px 0 0 0;
+  border: 1px solid #333;
+  border-radius: 10px;
+  align-items: center;
+  color: white;
+  cursor: default;
+  width: 100%;
+  background-color: transparent;
+  box-sizing: border-box;
+  padding-bottom: 0;
+}
+
+.DoneGoals.DoneGoalsExpanded {
+  padding-bottom: 15px;
+}
+
+.DoneGoalsHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.DoneGoalsHeader:hover {
+  cursor: pointer;
+}
+
+.DoneGoalsHeader h3 {
+  background-color: inherit;
+  color: rgb(215, 215, 215);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.DoneGoalsHeader .length {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.DoneGoalsHeader .arrow {
+  transition: transform 0.3s ease;
+  width: 20px;
+  background-color: inherit;
+}
+
+.DoneGoalsHeader .arrowDown {
+  transform: rotateX(0deg);
+}
+
+.DoneGoalsHeader .arrowUp {
+  transform: rotateX(180deg);
+}
+
+.DoneGoalsList {
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+}
+
+.DoneGoalItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.DoneGoalItem:last-child {
+  margin-bottom: 0;
+}
+
+.DoneGoalText {
+  flex: 1;
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.DoneGoalDate {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-left: 10px;
 }
 
 .GoalProgressContainer {
@@ -433,4 +540,89 @@
   font-size: 12px;
   text-align: right;
   background-color: transparent;
+}
+
+.GoalProgressRight {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: transparent;
+}
+
+.ShowTasksButton {
+  background-color: transparent;
+  color: #888;
+  border: 1px solid #555;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ShowTasksButton:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #777;
+}
+
+.ShowTasksArrow {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.3s ease;
+  background-color: transparent;
+}
+
+.ShowTasksArrowDown {
+  transform: rotateX(0deg);
+}
+
+.ShowTasksArrowUp {
+  transform: rotateX(180deg);
+}
+
+.GoalTasksList {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #333;
+  background-color: transparent;
+}
+
+.GoalTaskItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.GoalTaskItem:last-child {
+  margin-bottom: 0;
+}
+
+.GoalTaskText {
+  flex: 1;
+  font-size: 14px;
+  background-color: transparent;
+}
+
+.GoalTaskDuration {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  margin-left: 10px;
+  background-color: transparent;
+}
+
+.GoalTaskEmpty {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+  padding: 10px;
 }

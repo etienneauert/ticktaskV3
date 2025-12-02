@@ -3,6 +3,7 @@ import styles from "./Goals.module.css";
 import rightArrow2 from "../../assets/right-arrow-2.png";
 import close3 from "../../assets/close-3.png";
 import starWhite from "../../assets/star-white.png";
+import arrowDown from "../../assets/arrow-down.png";
 import GoalsPopup from "./GoalsPopup";
 import { db } from "../../firebase/firebase";
 import {
@@ -13,6 +14,7 @@ import {
   doc,
   deleteDoc,
   onSnapshot,
+  updateDoc,
 } from "firebase/firestore";
 
 export default function Goals({ user, tasks = [] }) {
@@ -22,6 +24,11 @@ export default function Goals({ user, tasks = [] }) {
   const [goals, setGoals] = useState([]);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [goalToDelete, setGoalToDelete] = useState(null);
+  const [goalReachedOpen, setGoalReachedOpen] = useState(false);
+  const [goalReached, setGoalReached] = useState(null);
+  const [shownGoalReachedIds, setShownGoalReachedIds] = useState(new Set());
+  const [showDoneGoals, setShowDoneGoals] = useState(false);
+  const [expandedGoalIds, setExpandedGoalIds] = useState(new Set());
 
   // Debug: Log tasks when they change
   useEffect(() => {
@@ -198,6 +205,62 @@ export default function Goals({ user, tasks = [] }) {
     return timeSpentMinutes / 60;
   };
 
+  // Prüfe, ob ein Goal die Stundenanzahl erreicht hat
+  useEffect(() => {
+    if (!goals || goals.length === 0) return;
+
+    goals.forEach((goal) => {
+      if (!goal.id) return;
+
+      const timeSpent = getTimeSpent(goal);
+      const maxHours = goal.hoursNeeded || 0;
+
+      console.log(
+        `[Goal Reached Check] Goal: ${
+          goal.text
+        }, timeSpent: ${timeSpent}h, maxHours: ${maxHours}h, shown: ${shownGoalReachedIds.has(
+          goal.id
+        )}`
+      );
+
+      // Prüfe, ob das Goal erreicht wurde und noch nicht angezeigt wurde
+      // Verwende eine kleine Toleranz (0.01) für Rundungsfehler
+      if (
+        maxHours > 0 &&
+        timeSpent >= maxHours - 0.01 &&
+        !shownGoalReachedIds.has(goal.id)
+      ) {
+        console.log(`[Goal Reached] Showing popup for goal: ${goal.text}`);
+        setGoalReached(goal);
+        setGoalReachedOpen(true);
+        setShownGoalReachedIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(goal.id);
+          return newSet;
+        });
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goals]);
+
+  // Handler für Goal-Erreichungs-Popup
+  const handleGoalReachedClose = async (isCompleted = false) => {
+    if (isCompleted && goalReached && user?.uid) {
+      try {
+        const goalDoc = doc(db, "users", user.uid, "goals", goalReached.id);
+        await updateDoc(goalDoc, {
+          completed: true,
+          completedAt: serverTimestamp(),
+        });
+        console.log("Goal marked as completed:", goalReached.id);
+      } catch (e) {
+        console.error("Failed to mark goal as completed", e);
+      }
+    }
+    setGoalReachedOpen(false);
+    setGoalReached(null);
+  };
+
   // Formatiere Datum für Anzeige
   const formatDate = (dateValue) => {
     if (!dateValue) return null;
@@ -276,95 +339,199 @@ export default function Goals({ user, tasks = [] }) {
 
         {/* Goals Liste */}
         <div className={styles.GoalsList}>
-          {goals.map((goal) => {
-            const timeSpent = getTimeSpent(goal);
-            const maxHours = goal.hoursNeeded || 0;
-            const progress =
-              maxHours > 0 ? Math.min((timeSpent / maxHours) * 100, 100) : 0;
+          {goals
+            .filter((goal) => !goal.completed)
+            .map((goal) => {
+              const timeSpent = getTimeSpent(goal);
+              const maxHours = goal.hoursNeeded || 0;
+              const progress =
+                maxHours > 0 ? Math.min((timeSpent / maxHours) * 100, 100) : 0;
 
-            console.log(
-              `[Goals] Rendering goal "${goal.text}": timeSpent=${timeSpent}h, maxHours=${maxHours}h, progress=${progress}%`
-            );
+              console.log(
+                `[Goals] Rendering goal "${goal.text}": timeSpent=${timeSpent}h, maxHours=${maxHours}h, progress=${progress}%`
+              );
 
-            return (
-              <div key={goal.id} className={styles.GoalItem}>
-                <div className={styles.GoalItemHeader}>
-                  <div className={styles.GoalTextContainer}>
-                    {goal.priority === "high" && (
-                      <img
-                        src={starWhite}
-                        alt=""
-                        className={styles.GoalPriorityIcon}
-                      />
-                    )}
-                    <div className={styles.GoalText}>{goal.text}</div>
-                  </div>
-                  <button
-                    className={styles.GoalDeleteButton}
-                    onClick={() => handleDeleteClick(goal)}
-                  >
-                    <img src={close3} alt="Delete" />
-                  </button>
-                </div>
-                <div className={styles.GoalProgressContainer}>
-                  <div className={styles.GoalProgressBar}>
-                    {progress > 0 && (
-                      <div
-                        className={styles.GoalProgressFill}
-                        style={{ width: `${progress}%` }}
-                      />
-                    )}
-                  </div>
-                  <div className={styles.GoalProgressInfo}>
-                    <div className={styles.GoalDatesContainer}>
-                      {formatCreatedDate(goal) && (
-                        <div className={styles.GoalDate}>
-                          <span className={styles.GoalDateLabel}>
-                            Erstellt:
-                          </span>
-                          <span className={styles.GoalDateValue}>
-                            {formatCreatedDate(goal)}
-                          </span>
-                        </div>
+              return (
+                <div key={goal.id} className={styles.GoalItem}>
+                  <div className={styles.GoalItemHeader}>
+                    <div className={styles.GoalTextContainer}>
+                      {goal.priority === "high" && (
+                        <img
+                          src={starWhite}
+                          alt=""
+                          className={styles.GoalPriorityIcon}
+                        />
                       )}
-                      {goal.targetDate && (
-                        <div className={styles.GoalDate}>
-                          <span className={styles.GoalDateLabel}>Ziel:</span>
-                          <span className={styles.GoalDateValue}>
-                            {formatDate(goal.targetDate)}
-                          </span>
-                          {getDaysUntilTarget(goal) !== null && (
-                            <span
-                              className={`${styles.GoalDaysRemaining} ${
-                                getDaysUntilTarget(goal) > 0 &&
-                                getDaysUntilTarget(goal) <= 10
-                                  ? styles.GoalDaysRemainingUrgent
-                                  : ""
-                              }`}
-                            >
-                              {getDaysUntilTarget(goal) > 0
-                                ? `${getDaysUntilTarget(goal)} Tage verbleibend`
-                                : getDaysUntilTarget(goal) === 0
-                                ? "Heute"
-                                : `${Math.abs(
-                                    getDaysUntilTarget(goal)
-                                  )} Tage überfällig`}
+                      <div className={styles.GoalText}>{goal.text}</div>
+                    </div>
+                    <button
+                      className={styles.GoalDeleteButton}
+                      onClick={() => handleDeleteClick(goal)}
+                    >
+                      <img src={close3} alt="Delete" />
+                    </button>
+                  </div>
+                  <div className={styles.GoalProgressContainer}>
+                    <div className={styles.GoalProgressBar}>
+                      {progress > 0 && (
+                        <div
+                          className={styles.GoalProgressFill}
+                          style={{ width: `${progress}%` }}
+                        />
+                      )}
+                    </div>
+                    <div className={styles.GoalProgressInfo}>
+                      <div className={styles.GoalDatesContainer}>
+                        {formatCreatedDate(goal) && (
+                          <div className={styles.GoalDate}>
+                            <span className={styles.GoalDateLabel}>
+                              Erstellt:
                             </span>
-                          )}
+                            <span className={styles.GoalDateValue}>
+                              {formatCreatedDate(goal)}
+                            </span>
+                          </div>
+                        )}
+                        {goal.targetDate && (
+                          <div className={styles.GoalDate}>
+                            <span className={styles.GoalDateLabel}>Ziel:</span>
+                            <span className={styles.GoalDateValue}>
+                              {formatDate(goal.targetDate)}
+                            </span>
+                            {getDaysUntilTarget(goal) !== null && (
+                              <span
+                                className={`${styles.GoalDaysRemaining} ${
+                                  getDaysUntilTarget(goal) > 0 &&
+                                  getDaysUntilTarget(goal) <= 10
+                                    ? styles.GoalDaysRemainingUrgent
+                                    : ""
+                                }`}
+                              >
+                                {getDaysUntilTarget(goal) > 0
+                                  ? `${getDaysUntilTarget(
+                                      goal
+                                    )} Tage verbleibend`
+                                  : getDaysUntilTarget(goal) === 0
+                                  ? "Heute"
+                                  : `${Math.abs(
+                                      getDaysUntilTarget(goal)
+                                    )} Tage überfällig`}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className={styles.GoalProgressRight}>
+                        <button
+                          className={styles.ShowTasksButton}
+                          onClick={() => {
+                            setExpandedGoalIds((prev) => {
+                              const newSet = new Set(prev);
+                              if (newSet.has(goal.id)) {
+                                newSet.delete(goal.id);
+                              } else {
+                                newSet.add(goal.id);
+                              }
+                              return newSet;
+                            });
+                          }}
+                        >
+                          Tasks anzeigen
+                          <img
+                            src={arrowDown}
+                            alt=""
+                            className={`${styles.ShowTasksArrow} ${
+                              expandedGoalIds.has(goal.id)
+                                ? styles.ShowTasksArrowUp
+                                : styles.ShowTasksArrowDown
+                            }`}
+                          />
+                        </button>
+                        {maxHours > 0 && (
+                          <div className={styles.GoalProgressText}>
+                            {timeSpent.toFixed(1)}h / {maxHours}h
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tasks für dieses Goal anzeigen */}
+                  {expandedGoalIds.has(goal.id) && (
+                    <div className={styles.GoalTasksList}>
+                      {tasks
+                        .filter((task) => task.goalId === goal.id)
+                        .map((task) => {
+                          const taskDuration = task.taskDuration || 0;
+                          const durationInHours = taskDuration / 60;
+                          return (
+                            <div key={task.id} className={styles.GoalTaskItem}>
+                              <div className={styles.GoalTaskText}>
+                                {task.text}
+                              </div>
+                              {taskDuration > 0 && (
+                                <div className={styles.GoalTaskDuration}>
+                                  {durationInHours >= 1
+                                    ? `${durationInHours.toFixed(1)}h`
+                                    : `${taskDuration}min`}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      {tasks.filter((task) => task.goalId === goal.id)
+                        .length === 0 && (
+                        <div className={styles.GoalTaskEmpty}>
+                          Keine Tasks diesem Goal zugewiesen
                         </div>
                       )}
                     </div>
-                    {maxHours > 0 && (
-                      <div className={styles.GoalProgressText}>
-                        {timeSpent.toFixed(1)}h / {maxHours}h
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
+
+        {/* Done Goals List */}
+        {goals.filter((goal) => goal.completed).length > 0 && (
+          <div className={styles.DoneGoals}>
+            <div
+              className={styles.DoneGoalsHeader}
+              onClick={() => setShowDoneGoals(!showDoneGoals)}
+            >
+              <h3>
+                Erledigte Goals
+                <span className={styles.length}>
+                  {goals.filter((goal) => goal.completed).length}
+                </span>
+              </h3>
+              <img
+                src={arrowDown}
+                alt=""
+                className={`${styles.arrow} ${
+                  showDoneGoals ? styles.arrowUp : styles.arrowDown
+                }`}
+              />
+            </div>
+
+            {showDoneGoals && (
+              <div className={styles.DoneGoalsList}>
+                {goals
+                  .filter((goal) => goal.completed)
+                  .map((goal) => (
+                    <div key={goal.id} className={styles.DoneGoalItem}>
+                      <div className={styles.DoneGoalText}>{goal.text}</div>
+                      {goal.completedAt && (
+                        <div className={styles.DoneGoalDate}>
+                          {formatDate(goal.completedAt)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
       <GoalsPopup
         open={open}
@@ -411,6 +578,47 @@ export default function Goals({ user, tasks = [] }) {
                 className={styles.deleteConfirmDeleteButton}
               >
                 Löschen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Goal Reached Popup */}
+      {goalReachedOpen && goalReached && (
+        <div
+          className={styles.deleteConfirmOverlay}
+          onClick={handleGoalReachedClose}
+        >
+          <div
+            className={styles.deleteConfirmModal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.deleteConfirmHeader}>
+              <img
+                onClick={handleGoalReachedClose}
+                className={styles.deleteConfirmClose}
+                src={close3}
+                alt=""
+              />
+            </div>
+            <div className={styles.deleteConfirmContent}>
+              <h2 style={{ textAlign: "center" }}>
+                Wurde das Ziel: {goalReached.text} erreicht?
+              </h2>
+            </div>
+            <div className={styles.deleteConfirmActions}>
+              <button
+                onClick={handleGoalReachedClose}
+                className={styles.deleteConfirmCancelButton}
+              >
+                Nein
+              </button>
+              <button
+                onClick={() => handleGoalReachedClose(true)}
+                className={styles.deleteConfirmDeleteButton}
+              >
+                Ja
               </button>
             </div>
           </div>
