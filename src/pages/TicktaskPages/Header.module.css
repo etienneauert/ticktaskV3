@@ -130,9 +130,27 @@
 }
 
 .currentTimeHeader {
-  color: rgb(213, 255, 5);
-  font-size: 22px;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: transparent;
+}
+
+.currentDate {
+  color: #888;
+  font-size: 18px;
+  background-color: transparent;
+}
+
+.timeSeparator {
+  color: #888;
+  font-size: 18px;
+  background-color: transparent;
+}
+
+.currentTime {
+  color: #888;
+  font-size: 18px;
   background-color: transparent;
 }
 

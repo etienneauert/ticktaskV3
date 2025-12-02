@@ -222,8 +222,18 @@ export default function Header({
           )}
         </div>
         <div className={styles.currentTimeHeader}>
-          {String(currentTime.getHours()).padStart(2, "0")}:
-          {String(currentTime.getMinutes()).padStart(2, "0")}
+          <span className={styles.currentDate}>
+            {currentTime.toLocaleDateString("de-DE", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </span>
+          <span className={styles.timeSeparator}>|</span>
+          <span className={styles.currentTime}>
+            {String(currentTime.getHours()).padStart(2, "0")}:
+            {String(currentTime.getMinutes()).padStart(2, "0")}
+          </span>
         </div>
       </div>
       <div className={styles.buttonsRight}>
