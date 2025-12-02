@@ -1,5 +1,6 @@
 import styles from "./Weekly.module.css";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import pen from "../../../assets/pen.png";
 
 export default function Weekly({
   weeklyTasks,
@@ -36,9 +37,24 @@ export default function Weekly({
     });
   };
 
+  const handlePenClick = () => {
+    const event = new CustomEvent("openSettingsWithTab", {
+      detail: { tabId: 3 }, // Weekly Tab
+    });
+    window.dispatchEvent(event);
+  };
+
   return (
     <div className={styles.weeklyContainer}>
-      <h4 className={styles.weeklyTitle}>{t(currentDay)}</h4>
+      <div className={styles.checklistHeader}>
+        <h4 className={styles.weeklyTitle}>{t(currentDay)}</h4>
+        <img
+          src={pen}
+          alt=""
+          className={styles.penIcon}
+          onClick={handlePenClick}
+        />
+      </div>
 
       <div className={styles.tasksList}>
         {todayTasks.length === 0 ? (

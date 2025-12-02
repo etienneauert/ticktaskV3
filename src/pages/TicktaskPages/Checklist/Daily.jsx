@@ -1,5 +1,6 @@
 import styles from "./Daily.module.css";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import pen from "../../../assets/pen.png";
 
 export default function Daily({
   dailyTasks,
@@ -21,9 +22,24 @@ export default function Daily({
     });
   };
 
+  const handlePenClick = () => {
+    const event = new CustomEvent("openSettingsWithTab", {
+      detail: { tabId: 2 }, // Daily Tab
+    });
+    window.dispatchEvent(event);
+  };
+
   return (
     <div className={styles.dailyContainer}>
-      <h4 className={styles.dailyTitle}>{t("daily")}</h4>
+      <div className={styles.checklistHeader}>
+        <h4 className={styles.dailyTitle}>{t("daily")}</h4>
+        <img
+          src={pen}
+          alt=""
+          className={styles.penIcon}
+          onClick={handlePenClick}
+        />
+      </div>
 
       <div className={styles.tasksList}>
         {dailyTasks.length === 0 ? (

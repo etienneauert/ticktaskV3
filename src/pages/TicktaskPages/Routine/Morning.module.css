@@ -8,12 +8,32 @@
   width: 300px;
 }
 
+.checklistHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  background-color: transparent;
+  position: relative;
+}
+
 .morningTitle {
   color: #aaa;
-  margin-bottom: 15px;
+  margin: 0;
   font-size: 18px;
   text-align: center;
   background-color: transparent;
+  flex: 1;
+}
+
+.penIcon {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  cursor: pointer;
+  position: absolute;
+  top: -10px;
+  right: -10px;
 }
 
 .tasksList {

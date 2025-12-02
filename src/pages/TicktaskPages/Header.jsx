@@ -191,6 +191,21 @@ export default function Header({
     }
   }, []);
 
+  // Höre auf Events zum Öffnen der Settings mit einem bestimmten Tab
+  useEffect(() => {
+    const handleOpenSettings = (event) => {
+      const { tabId } = event.detail;
+      localStorage.setItem("ticktask_settingsTab", String(tabId));
+      setSettingsOpen(true);
+    };
+
+    window.addEventListener("openSettingsWithTab", handleOpenSettings);
+
+    return () => {
+      window.removeEventListener("openSettingsWithTab", handleOpenSettings);
+    };
+  }, []);
+
   return (
     <div
       className={`${styles.headerContainer} ${

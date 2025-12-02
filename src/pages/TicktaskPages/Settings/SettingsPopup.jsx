@@ -29,15 +29,17 @@ export default function SettingsPopup({
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const { t } = useLanguage();
 
-  // Prüfe ob ein bestimmter Tab nach Reload geöffnet werden soll
+  // Prüfe ob ein bestimmter Tab geöffnet werden soll
   useEffect(() => {
-    const savedTab = localStorage.getItem("ticktask_settingsTab");
-    if (savedTab) {
-      const tabIndex = parseInt(savedTab, 10);
-      setActiveTab(tabIndex);
-      localStorage.removeItem("ticktask_settingsTab");
+    if (open) {
+      const savedTab = localStorage.getItem("ticktask_settingsTab");
+      if (savedTab) {
+        const tabIndex = parseInt(savedTab, 10);
+        setActiveTab(tabIndex);
+        localStorage.removeItem("ticktask_settingsTab");
+      }
     }
-  }, []);
+  }, [open]);
 
   const tabs = [
     { id: 1, label: t("general") },

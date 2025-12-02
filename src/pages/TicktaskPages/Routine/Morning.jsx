@@ -1,6 +1,7 @@
 import styles from "./Morning.module.css";
 import { useState } from "react";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import pen from "../../../assets/pen.png";
 
 export default function Morning({
   morningTasks,
@@ -22,9 +23,24 @@ export default function Morning({
     });
   };
 
+  const handlePenClick = () => {
+    const event = new CustomEvent("openSettingsWithTab", {
+      detail: { tabId: 0 }, // Routine Tab
+    });
+    window.dispatchEvent(event);
+  };
+
   return (
     <div className={styles.morningContainer}>
-      <h4 className={styles.morningTitle}>{t("morning")}</h4>
+      <div className={styles.checklistHeader}>
+        <h4 className={styles.morningTitle}>{t("morning")}</h4>
+        <img
+          src={pen}
+          alt=""
+          className={styles.penIcon}
+          onClick={handlePenClick}
+        />
+      </div>
 
       <div className={styles.tasksList}>
         {morningTasks.length === 0 ? (
