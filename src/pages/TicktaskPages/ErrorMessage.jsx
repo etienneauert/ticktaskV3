@@ -10,7 +10,7 @@ export default function ErrorMessage({ message, onClose, isVisible, buttonRef })
       const timer = setTimeout(() => {
         setIsClosing(true);
         setTimeout(() => {
-          onClose();
+        onClose();
         }, 300); // Warte auf Animation
       }, 4000); // Auto-close nach 4 Sekunden
 

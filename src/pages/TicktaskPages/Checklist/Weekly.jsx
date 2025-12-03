@@ -38,8 +38,8 @@ export default function Weekly({
   };
 
   const handlePenClick = () => {
-    const event = new CustomEvent("openSettingsWithTab", {
-      detail: { tabId: 3 }, // Weekly Tab
+    const event = new CustomEvent("openRoutineCustomization", {
+      detail: { tabId: 2 }, // Weekly Tab
     });
     window.dispatchEvent(event);
   };

@@ -1926,6 +1926,11 @@ export function Ticktask({ user, isGuestMode = false }) {
     return (
       <div
         style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -1934,6 +1939,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           width: "100vw",
           backgroundColor: "#161616",
           gap: "20px",
+          zIndex: 9999,
         }}
       >
         <Ring2

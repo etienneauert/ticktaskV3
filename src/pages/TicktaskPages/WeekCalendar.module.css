@@ -8,6 +8,13 @@
   overflow-y: visible;
 }
 
+/* Ab 23 Zoll (etwa 1920px Breite): Kalender soll so breit sein wie Task-Komponente */
+@media (min-width: 1920px) {
+  .WeekCalendar {
+    max-width: 1600px;
+  }
+}
+
 .CalendarHeader {
   display: grid;
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
@@ -562,11 +569,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
-}
-
-.AddButton:hover {
-  transform: scale(1.1);
 }
 
 .AddButton img {

@@ -14,7 +14,7 @@
   color: #fff;
   padding: 24px;
   border-radius: 8px;
-  width: 1070px;
+  width: 700px;
   height: 500px;
   max-width: 90vw;
   max-height: 90vh;
@@ -29,7 +29,15 @@
 }
 
 .modalWide {
-  width: 1470px;
+  width: 1800px;
+}
+
+.routineModal {
+  width: 1000px;
+}
+
+.routineModalWeekly {
+  width: 2000px;
 }
 
 .modalcloseandinfo {
@@ -126,20 +134,7 @@
   display: flex;
   flex-direction: column;
   overflow: visible;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 60px,
-    black 80px,
-    black 100%
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent 0%,
-    transparent 60px,
-    black 80px,
-    black 100%
-  );
+  padding-top: 20px;
 }
 
 .tabPanel {
@@ -149,6 +144,8 @@
   background-color: transparent;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Mobile Media Queries */

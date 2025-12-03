@@ -23,8 +23,8 @@ export default function Daily({
   };
 
   const handlePenClick = () => {
-    const event = new CustomEvent("openSettingsWithTab", {
-      detail: { tabId: 2 }, // Daily Tab
+    const event = new CustomEvent("openRoutineCustomization", {
+      detail: { tabId: 3 }, // Daily Tab
     });
     window.dispatchEvent(event);
   };

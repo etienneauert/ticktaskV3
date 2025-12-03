@@ -5,18 +5,20 @@
 .weeklyDays {
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 15px;
   justify-content: center;
   align-items: flex-start;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   animation: fadeIn 0.3s ease-out 0.3s both;
   background-color: transparent;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .weeklySection {
   flex: 1;
-  min-width: 150px;
-  max-width: 400px;
+  min-width: 180px;
+  max-width: 220px;
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid #333;
@@ -24,13 +26,15 @@
   background-color: transparent;
   min-height: 70px;
   cursor: pointer;
-  transition: flex 0.3s ease;
+  transition: flex 0.3s ease, min-width 0.3s ease, max-width 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 
 .weeklySection:hover {
   flex: 2;
+  min-width: 250px;
+  max-width: 300px;
   min-height: calc(100% + 50px);
   /* border-color: #d5ff05; */
   background-color: transparent;

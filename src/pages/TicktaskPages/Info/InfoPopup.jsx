@@ -62,7 +62,7 @@ export default function InfoPopup({ open, onClose }) {
                 width: indicatorStyle.width,
               }}
             />
-          </div>
+              </div>
           <div className={styles.tabContent}>
             {activeTab === 0 && (
               <div className={styles.tabPanel}>
@@ -74,7 +74,7 @@ export default function InfoPopup({ open, onClose }) {
                 {/* Inhalt für "Wie es funktioniert" */}
               </div>
             )}
-          </div>
+            </div>
         </div>
       </div>
     </div>

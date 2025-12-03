@@ -3,6 +3,7 @@ import fire from "../../assets/flame.png";
 import setting from "../../assets/setting.png";
 import info from "../../assets/info.png";
 import SettingsPopup from "./Settings/SettingsPopup";
+import RoutineCustomizationPopup from "./Settings/RoutineCustomizationPopup";
 import InfoPopup from "./Info/InfoPopup";
 import ErrorMessage from "./ErrorMessage";
 import { useState, useEffect, useRef } from "react";
@@ -35,6 +36,9 @@ export default function Header({
   showErrorMessage,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [routineCustomizationOpen, setRoutineCustomizationOpen] =
+    useState(false);
+  const [routineCustomizationTab, setRoutineCustomizationTab] = useState(0);
   const [infoOpen, setInfoOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [errorMessage, setErrorMessage] = useState("");
@@ -206,102 +210,131 @@ export default function Header({
     };
   }, []);
 
+  // Höre auf Events zum Öffnen des Routine-Customization-Popups
+  useEffect(() => {
+    const handleOpenRoutineCustomization = (event) => {
+      const { tabId } = event.detail;
+      setRoutineCustomizationTab(tabId || 0);
+      setRoutineCustomizationOpen(true);
+    };
+
+    window.addEventListener(
+      "openRoutineCustomization",
+      handleOpenRoutineCustomization
+    );
+
+    return () => {
+      window.removeEventListener(
+        "openRoutineCustomization",
+        handleOpenRoutineCustomization
+      );
+    };
+  }, []);
+
   return (
     <div
       className={`${styles.headerContainer} ${
         isGuestMode ? styles.guestMode : ""
       }`}
     >
-      <div className={styles.headerLeft}>
-        <div className={styles.streak}>
-          <p className={styles.counter}>{streak}</p>
-          <img className={styles.fireIcon} src={fire} alt="" />
+      <div className={styles.headerContent}>
+        <div className={styles.headerLeft}>
+          <div className={styles.streak}>
+            <p className={styles.counter}>{streak}</p>
+            <img className={styles.fireIcon} src={fire} alt="" />
+          </div>
+          <div className={styles.finishDayContainer}>
+            <button
+              ref={finishDayButtonRef}
+              className={`${styles.finishDayButton} ${
+                isFinishDayDisabled() ? styles.disabled : ""
+              }`}
+              onClick={handleFinishDay}
+            >
+              {t("finishDay")}
+            </button>
+            {showError && (
+              <ErrorMessage
+                message={errorMessage}
+                isVisible={showError}
+                onClose={() => setShowError(false)}
+                buttonRef={finishDayButtonRef}
+              />
+            )}
+          </div>
+          <div className={styles.currentTimeHeader}>
+            <span className={styles.currentDate}>
+              {currentTime.toLocaleDateString("de-DE", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </span>
+            <span className={styles.timeSeparator}>|</span>
+            <span className={styles.currentTime}>
+              {String(currentTime.getHours()).padStart(2, "0")}:
+              {String(currentTime.getMinutes()).padStart(2, "0")}
+            </span>
+          </div>
         </div>
-        <div className={styles.finishDayContainer}>
+        <div className={styles.buttonsRight}>
+          <nav className={styles.headerNav}>
+            <button
+              className={styles.navLink}
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              Tasks
+            </button>
+            <button
+              className={styles.navLink}
+              onClick={() => {
+                const element = document.getElementById("calendar-section");
+                if (element) {
+                  element.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }
+              }}
+            >
+              Kalender
+            </button>
+            <button
+              className={styles.navLink}
+              onClick={() => {
+                const element = document.getElementById("goals-section");
+                if (element) {
+                  element.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }
+              }}
+            >
+              Ziele
+            </button>
+          </nav>
           <button
-            ref={finishDayButtonRef}
-            className={`${styles.finishDayButton} ${
-              isFinishDayDisabled() ? styles.disabled : ""
-            }`}
-            onClick={handleFinishDay}
-          >
-            {t("finishDay")}
-          </button>
-          {showError && (
-            <ErrorMessage
-              message={errorMessage}
-              isVisible={showError}
-              onClose={() => setShowError(false)}
-              buttonRef={finishDayButtonRef}
-            />
-          )}
-        </div>
-        <div className={styles.currentTimeHeader}>
-          <span className={styles.currentDate}>
-            {currentTime.toLocaleDateString("de-DE", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })}
-          </span>
-          <span className={styles.timeSeparator}>|</span>
-          <span className={styles.currentTime}>
-            {String(currentTime.getHours()).padStart(2, "0")}:
-            {String(currentTime.getMinutes()).padStart(2, "0")}
-          </span>
-        </div>
-      </div>
-      <div className={styles.buttonsRight}>
-        <nav className={styles.headerNav}>
-          <button
-            className={styles.navLink}
+            className={styles.headerSettingsButton}
             onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              localStorage.setItem("ticktask_settingsTab", "1"); // General Tab
+              setSettingsOpen(true);
             }}
           >
-            Tasks
+            <img src={setting} alt="" />
           </button>
           <button
-            className={styles.navLink}
-            onClick={() => {
-              const element = document.getElementById("calendar-section");
-              if (element) {
-                element.scrollIntoView({ behavior: "smooth", block: "start" });
-              }
-            }}
+            className={styles.headerAboutButton}
+            onClick={() => setInfoOpen(true)}
           >
-            Kalender
+            <img src={info} alt="" />
           </button>
-          <button
-            className={styles.navLink}
-            onClick={() => {
-              const element = document.getElementById("goals-section");
-              if (element) {
-                element.scrollIntoView({ behavior: "smooth", block: "start" });
-              }
-            }}
-          >
-            Ziele
+          <button className={styles.headerLogoutButton} onClick={onLogout}>
+            {t("logout")}
           </button>
-        </nav>
-        <button
-          className={styles.headerSettingsButton}
-          onClick={() => {
-            localStorage.setItem("ticktask_settingsTab", "1"); // General Tab
-            setSettingsOpen(true);
-          }}
-        >
-          <img src={setting} alt="" />
-        </button>
-        <button
-          className={styles.headerAboutButton}
-          onClick={() => setInfoOpen(true)}
-        >
-          <img src={info} alt="" />
-        </button>
-        <button className={styles.headerLogoutButton} onClick={onLogout}>
-          {t("logout")}
-        </button>
+        </div>
       </div>
 
       <SettingsPopup
@@ -318,6 +351,21 @@ export default function Header({
         user={user}
         streak={streak}
         onResetStreak={onResetStreak}
+      />
+
+      <RoutineCustomizationPopup
+        open={routineCustomizationOpen}
+        onClose={() => setRoutineCustomizationOpen(false)}
+        weeklyTasks={weeklyTasks}
+        updateWeeklyTasks={updateWeeklyTasks}
+        morningTasks={morningTasks}
+        updateMorningTasks={updateMorningTasks}
+        abendTasks={abendTasks}
+        updateAbendTasks={updateAbendTasks}
+        dailyTasks={dailyTasks}
+        updateDailyTasks={updateDailyTasks}
+        user={user}
+        initialTab={routineCustomizationTab}
       />
 
       <InfoPopup open={infoOpen} onClose={() => setInfoOpen(false)} />

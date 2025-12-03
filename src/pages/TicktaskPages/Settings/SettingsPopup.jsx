@@ -1,11 +1,8 @@
 import styles from "./SettingsPopup.module.css";
 import { useState, useEffect, useRef } from "react";
 import close3 from "../../../assets/close-3.png";
-import RoutineTab from "./RoutineTab";
-import TasksTab from "./TasksTab";
-import DailyTab from "./DailyTab";
-import WeeklyTab from "./WeeklyTab";
 import GeneralTab from "./GeneralTab";
+import CalendarTab from "./CalendarTab";
 import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function SettingsPopup({
@@ -23,7 +20,7 @@ export default function SettingsPopup({
   streak,
   onResetStreak,
 }) {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(1); // General Tab
   const buttonRefs = useRef([]);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const { t } = useLanguage();
@@ -36,15 +33,16 @@ export default function SettingsPopup({
         const tabIndex = parseInt(savedTab, 10);
         setActiveTab(tabIndex);
         localStorage.removeItem("ticktask_settingsTab");
+      } else {
+        // Standard: General Tab (id: 1)
+        setActiveTab(1);
       }
     }
   }, [open]);
 
   const tabs = [
     { id: 1, label: t("general") },
-    { id: 0, label: t("routine") },
-    { id: 3, label: t("weekly") },
-    { id: 2, label: t("daily") },
+    { id: 4, label: "Kalender" },
   ];
 
   useEffect(() => {
@@ -92,9 +90,7 @@ export default function SettingsPopup({
 
   return (
     <div className={styles.overlay}>
-      <div
-        className={`${styles.modal} ${activeTab === 3 ? styles.modalWide : ""}`}
-      >
+      <div className={styles.modal}>
         <div className={styles.modalcloseandinfo}>
           <p></p>
           <img onClick={onClose} className={styles.close} src={close3} alt="" />
@@ -126,15 +122,6 @@ export default function SettingsPopup({
             </div>
 
             <div className={styles.tabContent}>
-              {activeTab === 0 && (
-                <RoutineTab
-                  user={user}
-                  morningTasks={morningTasks}
-                  updateMorningTasks={updateMorningTasks}
-                  abendTasks={abendTasks}
-                  updateAbendTasks={updateAbendTasks}
-                />
-              )}
               {activeTab === 1 && (
                 <GeneralTab
                   streak={streak}
@@ -142,24 +129,7 @@ export default function SettingsPopup({
                   user={user}
                 />
               )}
-              {activeTab === 2 && (
-                <DailyTab
-                  dailyTasks={dailyTasks}
-                  onUpdateDailyTasks={updateDailyTasks}
-                />
-              )}
-              {activeTab === 3 && (
-                <>
-                  {console.log(
-                    "SettingsPopup: Rendering WeeklyTab with activeTab:",
-                    activeTab
-                  )}
-                  <WeeklyTab
-                    weeklyTasks={weeklyTasks}
-                    updateWeeklyTasks={updateWeeklyTasks}
-                  />
-                </>
-              )}
+              {activeTab === 4 && <CalendarTab user={user} />}
             </div>
           </div>
         </div>

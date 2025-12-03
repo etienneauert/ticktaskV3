@@ -24,8 +24,8 @@ export default function Abend({
   };
 
   const handlePenClick = () => {
-    const event = new CustomEvent("openSettingsWithTab", {
-      detail: { tabId: 0 }, // Routine Tab
+    const event = new CustomEvent("openRoutineCustomization", {
+      detail: { tabId: 1 }, // Abend Tab
     });
     window.dispatchEvent(event);
   };

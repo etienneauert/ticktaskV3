@@ -7,9 +7,10 @@
 }
 
 .routineSection {
-  flex: 1;
-  max-width: 400px;
+  width: 100%;
+  max-width: 500px;
   padding: 20px;
+  margin: 0 auto;
   margin-bottom: 20px;
   border: 1px solid #333;
   border-radius: 8px;
