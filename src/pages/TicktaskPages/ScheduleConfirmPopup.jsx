@@ -119,24 +119,29 @@ export default function ScheduleConfirmPopup({
     }
   }, [open]);
 
-  // Verhindere Body-Scroll, wenn das Popup offen ist
+  // Verhindere Body-Scroll, wenn das Popup offen ist (nur auf Desktop)
   useEffect(() => {
     if (open) {
-      const scrollY = window.scrollY;
-      document.body.style.position = "fixed";
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = "100%";
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
+      // Nur auf Desktop (>= 768px) Scrolling verhindern
+      const isMobile = window.innerWidth < 768;
+      
+      if (!isMobile) {
+        const scrollY = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = "100%";
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
 
-      return () => {
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.width = "";
-        document.body.style.overflow = "";
-        document.documentElement.style.overflow = "";
-        window.scrollTo(0, scrollY);
-      };
+        return () => {
+          document.body.style.position = "";
+          document.body.style.top = "";
+          document.body.style.width = "";
+          document.body.style.overflow = "";
+          document.documentElement.style.overflow = "";
+          window.scrollTo(0, scrollY);
+        };
+      }
     }
   }, [open]);
 

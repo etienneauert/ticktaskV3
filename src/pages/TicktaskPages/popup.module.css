@@ -164,8 +164,14 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  overflow: hidden;
   touch-action: none;
+}
+
+/* Verhindere Scrolling nur auf Desktop */
+@media (min-width: 768px) {
+  .overlay {
+    overflow: hidden;
+  }
 }
 
 .overlay:has(.taskModal) {

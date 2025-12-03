@@ -7,7 +7,13 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  overflow: hidden;
+}
+
+/* Verhindere Scrolling nur auf Desktop */
+@media (min-width: 768px) {
+  .overlay {
+    overflow: hidden;
+  }
 }
 
 .modal {
@@ -37,7 +43,8 @@
 }
 
 .routineModalWeekly {
-  width: 2000px;
+  width: 2000px !important;
+  max-width: 1460px !important;
 }
 
 .modalcloseandinfo {
@@ -70,12 +77,25 @@
   align-items: center;
   justify-content: flex-start;
   flex: 1;
-  overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: 30px;
   color: rgb(171, 171, 171);
   font-size: 16px;
   background-color: transparent;
+}
+
+/* Erlaube Scrolling nur auf Mobile */
+@media (max-width: 767px) {
+  .settingsContent {
+    overflow-y: auto;
+  }
+}
+
+/* Verhindere Scrolling auf Desktop */
+@media (min-width: 768px) {
+  .settingsContent {
+    overflow-y: hidden;
+  }
 }
 
 /* Custom Tabs */

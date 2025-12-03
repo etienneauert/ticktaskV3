@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import styles from "./Goals.module.css";
 import rightArrow2 from "../../assets/right-arrow-2.png";
 import close3 from "../../assets/close-3.png";
+import trashBin from "../../assets/trash-bin.png";
 import starWhite from "../../assets/star-white.png";
 import arrowDown from "../../assets/arrow-down.png";
 import GoalsPopup from "./GoalsPopup";
@@ -421,7 +422,7 @@ export default function Goals({ user, tasks = [] }) {
                         className={styles.GoalDeleteButton}
                         onClick={() => handleDeleteClick(goal)}
                       >
-                        <img src={close3} alt="Delete" />
+                        <img src={trashBin} alt="Delete" />
                       </button>
                     </div>
                     <div className={styles.GoalProgressContainer}>

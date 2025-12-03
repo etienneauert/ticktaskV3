@@ -1,11 +1,13 @@
 import styles from "./SettingsPopup.module.css";
 import { useState, useEffect, useRef } from "react";
 import close3 from "../../../assets/close-3.png";
-import GeneralTab from "./GeneralTab";
-import CalendarTab from "./CalendarTab";
+import MorningRoutine from "./MorningRoutine";
+import AbendRoutine from "./AbendRoutine";
+import DailyTab from "./DailyTab";
+import WeeklyTab from "./WeeklyTab";
 import { useLanguage } from "../../../contexts/LanguageContext";
 
-export default function SettingsPopup({
+export default function RoutineCustomizationPopup({
   open,
   onClose,
   weeklyTasks,
@@ -17,38 +19,30 @@ export default function SettingsPopup({
   dailyTasks,
   updateDailyTasks,
   user,
-  streak,
-  onResetStreak,
+  initialTab = 0, // 0 = Morning, 1 = Abend, 2 = Weekly, 3 = Daily
 }) {
-  const [activeTab, setActiveTab] = useState(1); // General Tab
+  const [activeTab, setActiveTab] = useState(initialTab);
   const buttonRefs = useRef([]);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const { t } = useLanguage();
 
-  // Prüfe ob ein bestimmter Tab geöffnet werden soll
+  // Setze initialen Tab wenn Popup geöffnet wird
   useEffect(() => {
     if (open) {
-      const savedTab = localStorage.getItem("ticktask_settingsTab");
-      if (savedTab) {
-        const tabIndex = parseInt(savedTab, 10);
-        setActiveTab(tabIndex);
-        localStorage.removeItem("ticktask_settingsTab");
-      } else {
-        // Standard: General Tab (id: 1)
-        setActiveTab(1);
-      }
+      setActiveTab(initialTab);
     }
-  }, [open]);
+  }, [open, initialTab]);
 
   const tabs = [
-    { id: 1, label: t("general") },
-    { id: 4, label: "Kalender" },
+    { id: 0, label: t("morningRoutine") },
+    { id: 1, label: t("eveningRoutine") },
+    { id: 2, label: t("weekly") },
+    { id: 3, label: t("daily") },
   ];
 
   useEffect(() => {
     const el = buttonRefs.current[activeTab];
     if (el) {
-      // Sofortige Positionierung, da Tabs nicht mehr von Modal-Breite beeinflusst werden
       setIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth });
     }
   }, [activeTab]);
@@ -68,9 +62,8 @@ export default function SettingsPopup({
     if (open) {
       // Nur auf Desktop (>= 768px) Scrolling verhindern
       const isMobile = window.innerWidth < 768;
-
+      
       if (!isMobile) {
-        // Speichere die aktuelle Scroll-Position
         const scrollY = window.scrollY;
         document.body.style.position = "fixed";
         document.body.style.top = `-${scrollY}px`;
@@ -79,7 +72,6 @@ export default function SettingsPopup({
         document.documentElement.style.overflow = "hidden";
 
         return () => {
-          // Stelle die Scroll-Position wieder her
           document.body.style.position = "";
           document.body.style.top = "";
           document.body.style.width = "";
@@ -95,7 +87,11 @@ export default function SettingsPopup({
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.modal}>
+      <div
+        className={`${styles.modal} ${styles.routineModal} ${
+          activeTab === 2 ? styles.routineModalWeekly : ""
+        }`}
+      >
         <div className={styles.modalcloseandinfo}>
           <p></p>
           <img onClick={onClose} className={styles.close} src={close3} alt="" />
@@ -127,14 +123,34 @@ export default function SettingsPopup({
             </div>
 
             <div className={styles.tabContent}>
+              {activeTab === 0 && (
+                <div className={styles.tabPanel}>
+                  <MorningRoutine
+                    tasks={morningTasks}
+                    onUpdateTasks={updateMorningTasks}
+                  />
+                </div>
+              )}
               {activeTab === 1 && (
-                <GeneralTab
-                  streak={streak}
-                  onResetStreak={onResetStreak}
-                  user={user}
+                <div className={styles.tabPanel}>
+                  <AbendRoutine
+                    tasks={abendTasks}
+                    onUpdateTasks={updateAbendTasks}
+                  />
+                </div>
+              )}
+              {activeTab === 2 && (
+                <WeeklyTab
+                  weeklyTasks={weeklyTasks}
+                  updateWeeklyTasks={updateWeeklyTasks}
                 />
               )}
-              {activeTab === 4 && <CalendarTab user={user} />}
+              {activeTab === 3 && (
+                <DailyTab
+                  dailyTasks={dailyTasks}
+                  onUpdateDailyTasks={updateDailyTasks}
+                />
+              )}
             </div>
           </div>
         </div>

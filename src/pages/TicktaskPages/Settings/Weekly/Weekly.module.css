@@ -13,6 +13,8 @@
   background-color: transparent;
   width: 100%;
   overflow-x: auto;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .weeklySection {
