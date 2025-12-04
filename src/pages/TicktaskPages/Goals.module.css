@@ -9,6 +9,13 @@
   background-color: transparent;
 }
 
+/* Ab 1920px: Goals sollen so breit sein wie der Kalender */
+@media (min-width: 1920px) {
+  .GoalsContainer {
+    max-width: 1600px;
+  }
+}
+
 .GoalsTitle {
   color: #d5ff05;
   font-size: 18px;

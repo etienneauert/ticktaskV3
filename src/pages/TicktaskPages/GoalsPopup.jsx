@@ -11,6 +11,7 @@ function CustomDatePicker({ value, onChange, className = "" }) {
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [selectedYear, setSelectedYear] = useState(null);
+  const [isInvalid, setIsInvalid] = useState(false);
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -19,16 +20,22 @@ function CustomDatePicker({ value, onChange, className = "" }) {
       setSelectedDay(date.getDate());
       setSelectedMonth(date.getMonth() + 1);
       setSelectedYear(date.getFullYear());
+      // Validiere das Datum
+      validateDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
     } else {
       setSelectedDay(null);
       setSelectedMonth(null);
       setSelectedYear(null);
+      setIsInvalid(false);
     }
   }, [value]);
 
   useEffect(() => {
     if (!isOpen) {
       setStep("day");
+    } else {
+      // Reset invalid state when picker opens
+      setIsInvalid(false);
     }
   }, [isOpen]);
 
@@ -56,7 +63,54 @@ function CustomDatePicker({ value, onChange, className = "" }) {
     return `${day}.${month}.${year}`;
   };
 
+  const validateDate = (day, month, year) => {
+    if (!day || !month || !year) {
+      setIsInvalid(false);
+      return true;
+    }
+    const date = new Date(year, month - 1, day);
+    const isValidDate =
+      date.getDate() === day &&
+      date.getMonth() === month - 1 &&
+      date.getFullYear() === year;
+
+    if (!isValidDate) {
+      setIsInvalid(true);
+      return false;
+    }
+
+    // Prüfe ob das Datum in der Vergangenheit liegt
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Setze Zeit auf Mitternacht für Vergleich
+    const inputDate = new Date(year, month - 1, day);
+    inputDate.setHours(0, 0, 0, 0);
+
+    const isInPast = inputDate < today;
+    setIsInvalid(isInPast);
+    return !isInPast;
+  };
+
   const getDisplayText = () => {
+    if (isInvalid && selectedDay && selectedMonth && selectedYear) {
+      const date = new Date(selectedYear, selectedMonth - 1, selectedDay);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      date.setHours(0, 0, 0, 0);
+
+      // Prüfe ob das Datum ungültig ist (z.B. 31.02) oder in der Vergangenheit
+      const isValidDate =
+        date.getDate() === selectedDay &&
+        date.getMonth() === selectedMonth - 1 &&
+        date.getFullYear() === selectedYear;
+
+      if (!isValidDate) {
+        return "Ungültiges Datum";
+      }
+      if (date < today) {
+        return "Datum liegt in der Vergangenheit";
+      }
+      return "Ungültiges Datum";
+    }
     if (selectedDay && selectedMonth && selectedYear) {
       return formatDate(
         `${selectedYear}-${String(selectedMonth).padStart(2, "0")}-${String(
@@ -77,23 +131,31 @@ function CustomDatePicker({ value, onChange, className = "" }) {
 
   const handleDaySelect = (day) => {
     setSelectedDay(day);
+    setIsInvalid(false); // Reset invalid state when user starts selecting new date
     setStep("month");
   };
 
   const handleMonthSelect = (month) => {
     setSelectedMonth(month);
+    setIsInvalid(false); // Reset invalid state when user starts selecting new date
     setStep("year");
   };
 
   const handleYearSelect = (year) => {
     setSelectedYear(year);
-    // Alle Werte sind jetzt ausgewählt, erstelle das Datum
-    const dateString = `${year}-${String(selectedMonth).padStart(
-      2,
-      "0"
-    )}-${String(selectedDay).padStart(2, "0")}`;
-    onChange(dateString);
-    setIsOpen(false);
+    // Alle Werte sind jetzt ausgewählt, validiere und erstelle das Datum
+    const isValid = validateDate(selectedDay, selectedMonth, year);
+    if (isValid) {
+      const dateString = `${year}-${String(selectedMonth).padStart(
+        2,
+        "0"
+      )}-${String(selectedDay).padStart(2, "0")}`;
+      onChange(dateString);
+      setIsOpen(false);
+    } else {
+      // Ungültiges Datum - zeige Fehlermeldung, aber schließe nicht
+      setIsOpen(false);
+    }
   };
 
   // Generiere Tage (1-31)
@@ -185,6 +247,8 @@ function CustomDatePicker({ value, onChange, className = "" }) {
         type="button"
         className={`${styles.datePickerDisplay} ${
           isOpen ? styles.datePickerDisplayOpen : ""
+        } ${!value ? styles.datePickerDisplayPlaceholder : ""} ${
+          isInvalid ? styles.datePickerDisplayInvalid : ""
         }`}
         onClick={() => setIsOpen(!isOpen)}
       >
@@ -218,6 +282,34 @@ export default function GoalsPopup({
     }
   }, [open]);
 
+  // Verhindere Body-Scroll wenn Popup offen ist (nur auf Desktop)
+  useEffect(() => {
+    if (open) {
+      // Nur auf Desktop (>= 768px) Scrolling verhindern
+      const isMobile = window.innerWidth < 768;
+
+      if (!isMobile) {
+        // Speichere die aktuelle Scroll-Position
+        const scrollY = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = "100%";
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+
+        return () => {
+          // Stelle die Scroll-Position wieder her
+          document.body.style.position = "";
+          document.body.style.top = "";
+          document.body.style.width = "";
+          document.body.style.overflow = "";
+          document.documentElement.style.overflow = "";
+          window.scrollTo(0, scrollY);
+        };
+      }
+    }
+  }, [open]);
+
   const handleSubmit = () => {
     onConfirm({
       text: goalText,
@@ -232,7 +324,7 @@ export default function GoalsPopup({
   return (
     <div className={styles.overlay} onClick={onCancel}>
       <div
-        className={`${styles.modal} ${styles.taskModal}`}
+        className={`${styles.modal} ${styles.goalsModal}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles.modalcloseandinfo}>
@@ -245,17 +337,25 @@ export default function GoalsPopup({
           />
         </div>
 
+        {/* Goal Name Heading */}
+        {goalText && <h1 className={styles.goalNameHeading}>{goalText}</h1>}
+
         {/* Hours Needed */}
         <div className={styles.scheduleSection}>
           <h2>Benötigte Stunden</h2>
           <input
-            type="number"
+            type="text"
             className={styles.dateInput}
             value={hoursNeeded}
-            onChange={(e) => setHoursNeeded(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              // Erlaube nur Ziffern (0-9), keine Buchstaben oder Sonderzeichen
+              if (value === "" || /^\d+$/.test(value)) {
+                setHoursNeeded(value);
+              }
+            }}
             placeholder="z.B. 10"
-            min="0"
-            step="0.5"
+            inputMode="numeric"
           />
         </div>
 

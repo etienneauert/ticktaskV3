@@ -63,19 +63,48 @@ export default function Header({
 
   // Finish Day Button Logik
   const handleFinishDay = () => {
+    // Prüfe zuerst, ob der Tag bereits heute beendet wurde (pro Benutzer)
+    const today = new Date().toDateString(); // Format: "Mon Jan 01 2024"
+    const userKey = user?.uid
+      ? `ticktask_lastFinishDay_${user.uid}`
+      : "ticktask_lastFinishDay_guest";
+    const lastFinishDay = localStorage.getItem(userKey);
+
+    if (lastFinishDay === today) {
+      // Tag wurde bereits heute beendet
+      setErrorMessage("Du hast den Tag heute schon beendet!");
+      setShowError(true);
+      return;
+    }
+
+    // Prüfe ob überhaupt Tasks vorhanden sind
+    const todayWeekday = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+    const todayLower = todayWeekday.toLowerCase();
+    const todayTasks =
+      weeklyTasks[todayWeekday] ||
+      weeklyTasks[todayLower] ||
+      weeklyTasks[todayWeekday.toUpperCase()] ||
+      [];
+
+    const hasAnyTasks =
+      tasks.length > 0 ||
+      morningTasks.length > 0 ||
+      abendTasks.length > 0 ||
+      dailyTasks.length > 0 ||
+      todayTasks.length > 0;
+
+    if (!hasAnyTasks) {
+      // Keine Tasks vorhanden
+      setErrorMessage("Erstelle mindestens einen Task, um den Tag zu beenden");
+      setShowError(true);
+      return;
+    }
+
     // Prüfe ob Finish Day möglich ist
     if (isFinishDayDisabled()) {
       // Erstelle detaillierte Fehlermeldung
-      const today = new Date().toLocaleDateString("en-US", {
-        weekday: "long",
-      });
-      const todayLower = today.toLowerCase();
-      const todayTasks =
-        weeklyTasks[today] ||
-        weeklyTasks[todayLower] ||
-        weeklyTasks[today.toUpperCase()] ||
-        [];
-
       const activeTasks = tasks.filter((task) => !task.done);
       const morningOk =
         morningTasks.length === 0 ||
@@ -131,6 +160,9 @@ export default function Header({
 
     // Streak erhöhen
     increaseStreak();
+
+    // Speichere das heutige Datum als letztes Finish Day (pro Benutzer)
+    localStorage.setItem(userKey, today);
 
     // Alle Checklisten zurücksetzen
     setMorningCompleted(new Set());

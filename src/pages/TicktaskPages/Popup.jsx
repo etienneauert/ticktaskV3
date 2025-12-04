@@ -130,6 +130,34 @@ export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
     }
   }, [open]);
 
+  // Verhindere Body-Scroll wenn Popup offen ist (nur auf Desktop)
+  useEffect(() => {
+    if (open) {
+      // Nur auf Desktop (>= 768px) Scrolling verhindern
+      const isMobile = window.innerWidth < 768;
+
+      if (!isMobile) {
+        // Speichere die aktuelle Scroll-Position
+        const scrollY = window.scrollY;
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = "100%";
+        document.body.style.overflow = "hidden";
+        document.documentElement.style.overflow = "hidden";
+
+        return () => {
+          // Stelle die Scroll-Position wieder her
+          document.body.style.position = "";
+          document.body.style.top = "";
+          document.body.style.width = "";
+          document.body.style.overflow = "";
+          document.documentElement.style.overflow = "";
+          window.scrollTo(0, scrollY);
+        };
+      }
+    }
+  }, [open]);
+
   // Lade Goals aus Firebase
   useEffect(() => {
     const loadGoals = async () => {
