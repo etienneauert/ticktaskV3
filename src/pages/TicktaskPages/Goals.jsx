@@ -30,6 +30,8 @@ export default function Goals({ user, tasks = [] }) {
   const [shownGoalReachedIds, setShownGoalReachedIds] = useState(new Set());
   const [showDoneGoals, setShowDoneGoals] = useState(false);
   const [expandedGoalIds, setExpandedGoalIds] = useState(new Set());
+  const [completeConfirmOpen, setCompleteConfirmOpen] = useState(false);
+  const [goalToComplete, setGoalToComplete] = useState(null);
 
   // Debug: Log tasks when they change
   useEffect(() => {
@@ -265,20 +267,35 @@ export default function Goals({ user, tasks = [] }) {
     setGoalReached(null);
   };
 
-  // Handler für "Ziel erreicht" Button
-  const handleGoalCompleted = async (goal) => {
-    if (!user?.uid || !goal) return;
+  // Handler für "Ziel erreicht" Button - öffnet Bestätigungs-Popup
+  const handleGoalCompleted = (goal) => {
+    setGoalToComplete(goal);
+    setCompleteConfirmOpen(true);
+  };
+
+  // Handler für Bestätigung des "Ziel erreicht" Popups
+  const handleCompleteConfirm = async () => {
+    if (!user?.uid || !goalToComplete) return;
 
     try {
-      const goalDoc = doc(db, "users", user.uid, "goals", goal.id);
+      const goalDoc = doc(db, "users", user.uid, "goals", goalToComplete.id);
       await updateDoc(goalDoc, {
         completed: true,
         completedAt: serverTimestamp(),
       });
-      console.log("Goal marked as completed:", goal.id);
+      console.log("Goal marked as completed:", goalToComplete.id);
     } catch (e) {
       console.error("Failed to mark goal as completed", e);
+    } finally {
+      setCompleteConfirmOpen(false);
+      setGoalToComplete(null);
     }
+  };
+
+  // Handler für Abbrechen des "Ziel erreicht" Popups
+  const handleCompleteCancel = () => {
+    setCompleteConfirmOpen(false);
+    setGoalToComplete(null);
   };
 
   // Handler für "Alle löschen" Button bei erledigten Goals
@@ -645,10 +662,6 @@ export default function Goals({ user, tasks = [] }) {
             </div>
             <div className={styles.deleteConfirmContent}>
               <h2>Goal löschen?</h2>
-              <p>
-                Möchtest du das Goal "{goalToDelete.text}" wirklich löschen?
-                Diese Aktion kann nicht rückgängig gemacht werden.
-              </p>
             </div>
             <div className={styles.deleteConfirmActions}>
               <button
@@ -703,6 +716,45 @@ export default function Goals({ user, tasks = [] }) {
                 className={styles.deleteConfirmDeleteButton}
               >
                 Ja
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Complete Confirmation Popup */}
+      {completeConfirmOpen && goalToComplete && (
+        <div
+          className={styles.deleteConfirmOverlay}
+          onClick={handleCompleteCancel}
+        >
+          <div
+            className={styles.deleteConfirmModal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.deleteConfirmHeader}>
+              <img
+                onClick={handleCompleteCancel}
+                className={styles.deleteConfirmClose}
+                src={close3}
+                alt=""
+              />
+            </div>
+            <div className={styles.deleteConfirmContent}>
+              <h2>Ziel erreicht?</h2>
+            </div>
+            <div className={styles.deleteConfirmActions}>
+              <button
+                onClick={handleCompleteCancel}
+                className={styles.deleteConfirmCancelButton}
+              >
+                Abbrechen
+              </button>
+              <button
+                onClick={handleCompleteConfirm}
+                className={styles.deleteConfirmConfirmButton}
+              >
+                Bestätigen
               </button>
             </div>
           </div>

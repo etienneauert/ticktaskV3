@@ -426,6 +426,24 @@
   border-color: #ff6666;
 }
 
+.deleteConfirmConfirmButton {
+  background-color: transparent;
+  color: #d5ff05;
+  border: 1px solid #d5ff05;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  min-width: 120px;
+}
+
+.deleteConfirmConfirmButton:hover {
+  background-color: rgba(213, 255, 5, 0.15);
+  border-color: #d5ff05;
+}
+
 /* Done Goals List */
 .DoneGoals {
   display: flex;

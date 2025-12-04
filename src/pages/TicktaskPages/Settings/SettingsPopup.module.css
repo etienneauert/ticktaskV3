@@ -45,6 +45,7 @@
 .routineModalWeekly {
   width: 2000px !important;
   max-width: 1460px !important;
+  overflow: visible !important;
 }
 
 .modalcloseandinfo {
@@ -155,6 +156,11 @@
   flex-direction: column;
   overflow: visible;
   padding-top: 20px;
+  position: relative;
+}
+
+.routineModalWeekly .tabContent {
+  overflow: visible;
 }
 
 .tabPanel {
