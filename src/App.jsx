@@ -20,13 +20,30 @@ export default function App() {
   });
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
-  const [isGuestMode, setIsGuestMode] = useState(false);
+  const [isGuestMode, setIsGuestMode] = useState(() => {
+    // Prüfe localStorage beim Initialisieren
+    return localStorage.getItem("ticktask_guestMode") === "true";
+  });
+
+  // Speichere Guest-Mode im localStorage
+  useEffect(() => {
+    if (isGuestMode) {
+      localStorage.setItem("ticktask_guestMode", "true");
+    } else {
+      localStorage.removeItem("ticktask_guestMode");
+    }
+  }, [isGuestMode]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsLoggedIn(!!user);
       setUser(user);
       setAuthReady(true);
+      
+      // Wenn ein Benutzer eingeloggt ist, verlasse den Guest-Mode
+      if (user) {
+        setIsGuestMode(false);
+      }
     });
     return () => unsubscribe();
   }, []);

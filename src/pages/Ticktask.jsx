@@ -2086,7 +2086,10 @@ export function Ticktask({ user, isGuestMode = false }) {
       <div>
         <Header
           user={null}
-          onLogout={() => window.location.reload()}
+          onLogout={() => {
+            localStorage.removeItem("ticktask_guestMode");
+            window.location.reload();
+          }}
           weeklyTasks={currentWeeklyTasks}
           updateWeeklyTasks={updateWeeklyTasks}
           morningTasks={currentMorningTasks}
