@@ -310,6 +310,7 @@ export default function Header({
             </span>
           </div>
         </div>
+        {isGuestMode && <div className={styles.guestModeLabel}>Demo Mode</div>}
         <div className={styles.buttonsRight}>
           <nav className={styles.headerNav}>
             <button
@@ -366,7 +367,7 @@ export default function Header({
             <img src={info} alt="" />
           </button>
           <button className={styles.headerLogoutButton} onClick={onLogout}>
-            {t("logout")}
+            {isGuestMode ? "Demomodus verlassen" : t("logout")}
           </button>
         </div>
       </div>

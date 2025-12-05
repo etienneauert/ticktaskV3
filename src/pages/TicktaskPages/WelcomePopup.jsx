@@ -56,10 +56,7 @@ export default function WelcomePopup({ open, onClose, onStartTutorial }) {
         </div>
 
         <div className={styles.buttonContainer}>
-          <button
-            className={styles.skipButton}
-            onClick={onClose}
-          >
+          <button className={styles.skipButton} onClick={onClose}>
             Skip Tutorial
           </button>
           <button
@@ -74,9 +71,11 @@ export default function WelcomePopup({ open, onClose, onStartTutorial }) {
           >
             Start Tutorial
           </button>
+          <button className={styles.startButtonSmall} onClick={onClose}>
+            Start
+          </button>
         </div>
       </div>
     </div>
   );
 }
-

@@ -1,8 +1,8 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(20px);
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,7 +26,7 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 -20px 40px rgba(0, 0, 0, 0.7),
     20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7),
     0 0 0 4px rgba(255, 255, 255, 0.1);
-  background-color: transparent;
+  background-color: rgba(20, 20, 20, 0.95);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -107,14 +107,12 @@
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(213, 255, 5, 0.3);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .startButton:hover {
   background-color: rgb(213, 255, 5);
   color: #000;
-  box-shadow: 0 6px 16px rgba(213, 255, 5, 0.4);
 }
 
 .startButton:active {
@@ -142,6 +140,41 @@
   transform: scale(0.98);
 }
 
+/* Start Button für kleine Bildschirme (< 1370px) */
+.startButtonSmall {
+  display: none;
+  background: transparent;
+  color: rgb(213, 255, 5);
+  border: 2px solid rgb(213, 255, 5);
+  border-radius: 12px;
+  padding: 14px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.startButtonSmall:hover {
+  background-color: rgb(213, 255, 5);
+  color: #000;
+}
+
+.startButtonSmall:active {
+  transform: scale(0.98);
+}
+
+/* Bei Bildschirmbreite < 1370px: Nur Start Button anzeigen */
+@media (max-width: 1369px) {
+  .skipButton,
+  .startButton {
+    display: none;
+  }
+
+  .startButtonSmall {
+    display: block;
+  }
+}
+
 /* Mobile Anpassungen */
 @media (max-width: 767px) {
   .modal {
@@ -164,4 +197,3 @@
     font-size: 16px;
   }
 }
-

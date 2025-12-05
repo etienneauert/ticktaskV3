@@ -69,6 +69,7 @@
   max-width: 1800px;
   margin: 0 auto;
   padding: 10px 0;
+  position: relative;
 }
 
 .headerLeft {
@@ -168,6 +169,16 @@
 .currentTime {
   color: #888;
   font-size: 18px;
+  background-color: transparent;
+}
+
+.guestModeLabel {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgb(255, 0, 0);
+  font-size: 18px;
+  font-weight: 600;
   background-color: transparent;
 }
 

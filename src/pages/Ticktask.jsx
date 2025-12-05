@@ -17,7 +17,6 @@ import { useGuestData } from "../hooks/useGuestData.js";
 import { useEffect, useState, useRef } from "react";
 import { Ring2 } from "ldrs/react";
 import "ldrs/react/Ring2.css";
-import guestStyles from "./TicktaskPages/GuestBanner.module.css";
 import {
   addDoc,
   collection,
@@ -203,6 +202,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   // Welcome popup state
   const [showWelcomePopup, setShowWelcomePopup] = useState(false);
   const welcomeCheckedRef = useRef(false); // Verhindert mehrfache Prüfungen
+  const guestWelcomeShownRef = useRef(false); // Verhindert mehrfache Anzeige im Guest-Mode
 
   // Tutorial state
   const [isTutorialActive, setIsTutorialActive] = useState(false);
@@ -1839,6 +1839,29 @@ export function Ticktask({ user, isGuestMode = false }) {
     }
   }, [isGuestMode, guestData.streak, user?.uid]);
 
+  // Zeige Welcome-Popup im Guest-Mode immer an
+  useEffect(() => {
+    if (isGuestMode) {
+      console.log("[Guest Mode] Welcome popup useEffect triggered");
+      // Reset ref wenn Guest-Mode aktiviert wird
+      guestWelcomeShownRef.current = false;
+
+      // Warte kurz, damit die App vollständig geladen ist
+      const timer = setTimeout(() => {
+        console.log("[Guest Mode] Setting welcome popup to true");
+        if (!guestWelcomeShownRef.current) {
+          setShowWelcomePopup(true);
+          guestWelcomeShownRef.current = true;
+        }
+      }, 800);
+
+      return () => clearTimeout(timer);
+    } else {
+      // Reset ref wenn Guest-Mode verlassen wird
+      guestWelcomeShownRef.current = false;
+    }
+  }, [isGuestMode]);
+
   // Prüfe, ob Welcome-Popup angezeigt werden soll (nur einmal beim ersten Mal nach Registrierung)
   useEffect(() => {
     if (!user?.uid || isGuestMode || isLoading) return;
@@ -2065,19 +2088,6 @@ export function Ticktask({ user, isGuestMode = false }) {
   if (isGuestMode) {
     return (
       <div>
-        <div className={guestStyles.guestBanner}>
-          <p className={guestStyles.guestText}>Willkommen im Demo-Modus!</p>
-          <button
-            onClick={() => {
-              // Wechsle direkt zur Registrierung
-              localStorage.setItem("ticktask_showAuth", "true");
-              window.location.reload();
-            }}
-            className={guestStyles.guestButton}
-          >
-            Jetzt registrieren
-          </button>
-        </div>
         <Header
           user={null}
           onLogout={() => window.location.reload()}
@@ -2109,9 +2119,34 @@ export function Ticktask({ user, isGuestMode = false }) {
           task={task}
           tasks={guestData.tasks}
           user={null}
-          tutorialPopupOpen={false}
-          onTutorialPopupClose={() => {}}
+          tutorialPopupOpen={tutorialPopupOpen}
+          onTutorialPopupClose={handleTutorialNext}
+          isTutorialMode={isTutorialActive && tutorialPopupOpen}
         />
+        {isTutorialActive &&
+          currentTutorialStep < tutorialSteps.length &&
+          tutorialSteps[currentTutorialStep] && (
+            <>
+              <div
+                className={tutorialOverlayStyles.overlay}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <TutorialTooltip
+                targetId={tutorialSteps[currentTutorialStep].targetId}
+                message={tutorialSteps[currentTutorialStep].message}
+                position={tutorialSteps[currentTutorialStep].position}
+                onNext={handleTutorialNext}
+                onSkip={handleTutorialSkip}
+                showNext={false}
+                showSkip={true}
+                maxWidth={tutorialSteps[currentTutorialStep].maxWidth}
+                isFirstStep={currentTutorialStep === 0}
+                isLastStep={currentTutorialStep === tutorialSteps.length - 1}
+                currentStep={currentTutorialStep + 1}
+                totalSteps={tutorialSteps.length}
+              />
+            </>
+          )}
         <Main
           tasks={guestData.tasks}
           frequentTemplates={guestData.frequentTemplates}
@@ -2145,6 +2180,11 @@ export function Ticktask({ user, isGuestMode = false }) {
           message={errorMessage}
           isVisible={showError}
           onClose={hideErrorMessage}
+        />
+        <WelcomePopup
+          open={showWelcomePopup}
+          onClose={handleWelcomeClose}
+          onStartTutorial={handleStartTutorial}
         />
       </div>
     );
