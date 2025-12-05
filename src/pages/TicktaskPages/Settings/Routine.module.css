@@ -59,7 +59,7 @@
 }
 
 .routineInput::placeholder {
-  color: #ababab;
+  color: #333;
 }
 
 .submitButton {
@@ -149,7 +149,6 @@
 .arrowDown {
   transform: rotate(0deg);
 }
-
 
 .bulletPoint {
   color: #d5ff05;

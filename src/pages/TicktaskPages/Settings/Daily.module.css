@@ -59,7 +59,7 @@
 }
 
 .dailyInput::placeholder {
-  color: #ababab;
+  color: #333;
 }
 
 .submitButton {

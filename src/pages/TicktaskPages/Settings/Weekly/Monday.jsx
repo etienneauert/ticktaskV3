@@ -63,11 +63,7 @@ export default function Monday({ tasks, onUpdateTasks }) {
                   disabled={index === 0}
                   title="Nach oben"
                 >
-                  <img 
-                    src={arrowDown} 
-                    alt="↑" 
-                    className={styles.arrowUp}
-                  />
+                  <img src={arrowDown} alt="↑" className={styles.arrowUp} />
                 </button>
                 <button
                   className={styles.moveButton}
@@ -75,11 +71,7 @@ export default function Monday({ tasks, onUpdateTasks }) {
                   disabled={index === tasks.length - 1}
                   title="Nach unten"
                 >
-                  <img 
-                    src={arrowDown} 
-                    alt="↓" 
-                    className={styles.arrowDown}
-                  />
+                  <img src={arrowDown} alt="↓" className={styles.arrowDown} />
                 </button>
               </div>
               <button
@@ -110,7 +102,7 @@ export default function Monday({ tasks, onUpdateTasks }) {
                 setInputValue("");
               }
             }}
-            placeholder=""
+            placeholder="Task hinzufügen..."
             className={styles.dayInput}
           />
           <button

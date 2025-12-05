@@ -87,7 +87,8 @@
 }
 
 .dayInput::placeholder {
-  color: #ababab;
+  color: #333;
+  font-size: 9px;
 }
 
 .submitButton {

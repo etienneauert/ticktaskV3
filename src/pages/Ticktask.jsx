@@ -2039,6 +2039,11 @@ export function Ticktask({ user, isGuestMode = false }) {
       setIsTutorialActive(false);
       setCurrentTutorialStep(0);
       setTutorialPopupOpen(false);
+      // Scroll zum Anfang der Seite
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     }
   };
 

@@ -10,7 +10,7 @@ export default function MorningRoutine({ tasks, onUpdateTasks }) {
 
   const handleMoveUp = (index) => {
     if (index === 0) return; // Kann nicht weiter nach oben
-    
+
     const newTasks = [...tasks];
     const temp = newTasks[index];
     newTasks[index] = newTasks[index - 1];
@@ -20,7 +20,7 @@ export default function MorningRoutine({ tasks, onUpdateTasks }) {
 
   const handleMoveDown = (index) => {
     if (index === tasks.length - 1) return; // Kann nicht weiter nach unten
-    
+
     const newTasks = [...tasks];
     const temp = newTasks[index];
     newTasks[index] = newTasks[index + 1];
@@ -49,11 +49,7 @@ export default function MorningRoutine({ tasks, onUpdateTasks }) {
                   disabled={index === 0}
                   title="Nach oben"
                 >
-                  <img 
-                    src={arrowDown} 
-                    alt="↑" 
-                    className={styles.arrowUp}
-                  />
+                  <img src={arrowDown} alt="↑" className={styles.arrowUp} />
                 </button>
                 <button
                   className={styles.moveButton}
@@ -61,11 +57,7 @@ export default function MorningRoutine({ tasks, onUpdateTasks }) {
                   disabled={index === tasks.length - 1}
                   title="Nach unten"
                 >
-                  <img 
-                    src={arrowDown} 
-                    alt="↓" 
-                    className={styles.arrowDown}
-                  />
+                  <img src={arrowDown} alt="↓" className={styles.arrowDown} />
                 </button>
               </div>
               <button
@@ -93,7 +85,7 @@ export default function MorningRoutine({ tasks, onUpdateTasks }) {
                 setInputValue("");
               }
             }}
-            placeholder=""
+            placeholder="Task hinzufügen..."
             className={styles.routineInput}
           />
           <button
