@@ -10,6 +10,9 @@ import Input from "./TicktaskPages/Input.jsx";
 import Main from "./TicktaskPages/Main.jsx";
 import ErrorMessage from "./TicktaskPages/ErrorMessage.jsx";
 import ScheduleConfirmPopup from "./TicktaskPages/ScheduleConfirmPopup.jsx";
+import WelcomePopup from "./TicktaskPages/WelcomePopup.jsx";
+import TutorialTooltip from "./TicktaskPages/TutorialTooltip.jsx";
+import tutorialOverlayStyles from "./TicktaskPages/TutorialOverlay.module.css";
 import { useGuestData } from "../hooks/useGuestData.js";
 import { useEffect, useState, useRef } from "react";
 import { Ring2 } from "ldrs/react";
@@ -196,6 +199,15 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   // Global running task state - always start with null
   const [runningTaskId, setRunningTaskId] = useState(null);
+
+  // Welcome popup state
+  const [showWelcomePopup, setShowWelcomePopup] = useState(false);
+  const welcomeCheckedRef = useRef(false); // Verhindert mehrfache Prüfungen
+
+  // Tutorial state
+  const [isTutorialActive, setIsTutorialActive] = useState(false);
+  const [currentTutorialStep, setCurrentTutorialStep] = useState(0);
+  const [tutorialPopupOpen, setTutorialPopupOpen] = useState(false);
 
   // Error handling functions
   const showErrorMessage = (message) => {
@@ -1827,6 +1839,217 @@ export function Ticktask({ user, isGuestMode = false }) {
     }
   }, [isGuestMode, guestData.streak, user?.uid]);
 
+  // Prüfe, ob Welcome-Popup angezeigt werden soll (nur einmal beim ersten Mal nach Registrierung)
+  useEffect(() => {
+    if (!user?.uid || isGuestMode || isLoading) return;
+
+    // Verhindere mehrfache Prüfungen in derselben Session
+    if (welcomeCheckedRef.current) return;
+    welcomeCheckedRef.current = true;
+
+    // Warte kurz, damit die App vollständig geladen ist
+    const checkWelcomePopup = async () => {
+      try {
+        // Prüfe zuerst, ob der Benutzer gerade registriert wurde (durch Flag in localStorage)
+        const justRegisteredFlag = localStorage.getItem(
+          `ticktask_justRegistered_${user.uid}`
+        );
+
+        if (justRegisteredFlag === "true") {
+          // Benutzer wurde gerade registriert - zeige Popup
+          // Entferne den Flag sofort, damit er nicht mehrfach angezeigt wird
+          localStorage.removeItem(`ticktask_justRegistered_${user.uid}`);
+
+          // Prüfe zusätzlich in Firestore, ob das Popup bereits angezeigt wurde
+          const profileDoc = doc(db, "users", user.uid, "profile", "welcome");
+          const profileSnap = await getDoc(profileDoc);
+
+          if (!profileSnap.exists() || !profileSnap.data().welcomeShown) {
+            // Popup noch nicht angezeigt - zeige es nach kurzer Verzögerung
+            setTimeout(() => {
+              setShowWelcomePopup(true);
+            }, 500);
+          }
+        }
+        // Wenn justRegisteredFlag nicht gesetzt ist, wurde der Benutzer nicht gerade registriert
+        // → Popup nicht anzeigen (normaler Login)
+      } catch (e) {
+        console.error("Failed to check welcome popup status", e);
+        // Bei Fehler NICHT anzeigen - sicherstellen, dass es nur einmal erscheint
+      }
+    };
+
+    checkWelcomePopup();
+  }, [user?.uid, isGuestMode, isLoading]);
+
+  // Speichere, dass Welcome-Popup angezeigt wurde (wird nur einmal gespeichert)
+  const handleWelcomeClose = async () => {
+    setShowWelcomePopup(false);
+
+    if (!user?.uid || isGuestMode) return;
+
+    try {
+      const profileDoc = doc(db, "users", user.uid, "profile", "welcome");
+      await setDoc(
+        profileDoc,
+        {
+          welcomeShown: true,
+          shownAt: serverTimestamp(),
+        },
+        { merge: true }
+      ); // merge: true verhindert Überschreibung anderer Felder
+      console.log("Welcome popup marked as shown - wird nicht mehr angezeigt");
+    } catch (e) {
+      console.error("Failed to save welcome popup status", e);
+      // Auch bei Fehler das Popup nicht erneut anzeigen
+      // Der Benutzer hat es bereits gesehen
+    }
+  };
+
+  // Handler für "Start Tutorial" Button
+  const handleStartTutorial = () => {
+    setIsTutorialActive(true);
+    setCurrentTutorialStep(0);
+    setTutorialPopupOpen(false);
+    console.log("Tutorial wird gestartet");
+  };
+
+  // Tutorial-Schritte
+  const tutorialSteps = [
+    {
+      targetId: "task-input",
+      message:
+        "Hier kannst du deine Tasks definieren. Gib einfach den Namen deines Tasks ein und klicke auf den Pfeil.",
+      position: "top",
+      openPopup: false,
+    },
+    {
+      targetId: "task-popup",
+      message:
+        "Anschließend kannst du deinen Task anpassen: Zeitdauer festlegen, Termin planen, als wichtig markieren oder einem Ziel zuweisen.",
+      position: "left",
+      openPopup: true,
+    },
+    {
+      targetId: "checklist-pen-icon",
+      message:
+        "Mit diesem Stift-Icon kannst du deine Routinen und Checklisten anpassen.",
+      position: "top",
+      openPopup: false,
+    },
+    {
+      targetId: "calendar-plus-icon",
+      message:
+        "Hier kannst du Alltagstermine hinzufügen, die regelmäßig stattfinden.",
+      position: "top",
+      openPopup: false,
+      maxWidth: 250,
+    },
+    {
+      targetId: "goals-input",
+      message:
+        "Hier kannst du deine Ziele definieren, die du erreichen möchtest.",
+      position: "top",
+      openPopup: false,
+    },
+    {
+      targetId: "finish-day-button",
+      message:
+        "Mit diesem Button kannst du den Tag beenden, wenn alle Aufgaben und Routinen abgeschlossen sind, um deinen Streak zu erhalten.",
+      position: "top",
+      openPopup: false,
+    },
+    {
+      targetId: "info-button",
+      message:
+        "Hier findest du weitere Informationen über die App und wie sie funktioniert.",
+      position: "top",
+      openPopup: false,
+    },
+    // Weitere Schritte können hier hinzugefügt werden
+  ];
+
+  const handleTutorialNext = () => {
+    if (currentTutorialStep < tutorialSteps.length - 1) {
+      const nextStep = currentTutorialStep + 1;
+      const currentStep = tutorialSteps[currentTutorialStep];
+      const nextStepData = tutorialSteps[nextStep];
+
+      // Scroll zum nächsten Element, wenn es außerhalb des Viewports ist
+      const scrollToNextElement = () => {
+        if (nextStepData?.targetId) {
+          const targetElement = document.getElementById(nextStepData.targetId);
+          if (targetElement) {
+            const rect = targetElement.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+
+            // Prüfe, ob das Element außerhalb des Viewports ist
+            if (rect.top < 0 || rect.bottom > viewportHeight) {
+              // Scroll zum Element mit etwas Abstand oben
+              targetElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "nearest",
+              });
+            }
+          }
+        }
+      };
+
+      // Schließe Popup, wenn es im aktuellen Schritt geöffnet war
+      if (currentStep?.openPopup) {
+        setTutorialPopupOpen(false);
+        // Warte kurz, damit das Popup geschlossen ist, bevor der nächste Schritt angezeigt wird
+        setTimeout(() => {
+          // Scroll zum nächsten Element
+          scrollToNextElement();
+
+          // Öffne Popup, wenn der nächste Schritt es erfordert
+          if (nextStepData?.openPopup) {
+            setTutorialPopupOpen(true);
+            // Warte länger, damit das Popup vollständig gerendert ist, bevor der Schritt gewechselt wird
+            setTimeout(() => {
+              setCurrentTutorialStep(nextStep);
+            }, 500);
+          } else {
+            // Warte kurz, damit das Scrollen abgeschlossen ist
+            setTimeout(() => {
+              setCurrentTutorialStep(nextStep);
+            }, 300);
+          }
+        }, 300);
+      } else {
+        // Scroll zum nächsten Element
+        scrollToNextElement();
+
+        // Öffne Popup, wenn der nächste Schritt es erfordert
+        if (nextStepData?.openPopup) {
+          setTutorialPopupOpen(true);
+          // Warte länger, damit das Popup vollständig gerendert ist, bevor der Schritt gewechselt wird
+          setTimeout(() => {
+            setCurrentTutorialStep(nextStep);
+          }, 500);
+        } else {
+          // Warte kurz, damit das Scrollen abgeschlossen ist
+          setTimeout(() => {
+            setCurrentTutorialStep(nextStep);
+          }, 300);
+        }
+      }
+    } else {
+      // Tutorial beendet
+      setIsTutorialActive(false);
+      setCurrentTutorialStep(0);
+      setTutorialPopupOpen(false);
+    }
+  };
+
+  const handleTutorialSkip = () => {
+    setIsTutorialActive(false);
+    setCurrentTutorialStep(0);
+    setTutorialPopupOpen(false);
+  };
+
   const [task, _setTask] = useState({
     name: "",
     urgent: false,
@@ -1883,6 +2106,8 @@ export function Ticktask({ user, isGuestMode = false }) {
           task={task}
           tasks={guestData.tasks}
           user={null}
+          tutorialPopupOpen={false}
+          onTutorialPopupClose={() => {}}
         />
         <Main
           tasks={guestData.tasks}
@@ -1990,7 +2215,33 @@ export function Ticktask({ user, isGuestMode = false }) {
         increaseStreak={increaseStreak}
         showErrorMessage={showErrorMessage}
       ></Header>
-      <Input onAdd={handleAdd} task={task} tasks={tasks} user={user}></Input>
+      <Input
+        onAdd={handleAdd}
+        task={task}
+        tasks={tasks}
+        user={user}
+        tutorialPopupOpen={tutorialPopupOpen}
+        onTutorialPopupClose={handleTutorialNext}
+        isTutorialMode={isTutorialActive && tutorialPopupOpen}
+      ></Input>
+      {isTutorialActive && currentTutorialStep < tutorialSteps.length && (
+        <>
+          <div
+            className={tutorialOverlayStyles.overlay}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <TutorialTooltip
+            targetId={tutorialSteps[currentTutorialStep].targetId}
+            message={tutorialSteps[currentTutorialStep].message}
+            position={tutorialSteps[currentTutorialStep].position}
+            onNext={handleTutorialNext}
+            onSkip={handleTutorialSkip}
+            showNext={false}
+            showSkip={true}
+            maxWidth={tutorialSteps[currentTutorialStep].maxWidth}
+          />
+        </>
+      )}
       <Main
         tasks={tasks}
         frequentTemplates={frequentTemplates}
@@ -2029,6 +2280,12 @@ export function Ticktask({ user, isGuestMode = false }) {
         onConfirm={handleScheduleConfirm}
         onCancel={handleScheduleCancel}
         taskText={taskToCopy?.text || ""}
+      />
+
+      <WelcomePopup
+        open={showWelcomePopup}
+        onClose={handleWelcomeClose}
+        onStartTutorial={handleStartTutorial}
       />
     </div>
   );

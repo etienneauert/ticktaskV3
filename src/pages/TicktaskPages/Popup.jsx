@@ -100,7 +100,14 @@ function TransparentSelect({
   );
 }
 
-export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
+export default function Popup({
+  open,
+  onConfirm,
+  onCancel,
+  taskText,
+  user,
+  isTutorialMode = false,
+}) {
   const [urgent, setUrgent] = useState(false);
   const [taskDuration, setTaskDuration] = useState(0);
   const [frequent, setFrequent] = useState(false);
@@ -314,18 +321,20 @@ export default function Popup({ open, onConfirm, onCancel, taskText, user }) {
 
   return (
     <div className={styles.overlay}>
-      <div className={`${styles.modal} ${styles.taskModal}`}>
+      <div id="task-popup" className={`${styles.modal} ${styles.taskModal}`}>
         <div className={styles.modalcloseandinfo}>
           <p className={styles.currentTimeDisplay}>
             {String(currentTime.getHours()).padStart(2, "0")}:
             {String(currentTime.getMinutes()).padStart(2, "0")}
           </p>
-          <img
-            onClick={onCancel}
-            className={styles.close}
-            src={close3}
-            alt=""
-          />
+          {!isTutorialMode && (
+            <img
+              onClick={onCancel}
+              className={styles.close}
+              src={close3}
+              alt=""
+            />
+          )}
         </div>
         {/* <div className={styles.modalHeader}>
           <h1>Customize your task</h1>

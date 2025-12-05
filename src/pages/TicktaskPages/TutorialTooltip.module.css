@@ -1,0 +1,200 @@
+.tooltip {
+  position: fixed;
+  background: rgba(22, 22, 22, 0.95);
+  border: 3px solid rgb(213, 255, 5);
+  border-radius: 12px;
+  padding: 16px 20px;
+  max-width: 400px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.3s ease;
+  z-index: 10000;
+  /* Stelle sicher, dass absolute Kinder relativ zu diesem Element positioniert werden */
+  isolation: isolate;
+}
+
+.tooltip::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 12px;
+  right: 12px;
+  height: 3px;
+  background: rgb(213, 255, 5);
+  z-index: 1001;
+}
+
+.tooltip[data-position="left"]::before {
+  top: -3px;
+  left: 12px;
+  right: 12px;
+  width: auto;
+  height: 3px;
+  bottom: auto;
+}
+
+.tooltip[data-position="left"]::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 12px;
+  bottom: calc(
+    50% + 12px
+  ); /* Border endet oberhalb des Pfeils (Pfeil ist bei 50%) */
+  width: 3px;
+  background: rgb(213, 255, 5);
+  z-index: 1001;
+}
+
+.tooltip[data-position="left"]::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: calc(50% + 12px); /* Border beginnt unterhalb des Pfeils */
+  bottom: 12px;
+  width: 3px;
+  background: rgb(213, 255, 5);
+  z-index: 1001;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.arrow[data-position="top"] {
+  top: -15px;
+  border-width: 0 15px 15px 15px;
+  border-color: transparent transparent rgb(213, 255, 5) transparent;
+  z-index: 1000;
+  /* left und transform werden per inline-Style gesetzt */
+  /* Keine left oder transform hier, damit inline-Style Priorität hat */
+}
+
+.arrow[data-position="top"]::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: -12px;
+  border-width: 0 12px 12px 12px;
+  border-color: transparent transparent transparent transparent;
+  border-style: solid;
+}
+
+.arrow[data-position="left"] {
+  top: 50%;
+  left: -15px;
+  transform: translateY(-50%);
+  border-width: 15px 15px 15px 0;
+  border-color: transparent rgb(213, 255, 5) transparent transparent;
+  z-index: 1000;
+}
+
+.arrow[data-position="left"]::after {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 3px;
+  border-width: 12px 12px 12px 0;
+  border-color: transparent transparent transparent transparent;
+  border-style: solid;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.message {
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.nextButton {
+  background: linear-gradient(135deg, #d5ff05 0%, #b8e600 100%);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(213, 255, 5, 0.3);
+}
+
+.nextButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(213, 255, 5, 0.4);
+}
+
+.skipButton {
+  background: transparent;
+  color: rgb(171, 171, 171);
+  border: 1px solid rgba(160, 160, 160, 0.35);
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.skipButton:hover {
+  border-color: rgba(200, 200, 200, 0.6);
+  color: #fff;
+}
+
+.continueButton {
+  background: linear-gradient(135deg, #d5ff05 0%, #b8e600 100%);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(213, 255, 5, 0.3);
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 767px) {
+  .tooltip {
+    max-width: 90%;
+    padding: 12px 16px;
+  }
+
+  .message {
+    font-size: 14px;
+  }
+
+  .nextButton,
+  .skipButton,
+  .continueButton {
+    padding: 6px 16px;
+    font-size: 12px;
+  }
+}

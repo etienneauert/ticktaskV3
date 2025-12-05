@@ -672,6 +672,7 @@ export default function WeekCalendar({
         <div className={styles.LeftBar}></div>
         <div className={styles.TimeColumnHeader}>
           <button
+            id="calendar-plus-icon"
             className={styles.AddButton}
             title="Termin hinzufügen"
             onClick={handleAddButtonClick}

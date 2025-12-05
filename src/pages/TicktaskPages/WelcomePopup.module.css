@@ -1,0 +1,167 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Verhindere Scrolling nur auf Desktop */
+@media (min-width: 768px) {
+  .overlay {
+    overflow: hidden;
+  }
+}
+
+.modal {
+  color: #fff;
+  padding: 32px;
+  border-radius: 16px;
+  width: 600px;
+  max-width: 90vw;
+  max-height: 90vh;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 -20px 40px rgba(0, 0, 0, 0.7),
+    20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7),
+    0 0 0 4px rgba(255, 255, 255, 0.1);
+  background-color: transparent;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.modalcloseandinfo {
+  display: flex;
+  justify-content: space-between;
+  background-color: transparent;
+  position: relative;
+}
+
+.close {
+  width: 20px;
+  cursor: pointer;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  transition: opacity 0.2s ease;
+}
+
+.close:hover {
+  opacity: 0.7;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  background-color: transparent;
+}
+
+.modalHeader h1 {
+  font-size: 32px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  text-align: center;
+  background-color: transparent;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 20px;
+  color: rgb(171, 171, 171);
+  font-size: 16px;
+  line-height: 1.6;
+  background-color: transparent;
+  overflow-y: auto;
+}
+
+.content p {
+  margin: 0;
+  text-align: center;
+  background-color: transparent;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 30px;
+  padding-top: 20px;
+  background-color: transparent;
+}
+
+.startButton {
+  background: transparent;
+  color: rgb(213, 255, 5);
+  border: 2px solid rgb(213, 255, 5);
+  border-radius: 12px;
+  padding: 14px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(213, 255, 5, 0.3);
+}
+
+.startButton:hover {
+  background-color: rgb(213, 255, 5);
+  color: #000;
+  box-shadow: 0 6px 16px rgba(213, 255, 5, 0.4);
+}
+
+.startButton:active {
+  transform: scale(0.98);
+}
+
+.skipButton {
+  background: transparent;
+  color: rgb(171, 171, 171);
+  border: 1px solid rgba(160, 160, 160, 0.35);
+  border-radius: 12px;
+  padding: 14px 40px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.skipButton:hover {
+  border-color: rgba(200, 200, 200, 0.6);
+  color: #fff;
+}
+
+.skipButton:active {
+  transform: scale(0.98);
+}
+
+/* Mobile Anpassungen */
+@media (max-width: 767px) {
+  .modal {
+    padding: 24px;
+    width: 95vw;
+  }
+
+  .modalHeader h1 {
+    font-size: 24px;
+  }
+
+  .content {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+
+  .startButton,
+  .skipButton {
+    padding: 12px 32px;
+    font-size: 16px;
+  }
+}
+

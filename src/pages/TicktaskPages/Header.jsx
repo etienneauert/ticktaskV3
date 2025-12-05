@@ -277,6 +277,7 @@ export default function Header({
           </div>
           <div className={styles.finishDayContainer}>
             <button
+              id="finish-day-button"
               ref={finishDayButtonRef}
               className={`${styles.finishDayButton} ${
                 isFinishDayDisabled() ? styles.disabled : ""
@@ -358,6 +359,7 @@ export default function Header({
             <img src={setting} alt="" />
           </button>
           <button
+            id="info-button"
             className={styles.headerAboutButton}
             onClick={() => setInfoOpen(true)}
           >

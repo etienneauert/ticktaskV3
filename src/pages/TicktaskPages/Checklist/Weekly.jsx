@@ -49,6 +49,7 @@ export default function Weekly({
       <div className={styles.checklistHeader}>
         <h4 className={styles.weeklyTitle}>{t(currentDay)}</h4>
         <img
+          id="checklist-pen-icon"
           src={pen}
           alt=""
           className={styles.penIcon}

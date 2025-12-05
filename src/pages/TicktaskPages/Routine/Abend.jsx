@@ -35,6 +35,7 @@ export default function Abend({
       <div className={styles.checklistHeader}>
         <h4 className={styles.abendTitle}>{t("evening")}</h4>
         <img
+          id="checklist-pen-icon"
           src={pen}
           alt=""
           className={styles.penIcon}

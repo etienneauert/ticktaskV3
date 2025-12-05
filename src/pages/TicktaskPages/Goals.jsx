@@ -379,6 +379,7 @@ export default function Goals({ user, tasks = [] }) {
       <div className={styles.GoalsContainer}>
         <form className={styles.GoalsInputContainer} onSubmit={handleSubmit}>
           <input
+            id="goals-input"
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}

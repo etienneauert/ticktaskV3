@@ -108,7 +108,7 @@ export default function MainTasks({
   return (
     <div>
       {isEmpty ? (
-        <div className={styles.emptyMessage}>Die Task liste ist leer</div>
+        <div className={styles.emptyMessage}>Die Taskliste ist leer</div>
       ) : (
         <>
           <Task

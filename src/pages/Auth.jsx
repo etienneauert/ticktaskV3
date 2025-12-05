@@ -52,6 +52,14 @@ export default function Auth({ onSwitchToLogin, onGuestLogin }) {
         formData.password
       );
 
+      // Setze Flag, dass Benutzer gerade registriert wurde
+      if (userCredential.user?.uid) {
+        localStorage.setItem(
+          `ticktask_justRegistered_${userCredential.user.uid}`,
+          "true"
+        );
+      }
+
       setMessage("Registration successful! Welcome to TickTask!");
 
       // Reset form
@@ -89,7 +97,24 @@ export default function Auth({ onSwitchToLogin, onGuestLogin }) {
       setMessage("");
 
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      
+      // Prüfe, ob es ein neuer Benutzer ist (Google Sign-In kann auch Registrierung sein)
+      // Wenn metadata.creationTime sehr nah an jetzt ist, ist es wahrscheinlich eine neue Registrierung
+      if (result.user?.metadata?.creationTime) {
+        const creationTime = new Date(result.user.metadata.creationTime).getTime();
+        const now = Date.now();
+        const timeDiff = now - creationTime;
+        
+        // Wenn das Konto in den letzten 10 Sekunden erstellt wurde, ist es wahrscheinlich eine neue Registrierung
+        if (timeDiff < 10000 && result.user?.uid) {
+          localStorage.setItem(
+            `ticktask_justRegistered_${result.user.uid}`,
+            "true"
+          );
+        }
+      }
+      
       // onAuthStateChanged in App.jsx wird automatisch ausgelöst
     } catch (error) {
       console.error("Google Sign-In error:", error);

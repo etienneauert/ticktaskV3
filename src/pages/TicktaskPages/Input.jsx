@@ -4,7 +4,13 @@ import styles from "./Input.module.css";
 import rightArrow2 from "../../assets/right-arrow-2.png";
 import { useLanguage } from "../../contexts/LanguageContext";
 
-export default function Input({ onAdd, user }) {
+export default function Input({
+  onAdd,
+  user,
+  tutorialPopupOpen,
+  onTutorialPopupClose,
+  isTutorialMode = false,
+}) {
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
@@ -46,6 +52,7 @@ export default function Input({ onAdd, user }) {
     <>
       <form className={styles.InputContainer} onSubmit={handleSubmit}>
         <input
+          id="task-input"
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
@@ -62,11 +69,12 @@ export default function Input({ onAdd, user }) {
         </button>
       </form>
       <Popup
-        open={open}
+        open={open || tutorialPopupOpen}
         onConfirm={confirmAdd}
-        onCancel={cancelAdd}
-        taskText={value}
+        onCancel={tutorialPopupOpen ? onTutorialPopupClose : cancelAdd}
+        taskText={value || "Beispiel Task"}
         user={user}
+        isTutorialMode={tutorialPopupOpen}
       />
     </>
   );
