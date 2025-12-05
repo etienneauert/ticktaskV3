@@ -67,8 +67,9 @@ export default function WelcomePopup({ open, onClose, onStartTutorial }) {
             onClick={() => {
               if (onStartTutorial) {
                 onStartTutorial();
+              } else {
+                onClose();
               }
-              onClose();
             }}
           >
             Start Tutorial

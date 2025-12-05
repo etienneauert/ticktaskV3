@@ -31,7 +31,7 @@ export default function DailyTab({ dailyTasks, onUpdateDailyTasks }) {
 
   return (
     <div className={styles.tabPanel}>
-      <div className={dailyStyles.dailySection}>
+        <div className={dailyStyles.dailySection}>
           <h3>{t("dailyTasks")}</h3>
 
           <div className={dailyStyles.tasksList}>
@@ -113,9 +113,9 @@ export default function DailyTab({ dailyTasks, onUpdateDailyTasks }) {
               >
                 +
               </button>
-            </div>
           </div>
         </div>
+      </div>
     </div>
   );
 }

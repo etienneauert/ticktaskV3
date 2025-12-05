@@ -10,6 +10,14 @@
   z-index: 10000;
   /* Stelle sicher, dass absolute Kinder relativ zu diesem Element positioniert werden */
   isolation: isolate;
+  box-sizing: border-box;
+}
+
+/* Spezifische Breite für Info-Button Tooltip */
+.infoButtonTooltip {
+  width: 220px !important;
+  max-width: 220px !important;
+  min-width: 220px !important;
 }
 
 .tooltip::before {
@@ -72,6 +80,7 @@
   width: 0;
   height: 0;
   border-style: solid;
+  background-color: transparent;
 }
 
 .arrow[data-position="top"] {
@@ -116,6 +125,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .message {
@@ -124,6 +135,11 @@
   line-height: 1.5;
   margin: 0;
   text-align: center;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .buttons {

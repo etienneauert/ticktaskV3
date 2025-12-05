@@ -28,67 +28,8 @@ export default function TutorialTooltip({
         updatePosition.isUpdating = false;
       }, 50);
 
-      // Für Info-Button: Finde das richtige Element durch Suche nach dem Button mit img vor dem Abmelden-Button
-      let targetElement;
-      if (targetId === "info-button") {
-        // Suche alle Buttons im Header-Bereich
-        const buttonsRight =
-          document.querySelector(".buttonsRight") ||
-          document.querySelector('[class*="buttonsRight"]');
-        let allButtons = [];
-
-        if (buttonsRight) {
-          allButtons = Array.from(buttonsRight.querySelectorAll("button"));
-        } else {
-          // Fallback: Suche in header und headerContainer
-          allButtons = Array.from(
-            document.querySelectorAll("header button, .headerContainer button")
-          );
-        }
-
-        // Finde den Abmelden-Button (hat Text "Abmelden" oder "logout")
-        const abmeldenButton = allButtons.find((btn) => {
-          const text = btn.textContent?.trim() || "";
-          return (
-            text.toLowerCase().includes("abmelden") ||
-            text.toLowerCase().includes("logout")
-          );
-        });
-
-        // WICHTIG: Suche direkt nach Button mit id="info-button" (das ist der Info-Button)
-        const byId = document.getElementById("info-button");
-        if (byId) {
-          const img = byId.querySelector("img");
-          const text = byId.textContent?.trim() || "";
-          const hasAbmeldenText =
-            text.toLowerCase().includes("abmelden") ||
-            text.toLowerCase().includes("logout");
-          // Stelle sicher, dass es nicht der Settings-Button ist (Settings-Button hat kein id="info-button")
-          // Der Info-Button hat id="info-button" UND ein img-Element
-          if (byId.id === "info-button" && img && !hasAbmeldenText) {
-            targetElement = byId;
-          }
-        }
-
-        // Fallback: Suche nach Button direkt vor dem Abmelden-Button mit id="info-button"
-        if (!targetElement && abmeldenButton) {
-          const abmeldenIndex = allButtons.indexOf(abmeldenButton);
-          if (abmeldenIndex > 0) {
-            const possibleInfoButton = allButtons[abmeldenIndex - 1];
-            // Prüfe, ob es der Button mit id="info-button" ist
-            if (possibleInfoButton && possibleInfoButton.id === "info-button") {
-              targetElement = possibleInfoButton;
-            }
-          }
-        }
-
-        // Letzter Fallback: Verwende getElementById
-        if (!targetElement) {
-          targetElement = document.getElementById(targetId);
-        }
-      } else {
-        targetElement = document.getElementById(targetId);
-      }
+      // Suche nach dem Ziel-Element
+      let targetElement = document.getElementById(targetId);
 
       if (!targetElement) {
         // Wenn Element nicht gefunden, versuche es nach kurzer Verzögerung erneut
@@ -121,13 +62,24 @@ export default function TutorialTooltip({
 
         // Berechne die verfügbare Breite
         const availableWidth = window.innerWidth - minMargin * 2;
-        const actualTooltipWidth = Math.min(tooltipMaxWidth, availableWidth);
+        // Für Info-Button: Verwende immer die feste maxWidth, nicht die verfügbare Breite
+        const actualTooltipWidth =
+          targetId === "info-button"
+            ? tooltipMaxWidth
+            : Math.min(tooltipMaxWidth, availableWidth);
 
+        // Deklariere Variablen für Tooltip-Positionierung
+        let left;
+        let tooltipLeftEdge;
+        let arrowOffset;
+
+        // Normale Positionierung für alle Elemente (inkl. Info-Button)
         // Versuche, das Tooltip zentriert über dem Ziel zu positionieren
-        let left = targetCenter;
+        left = targetCenter;
 
         // Berechne die Ränder des Tooltips (vor transform)
-        let tooltipLeftEdge = left - actualTooltipWidth / 2;
+        // WICHTIG: Mit transform: translateX(-50%) ist die linke Kante bei left - actualTooltipWidth / 2
+        tooltipLeftEdge = left - actualTooltipWidth / 2;
         const tooltipRightEdge = left + actualTooltipWidth / 2;
 
         // Prüfe, ob das Tooltip links außerhalb des Viewports wäre
@@ -144,92 +96,54 @@ export default function TutorialTooltip({
         }
 
         // Berechne die Pfeil-Position basierend auf der Position des Ziel-Elements
-        // Das Tooltip hat transform: translateX(-50%), daher ist die linke Kante bei: left - actualTooltipWidth / 2
-        // tooltipLeftEdge wurde bereits oben berechnet
+        // Nach transform: translateX(-50%) ist die linke Kante des Tooltips bei left - actualTooltipWidth / 2
+        // Der Pfeil soll auf targetCenter zeigen
+        // arrowOffset = targetCenter - tooltipLeftEdge
+        // tooltipLeftEdge = left - actualTooltipWidth / 2
+        // arrowOffset = targetCenter - (left - actualTooltipWidth / 2)
 
-        // Die Position des Pfeils relativ zur linken Kante des Tooltips
-        // targetCenter ist die X-Position der Mitte des Ziel-Elements im Viewport
-        // arrowOffset ist der Abstand von der linken Kante des Tooltips zur Mitte des Ziel-Elements
-        // Der Pfeil selbst hat auch transform: translateX(-50%), daher zeigt die linke Position auf die Mitte des Pfeils
-        let arrowOffset = targetCenter - tooltipLeftEdge;
-
-        // Stelle sicher, dass der Pfeil innerhalb des Tooltips bleibt (mit etwas Abstand zu den Rändern)
-        const minArrowOffset = 20; // Mindestabstand vom linken Rand des Tooltips
-        const maxArrowOffset = actualTooltipWidth - 20; // Mindestabstand vom rechten Rand
-
-        // Für Info-Button: Berechne die Position komplett neu
+        // Für Info-Button: Pfeil soll immer genau in der Mitte sein (50% der Breite)
+        // Das Tooltip hat eine feste Breite von 220px (durch CSS-Klasse)
+        // Der Pfeil soll genau in der Mitte sein, unabhängig von der Positionierung
         if (targetId === "info-button") {
-          // Finde das Info-Button-Element durch Suche nach dem Button mit img, der direkt vor dem Abmelden-Button steht
-          const allButtons = document.querySelectorAll(
-            'header button, .headerContainer button, [class*="buttonsRight"] button'
-          );
-          const buttonsArray = Array.from(allButtons);
-
-          // Finde den Abmelden-Button (hat Text "Abmelden" oder "logout")
-          const abmeldenButton = buttonsArray.find((btn) => {
-            const text = btn.textContent?.trim() || "";
-            return (
-              text.toLowerCase().includes("abmelden") ||
-              text.toLowerCase().includes("logout")
-            );
-          });
-
-          let infoButton = null;
-          if (abmeldenButton) {
-            // Finde den Button direkt vor dem Abmelden-Button
-            const abmeldenIndex = buttonsArray.indexOf(abmeldenButton);
-            if (abmeldenIndex > 0) {
-              const possibleInfoButton = buttonsArray[abmeldenIndex - 1];
-              // Prüfe, ob es ein Button mit img ist (Info-Button hat ein img)
-              if (
-                possibleInfoButton &&
-                possibleInfoButton.querySelector("img")
-              ) {
-                infoButton = possibleInfoButton;
-              }
-            }
-          }
-
-          // Fallback: Suche nach Button mit id="info-button"
-          if (!infoButton) {
-            const byId = document.getElementById("info-button");
-            if (
-              byId &&
-              byId.querySelector("img") &&
-              !byId.textContent?.toLowerCase().includes("abmelden")
-            ) {
-              infoButton = byId;
-            }
-          }
-
-          // Berechne die Pfeil-Position basierend auf dem gefundenen Info-Button
-          if (infoButton) {
-            const infoRect = infoButton.getBoundingClientRect();
-            const infoCenter = infoRect.left + infoRect.width / 2;
-            arrowOffset = infoCenter - tooltipLeftEdge;
-          } else {
-            // Falls Info-Button nicht gefunden, verschiebe den Pfeil stark nach links
-            arrowOffset = arrowOffset - 200;
-          }
-
-          // Stelle sicher, dass der Pfeil innerhalb des Tooltips bleibt
-          if (arrowOffset < 20) arrowOffset = 20;
-          if (arrowOffset > actualTooltipWidth - 20)
-            arrowOffset = actualTooltipWidth - 20;
+          // Für Info-Button: Pfeil immer genau in der Mitte
+          // Verwende die feste maxWidth (220px), nicht actualTooltipWidth
+          arrowOffset = tooltipMaxWidth / 2;
         } else {
+          arrowOffset = targetCenter - tooltipLeftEdge;
+
+          // Stelle sicher, dass arrowOffset definiert ist
+          if (arrowOffset === undefined) {
+            arrowOffset = targetCenter - tooltipLeftEdge;
+          }
+
+          // Stelle sicher, dass der Pfeil innerhalb des Tooltips bleibt (mit etwas Abstand zu den Rändern)
+          const minArrowOffset = 20; // Mindestabstand vom linken Rand des Tooltips
+          const maxArrowOffset = actualTooltipWidth - 20; // Mindestabstand vom rechten Rand
+
+          // Clamp arrowOffset
           arrowOffset = Math.max(
             minArrowOffset,
             Math.min(arrowOffset, maxArrowOffset)
           );
         }
 
-        const arrowLeft = `${arrowOffset}px`;
+        // Für Info-Button: Verwende Prozent-Wert für den Pfeil (immer 50% = Mitte)
+        // Für andere: Verwende Pixel-Wert
+        const arrowLeft =
+          targetId === "info-button" ? "50%" : `${arrowOffset}px`;
 
         setTooltipStyle({
           top: `${top}px`,
           left: `${left}px`,
           transform: "translateX(-50%)", // Horizontal zentrieren
-          maxWidth: `${actualTooltipWidth}px`, // Stelle sicher, dass das Tooltip nicht zu breit ist
+          // Für Info-Button: Verwende width statt maxWidth für feste Breite
+          ...(targetId === "info-button"
+            ? {
+                width: `${tooltipMaxWidth}px`,
+                maxWidth: `${tooltipMaxWidth}px`,
+              }
+            : { maxWidth: `${actualTooltipWidth}px` }),
         });
         // Speichere die Pfeil-Position separat
         setArrowPosition(arrowLeft);
@@ -287,9 +201,16 @@ export default function TutorialTooltip({
   if (!targetId) return null;
 
   // Kombiniere tooltipStyle mit maxWidth
+  // Wenn width gesetzt ist (z.B. für Info-Button), verwende diese statt maxWidth
   const finalStyle = {
     ...tooltipStyle,
-    maxWidth: tooltipStyle.maxWidth ? tooltipStyle.maxWidth : `${maxWidth}px`,
+    ...(tooltipStyle.width
+      ? {} // width hat bereits Priorität, kein maxWidth hinzufügen
+      : {
+          maxWidth: tooltipStyle.maxWidth
+            ? tooltipStyle.maxWidth
+            : `${maxWidth}px`,
+        }),
   };
 
   // Berechne arrowStyle basierend auf arrowPosition
@@ -306,7 +227,9 @@ export default function TutorialTooltip({
 
   return (
     <div
-      className={styles.tooltip}
+      className={`${styles.tooltip} ${
+        targetId === "info-button" ? styles.infoButtonTooltip : ""
+      }`}
       style={{ ...finalStyle, ...displayStyle }}
       data-position={position}
     >

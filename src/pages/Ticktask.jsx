@@ -1843,10 +1843,6 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (!user?.uid || isGuestMode || isLoading) return;
 
-    // Verhindere mehrfache Prüfungen in derselben Session
-    if (welcomeCheckedRef.current) return;
-    welcomeCheckedRef.current = true;
-
     // Warte kurz, damit die App vollständig geladen ist
     const checkWelcomePopup = async () => {
       try {
@@ -1857,9 +1853,6 @@ export function Ticktask({ user, isGuestMode = false }) {
 
         if (justRegisteredFlag === "true") {
           // Benutzer wurde gerade registriert - zeige Popup
-          // Entferne den Flag sofort, damit er nicht mehrfach angezeigt wird
-          localStorage.removeItem(`ticktask_justRegistered_${user.uid}`);
-
           // Prüfe zusätzlich in Firestore, ob das Popup bereits angezeigt wurde
           const profileDoc = doc(db, "users", user.uid, "profile", "welcome");
           const profileSnap = await getDoc(profileDoc);
@@ -1868,7 +1861,12 @@ export function Ticktask({ user, isGuestMode = false }) {
             // Popup noch nicht angezeigt - zeige es nach kurzer Verzögerung
             setTimeout(() => {
               setShowWelcomePopup(true);
+              // Entferne den Flag erst nachdem das Popup angezeigt wurde
+              localStorage.removeItem(`ticktask_justRegistered_${user.uid}`);
             }, 500);
+          } else {
+            // Popup wurde bereits angezeigt - entferne den Flag trotzdem
+            localStorage.removeItem(`ticktask_justRegistered_${user.uid}`);
           }
         }
         // Wenn justRegisteredFlag nicht gesetzt ist, wurde der Benutzer nicht gerade registriert
@@ -1879,7 +1877,13 @@ export function Ticktask({ user, isGuestMode = false }) {
       }
     };
 
-    checkWelcomePopup();
+    // Prüfe nur einmal pro user.uid
+    // Setze welcomeCheckedRef zurück, wenn sich der Benutzer ändert
+    const currentUserId = user?.uid;
+    if (welcomeCheckedRef.current !== currentUserId) {
+      welcomeCheckedRef.current = currentUserId;
+      checkWelcomePopup();
+    }
   }, [user?.uid, isGuestMode, isLoading]);
 
   // Speichere, dass Welcome-Popup angezeigt wurde (wird nur einmal gespeichert)
@@ -1908,10 +1912,23 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   // Handler für "Start Tutorial" Button
   const handleStartTutorial = () => {
-    setIsTutorialActive(true);
-    setCurrentTutorialStep(0);
-    setTutorialPopupOpen(false);
-    console.log("Tutorial wird gestartet");
+    console.log("handleStartTutorial aufgerufen");
+    setShowWelcomePopup(false); // Schließe Welcome-Popup
+
+    // Warte kurz, damit das Welcome-Popup geschlossen ist und alle Elemente gerendert sind
+    setTimeout(() => {
+      console.log(
+        "Tutorial wird gestartet - isTutorialActive wird auf true gesetzt"
+      );
+      setIsTutorialActive(true);
+      setCurrentTutorialStep(0);
+      setTutorialPopupOpen(false);
+      console.log("Tutorial State:", {
+        isTutorialActive: true,
+        currentTutorialStep: 0,
+        tutorialStepsLength: tutorialSteps.length,
+      });
+    }, 100);
   };
 
   // Tutorial-Schritte
@@ -1965,6 +1982,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         "Hier findest du weitere Informationen über die App und wie sie funktioniert.",
       position: "top",
       openPopup: false,
+      maxWidth: 220,
     },
     // Weitere Schritte können hier hinzugefügt werden
   ];
@@ -1984,7 +2002,12 @@ export function Ticktask({ user, isGuestMode = false }) {
             const viewportHeight = window.innerHeight;
 
             // Prüfe, ob das Element außerhalb des Viewports ist
-            if (rect.top < 0 || rect.bottom > viewportHeight) {
+            // Oder wenn der aktuelle Schritt der checklist-pen-icon ist, immer scrollen
+            if (
+              rect.top < 0 ||
+              rect.bottom > viewportHeight ||
+              currentStep?.targetId === "checklist-pen-icon"
+            ) {
               // Scroll zum Element mit etwas Abstand oben
               targetElement.scrollIntoView({
                 behavior: "smooth",
@@ -2199,24 +2222,26 @@ export function Ticktask({ user, isGuestMode = false }) {
         onTutorialPopupClose={handleTutorialNext}
         isTutorialMode={isTutorialActive && tutorialPopupOpen}
       ></Input>
-      {isTutorialActive && currentTutorialStep < tutorialSteps.length && (
-        <>
-          <div
-            className={tutorialOverlayStyles.overlay}
-            onClick={(e) => e.stopPropagation()}
-          />
-          <TutorialTooltip
-            targetId={tutorialSteps[currentTutorialStep].targetId}
-            message={tutorialSteps[currentTutorialStep].message}
-            position={tutorialSteps[currentTutorialStep].position}
-            onNext={handleTutorialNext}
-            onSkip={handleTutorialSkip}
-            showNext={false}
-            showSkip={true}
-            maxWidth={tutorialSteps[currentTutorialStep].maxWidth}
-          />
-        </>
-      )}
+      {isTutorialActive &&
+        currentTutorialStep < tutorialSteps.length &&
+        tutorialSteps[currentTutorialStep] && (
+          <>
+            <div
+              className={tutorialOverlayStyles.overlay}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <TutorialTooltip
+              targetId={tutorialSteps[currentTutorialStep].targetId}
+              message={tutorialSteps[currentTutorialStep].message}
+              position={tutorialSteps[currentTutorialStep].position}
+              onNext={handleTutorialNext}
+              onSkip={handleTutorialSkip}
+              showNext={false}
+              showSkip={true}
+              maxWidth={tutorialSteps[currentTutorialStep].maxWidth}
+            />
+          </>
+        )}
       <Main
         tasks={tasks}
         frequentTemplates={frequentTemplates}
