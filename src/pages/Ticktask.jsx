@@ -1846,16 +1846,12 @@ export function Ticktask({ user, isGuestMode = false }) {
       // Reset ref wenn Guest-Mode aktiviert wird
       guestWelcomeShownRef.current = false;
 
-      // Warte kurz, damit die App vollständig geladen ist
-      const timer = setTimeout(() => {
-        console.log("[Guest Mode] Setting welcome popup to true");
-        if (!guestWelcomeShownRef.current) {
-          setShowWelcomePopup(true);
-          guestWelcomeShownRef.current = true;
-        }
-      }, 800);
-
-      return () => clearTimeout(timer);
+      // Zeige Popup sofort ohne Verzögerung
+      console.log("[Guest Mode] Setting welcome popup to true");
+      if (!guestWelcomeShownRef.current) {
+        setShowWelcomePopup(true);
+        guestWelcomeShownRef.current = true;
+      }
     } else {
       // Reset ref wenn Guest-Mode verlassen wird
       guestWelcomeShownRef.current = false;
