@@ -1999,43 +1999,18 @@ export function Ticktask({ user, isGuestMode = false }) {
       // Schließe Popup, wenn es im aktuellen Schritt geöffnet war
       if (currentStep?.openPopup) {
         setTutorialPopupOpen(false);
-        // Warte kurz, damit das Popup geschlossen ist, bevor der nächste Schritt angezeigt wird
-        setTimeout(() => {
-          // Scroll zum nächsten Element
-          scrollToNextElement();
-
-          // Öffne Popup, wenn der nächste Schritt es erfordert
-          if (nextStepData?.openPopup) {
-            setTutorialPopupOpen(true);
-            // Warte länger, damit das Popup vollständig gerendert ist, bevor der Schritt gewechselt wird
-            setTimeout(() => {
-              setCurrentTutorialStep(nextStep);
-            }, 500);
-          } else {
-            // Warte kurz, damit das Scrollen abgeschlossen ist
-            setTimeout(() => {
-              setCurrentTutorialStep(nextStep);
-            }, 300);
-          }
-        }, 300);
-      } else {
-        // Scroll zum nächsten Element
-        scrollToNextElement();
-
-        // Öffne Popup, wenn der nächste Schritt es erfordert
-        if (nextStepData?.openPopup) {
-          setTutorialPopupOpen(true);
-          // Warte länger, damit das Popup vollständig gerendert ist, bevor der Schritt gewechselt wird
-          setTimeout(() => {
-            setCurrentTutorialStep(nextStep);
-          }, 500);
-        } else {
-          // Warte kurz, damit das Scrollen abgeschlossen ist
-          setTimeout(() => {
-            setCurrentTutorialStep(nextStep);
-          }, 300);
-        }
       }
+
+      // Scroll zum nächsten Element
+      scrollToNextElement();
+
+      // Öffne Popup, wenn der nächste Schritt es erfordert
+      if (nextStepData?.openPopup) {
+        setTutorialPopupOpen(true);
+      }
+
+      // Wechsle Schritt sofort - Tooltip passt sich dynamisch an
+      setCurrentTutorialStep(nextStep);
     } else {
       // Tutorial beendet
       setIsTutorialActive(false);
