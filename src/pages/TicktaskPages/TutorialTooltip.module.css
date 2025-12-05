@@ -145,8 +145,17 @@
 .buttons {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 12px;
   margin-top: 8px;
+}
+
+.progress {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  display: block;
+  text-align: center;
+  margin-bottom: 0px;
 }
 
 .nextButton {

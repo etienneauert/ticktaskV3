@@ -10,10 +10,21 @@ export default function TutorialTooltip({
   showNext = false,
   showSkip = false,
   maxWidth = 400,
+  isFirstStep = false,
+  isLastStep = false,
+  currentStep = 1,
+  totalSteps = 1,
 }) {
-  const [tooltipStyle, setTooltipStyle] = useState({});
+  // Initiale Position außerhalb des Viewports, damit kein "Springen" sichtbar ist
+  const [tooltipStyle, setTooltipStyle] = useState({
+    top: "-9999px",
+    left: "-9999px",
+    opacity: 0,
+  });
   const [arrowPosition, setArrowPosition] = useState("50%");
   const [isPositioned, setIsPositioned] = useState(false);
+  // isReady wird erst gesetzt, nachdem die Position berechnet wurde
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (!targetId) return;
@@ -43,7 +54,7 @@ export default function TutorialTooltip({
       if (position === "left") {
         // Rechts neben dem Element - Tooltip rechts vom Popup
         // Pfeil an der linken Seite des Tooltips, zeigt nach links zum Popup
-        const top = rect.top + rect.height * 0.5; // Weiter unten am Popup (85% der Höhe)
+        const top = rect.top + rect.height * 0.3; // Weiter oben am Popup (30% der Höhe statt 50%)
         const left = rect.right + 20; // 20px Abstand rechts vom Popup
 
         setTooltipStyle({
@@ -137,6 +148,7 @@ export default function TutorialTooltip({
           top: `${top}px`,
           left: `${left}px`,
           transform: "translateX(-50%)", // Horizontal zentrieren
+          opacity: 1, // Sichtbar machen, wenn positioniert
           // Für Info-Button: Verwende width statt maxWidth für feste Breite
           ...(targetId === "info-button"
             ? {
@@ -157,6 +169,9 @@ export default function TutorialTooltip({
     let rafId1, rafId2, rafId3;
 
     // Erste Positionierung nach kurzer Verzögerung
+    // Für den ersten Schritt: Längere Verzögerung, damit DOM vollständig geladen ist
+    const initialDelay = isFirstStep ? 200 : 100;
+
     rafId1 = requestAnimationFrame(() => {
       setTimeout(() => {
         updatePosition();
@@ -166,11 +181,22 @@ export default function TutorialTooltip({
             updatePosition();
             // Dritte Positionierung für finale Korrektur
             rafId3 = requestAnimationFrame(() => {
-              setTimeout(updatePosition, 50);
+              setTimeout(() => {
+                updatePosition();
+                // Nach finaler Positionierung: Tooltip sichtbar machen
+                // Für ersten Schritt: Zusätzliche kleine Verzögerung
+                if (isFirstStep) {
+                  setTimeout(() => {
+                    setIsReady(true);
+                  }, 50);
+                } else {
+                  setIsReady(true);
+                }
+              }, 50);
             });
           }, 50);
         });
-      }, 100);
+      }, initialDelay);
     });
 
     // Update on scroll and resize
@@ -196,7 +222,7 @@ export default function TutorialTooltip({
       window.removeEventListener("resize", updatePosition);
       observer.disconnect();
     };
-  }, [targetId, position]);
+  }, [targetId, position, isFirstStep]);
 
   if (!targetId) return null;
 
@@ -222,8 +248,9 @@ export default function TutorialTooltip({
         }
       : {};
 
-  // Verstecke das Tooltip, bis es korrekt positioniert ist
-  const displayStyle = isPositioned ? {} : { opacity: 0, visibility: "hidden" };
+  // Verstecke das Tooltip, bis es korrekt positioniert ist und bereit ist
+  // opacity wird bereits in tooltipStyle gesetzt, daher nur visibility hier
+  const displayStyle = isPositioned && isReady ? {} : { visibility: "hidden" };
 
   return (
     <div
@@ -239,6 +266,9 @@ export default function TutorialTooltip({
         style={arrowStyle}
       ></div>
       <div className={styles.content}>
+        <span className={styles.progress}>
+          {currentStep}/{totalSteps}
+        </span>
         <p className={styles.message}>{message}</p>
         {(showNext || showSkip) && (
           <div className={styles.buttons}>
@@ -249,7 +279,7 @@ export default function TutorialTooltip({
             )}
             {showSkip && (
               <button className={styles.continueButton} onClick={onNext}>
-                Weiter
+                {isLastStep ? "Beenden" : "Weiter"}
               </button>
             )}
           </div>

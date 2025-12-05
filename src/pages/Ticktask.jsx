@@ -2239,6 +2239,10 @@ export function Ticktask({ user, isGuestMode = false }) {
               showNext={false}
               showSkip={true}
               maxWidth={tutorialSteps[currentTutorialStep].maxWidth}
+              isFirstStep={currentTutorialStep === 0}
+              isLastStep={currentTutorialStep === tutorialSteps.length - 1}
+              currentStep={currentTutorialStep + 1}
+              totalSteps={tutorialSteps.length}
             />
           </>
         )}
