@@ -121,7 +121,7 @@
 /* Mobile Media Queries */
 @media (max-width: 768px) {
   .InputContainer {
-    margin-top: 80px;
+    margin-top: 120px;
     gap: 15px;
     flex-direction: row;
     align-items: center;
@@ -163,7 +163,7 @@
 
 @media (max-width: 480px) {
   .InputContainer {
-    margin-top: 50px;
+    margin-top: 100px;
     gap: 10px;
     padding: 0 10px;
     flex-direction: row;
