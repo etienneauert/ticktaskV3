@@ -10,6 +10,9 @@ export default function Input({
   tutorialPopupOpen,
   onTutorialPopupClose,
   isTutorialMode = false,
+  isGuestMode = false,
+  updateGuestData,
+  guestData,
 }) {
   const [value, setValue] = useState("");
   const [open, setOpen] = useState(false);
@@ -75,6 +78,9 @@ export default function Input({
         taskText={value || "Beispiel Task"}
         user={user}
         isTutorialMode={tutorialPopupOpen}
+        isGuestMode={isGuestMode}
+        updateGuestData={updateGuestData}
+        guestData={guestData}
       />
     </>
   );

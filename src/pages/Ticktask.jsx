@@ -997,7 +997,40 @@ export function Ticktask({ user, isGuestMode = false }) {
             }
           : task
       );
-      updateGuestData({ tasks: updatedTasks });
+
+      // Wenn der Task ein Goal hat, füge die Zeit zum Goal hinzu
+      // Verwende taskDuration (geplante Zeit) wie im normalen Modus, nicht actualTime
+      if (taskToComplete.goalId && taskDuration > 0) {
+        updateGuestData((prevData) => {
+          const updatedGoals = (prevData.goals || []).map((goal) => {
+            if (goal.id === taskToComplete.goalId) {
+              const currentTimeSpent = goal.timeSpent || 0;
+              const newTimeSpent = currentTimeSpent + taskDuration; // taskDuration ist in Minuten
+              console.log(
+                `[Guest Mode] Adding ${taskDuration} minutes (taskDuration) to goal ${goal.id}. Old: ${currentTimeSpent}min, New: ${newTimeSpent}min`
+              );
+              return {
+                ...goal,
+                timeSpent: newTimeSpent,
+              };
+            }
+            return goal;
+          });
+          return {
+            ...prevData,
+            tasks: updatedTasks,
+            goals: updatedGoals,
+          };
+        });
+        // Dispatch Event für automatische Aktualisierung
+        window.dispatchEvent(
+          new CustomEvent("goalsChanged", {
+            detail: { action: "timeSpentUpdated" },
+          })
+        );
+      } else {
+        updateGuestData({ tasks: updatedTasks });
+      }
       return;
     }
 
@@ -2225,6 +2258,9 @@ export function Ticktask({ user, isGuestMode = false }) {
           tutorialPopupOpen={tutorialPopupOpen}
           onTutorialPopupClose={handleTutorialNext}
           isTutorialMode={isTutorialActive && tutorialPopupOpen}
+          isGuestMode={isGuestMode}
+          updateGuestData={updateGuestData}
+          guestData={guestData}
         />
         {isTutorialActive &&
           currentTutorialStep < tutorialSteps.length &&

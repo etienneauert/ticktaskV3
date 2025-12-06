@@ -50,6 +50,7 @@ export default function Goals({
         goalId: t.goalId,
         done: t.done,
         actualTimeUsed: t.actualTimeUsed,
+        taskDuration: t.taskDuration,
       }))
     );
     const tasksWithGoals = tasks.filter((t) => t.goalId);
@@ -62,7 +63,14 @@ export default function Goals({
     console.log(
       "[Goals] Completed tasks with goals:",
       completedTasksWithGoals.length,
-      completedTasksWithGoals
+      completedTasksWithGoals.map((t) => ({
+        id: t.id,
+        text: t.text,
+        goalId: t.goalId,
+        done: t.done,
+        actualTimeUsed: t.actualTimeUsed,
+        taskDuration: t.taskDuration,
+      }))
     );
   }, [tasks]);
 
@@ -100,6 +108,12 @@ export default function Goals({
         ...prevData,
         goals: [...(prevData.goals || []), goalData],
       }));
+      // Dispatch Event für automatische Aktualisierung im Popup
+      window.dispatchEvent(
+        new CustomEvent("goalsChanged", {
+          detail: { action: "added" },
+        })
+      );
       setValue("");
       setOpen(false);
       return;
@@ -199,8 +213,60 @@ export default function Goals({
       // Im Guest Mode: Lade Goals aus guestData
       const guestGoals = guestData?.goals || [];
       console.log("Loaded guest goals:", guestGoals);
+      console.log(
+        "Guest goals with timeSpent:",
+        guestGoals.map((g) => ({
+          id: g.id,
+          text: g.text,
+          timeSpent: g.timeSpent,
+          hoursNeeded: g.hoursNeeded,
+        }))
+      );
       setGoals(guestGoals);
-      return;
+
+      // Höre auch auf Goals-Änderungen im Guest Mode
+      const handleGoalsChanged = () => {
+        // Lade direkt aus localStorage, da guestData möglicherweise noch nicht aktualisiert ist
+        const saved = localStorage.getItem("ticktask_guest_data");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            const updatedGoals = parsed.goals || [];
+            console.log(
+              "Goals changed event - reloading goals from localStorage:",
+              updatedGoals
+            );
+            console.log(
+              "Updated goals with timeSpent:",
+              updatedGoals.map((g) => ({
+                id: g.id,
+                text: g.text,
+                timeSpent: g.timeSpent,
+                hoursNeeded: g.hoursNeeded,
+              }))
+            );
+            setGoals(updatedGoals);
+          } catch (e) {
+            console.error("Failed to parse guest data on goalsChanged", e);
+            // Fallback: Verwende guestData prop
+            const updatedGoals = guestData?.goals || [];
+            setGoals(updatedGoals);
+          }
+        } else {
+          // Fallback: Verwende guestData prop
+          const updatedGoals = guestData?.goals || [];
+          console.log(
+            "Goals changed event - no localStorage, using guestData prop:",
+            updatedGoals
+          );
+          setGoals(updatedGoals);
+        }
+      };
+
+      window.addEventListener("goalsChanged", handleGoalsChanged);
+      return () => {
+        window.removeEventListener("goalsChanged", handleGoalsChanged);
+      };
     }
 
     if (!user?.uid) {
@@ -246,10 +312,22 @@ export default function Goals({
 
   // Lese die gespeicherte Zeit für ein Goal (aus dem Goal-Dokument)
   const getTimeSpent = (goal) => {
-    // timeSpent ist in Minuten im Goal-Dokument gespeichert
+    // Im Guest Mode und normalen Modus: timeSpent ist in Minuten im Goal-Objekt/Dokument gespeichert
     const timeSpentMinutes = goal.timeSpent || 0;
     // Konvertiere zu Stunden
-    return timeSpentMinutes / 60;
+    const timeSpentHours = timeSpentMinutes / 60;
+
+    if (isGuestMode) {
+      console.log(
+        `[Goals] Guest Mode: Goal "${
+          goal.text
+        }" - timeSpent=${timeSpentMinutes}min = ${timeSpentHours.toFixed(
+          2
+        )}h, hoursNeeded=${goal.hoursNeeded}h`
+      );
+    }
+
+    return timeSpentHours;
   };
 
   // Prüfe, ob ein Goal die Stundenanzahl erreicht hat
@@ -513,8 +591,29 @@ export default function Goals({
                     : 0;
 
                 console.log(
-                  `[Goals] Rendering goal "${goal.text}": timeSpent=${timeSpent}h, maxHours=${maxHours}h, progress=${progress}%`
+                  `[Goals] Rendering goal "${goal.text}": timeSpent=${timeSpent}h, maxHours=${maxHours}h, progress=${progress}%, goalId=${goal.id}`
                 );
+
+                if (isGuestMode) {
+                  const allTasks = tasks || [];
+                  const tasksWithGoalId = allTasks.filter(
+                    (t) => t.goalId === goal.id
+                  );
+                  const completedTasks = tasksWithGoalId.filter((t) => t.done);
+                  console.log(`[Goals] Guest Mode Debug for "${goal.text}":`, {
+                    allTasksCount: allTasks.length,
+                    tasksWithGoalId: tasksWithGoalId.length,
+                    completedTasks: completedTasks.length,
+                    completedTasksDetails: completedTasks.map((t) => ({
+                      id: t.id,
+                      text: t.text,
+                      done: t.done,
+                      actualTimeUsed: t.actualTimeUsed,
+                      taskDuration: t.taskDuration,
+                      goalId: t.goalId,
+                    })),
+                  });
+                }
 
                 return (
                   <div key={goal.id} className={styles.GoalItem}>
@@ -538,10 +637,15 @@ export default function Goals({
                     </div>
                     <div className={styles.GoalProgressContainer}>
                       <div className={styles.GoalProgressBar}>
-                        {progress > 0 && (
+                        {progress > 0 ? (
                           <div
                             className={styles.GoalProgressFill}
                             style={{ width: `${progress}%` }}
+                          />
+                        ) : (
+                          <div
+                            className={styles.GoalProgressFill}
+                            style={{ width: "0%" }}
                           />
                         )}
                       </div>

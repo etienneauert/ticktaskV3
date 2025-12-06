@@ -545,8 +545,10 @@ export default function SingleTask({
                   onClick={() => {
                     // Berechne tatsächlich verbrauchte Zeit
                     const taskDuration = parseInt(task.taskDuration) || 0;
-                    const actualTimeUsed =
-                      taskDuration - Math.floor(timeLeft / 60);
+                    // timeLeft ist in Sekunden, taskDuration ist in Minuten
+                    // Verbrauchte Zeit = geplante Zeit - verbleibende Zeit (in Minuten)
+                    const actualTimeUsed = Math.max(0, taskDuration - (timeLeft / 60));
+                    console.log(`[SingleTask] Task done: taskDuration=${taskDuration}min, timeLeft=${timeLeft}s (${timeLeft/60}min), actualTimeUsed=${actualTimeUsed}min`);
 
                     // Timer-State zurücksetzen
                     setIsRunning(false);
