@@ -667,6 +667,39 @@
   }
 }
 
+/* Ab 454px: Tage verbleibend unter Erstellt anzeigen und Zeitfortschritt über Ziel erreicht */
+@media (max-width: 454px) {
+  .GoalDatesContainer {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .GoalDate {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .GoalDaysRemaining {
+    margin-left: 0;
+    margin-top: 4px;
+  }
+
+  .GoalProgressRight {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .GoalProgressText {
+    order: 1;
+  }
+
+  .GoalActionButtons {
+    order: 2;
+  }
+}
+
 .GoalActionButtons {
   display: flex;
   align-items: center;
