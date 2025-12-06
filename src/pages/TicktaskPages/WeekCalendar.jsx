@@ -862,17 +862,14 @@ export default function WeekCalendar({
         <div className={styles.RightBar}></div>
       </div>
       <div className={styles.CalendarBody}>
-        {timePosition &&
-          isToday(weekDates[selectedDayIndex]) &&
-          timePosition.dayIndex === selectedDayIndex && (
-            <div
-              className={styles.CurrentTimeIndicator}
-              style={{
-                top: `${timePosition.top}px`,
-                gridColumn: `3 / 10`, // Spannt über alle 7 Tage
-              }}
-            />
-          )}
+        {timePosition && (
+          <div
+            className={styles.CurrentTimeIndicator}
+            style={{
+              top: `${timePosition.top}px`,
+            }}
+          />
+        )}
         <div className={styles.LeftBarColumn}>
           {hours.map((hour, index) => (
             <div key={hour}>
