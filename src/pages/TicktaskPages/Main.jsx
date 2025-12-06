@@ -150,7 +150,13 @@ export default function Main({
         </div>
       )}
       <div id="goals-section" className={styles.GoalsContainer}>
-        <Goals user={user} tasks={tasks} />
+        <Goals
+          user={user}
+          tasks={tasks}
+          isGuestMode={isGuestMode}
+          updateGuestData={updateGuestData}
+          guestData={guestData}
+        />
       </div>
     </div>
   );

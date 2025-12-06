@@ -18,7 +18,13 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
-export default function Goals({ user, tasks = [] }) {
+export default function Goals({
+  user,
+  tasks = [],
+  isGuestMode = false,
+  updateGuestData,
+  guestData,
+}) {
   const [value, setValue] = useState("");
   const [isShaking, setIsShaking] = useState(false);
   const [open, setOpen] = useState(false);
@@ -75,6 +81,30 @@ export default function Goals({ user, tasks = [] }) {
     const trimmed = value.trim();
     if (!trimmed) return;
 
+    const goalData = {
+      id: isGuestMode ? `local-${Date.now()}` : undefined,
+      text: trimmed,
+      targetDate: data.targetDate || null,
+      priority: data.priority || "low",
+      hoursNeeded: data.hoursNeeded || null,
+      timeSpent: 0, // Zeit in Minuten, initialisiert mit 0
+      createdAt: isGuestMode
+        ? { seconds: Math.floor(Date.now() / 1000) }
+        : serverTimestamp(),
+    };
+
+    if (isGuestMode) {
+      // Im Guest Mode: Speichere temporär in guestData
+      console.log("Saving guest goal:", goalData);
+      updateGuestData((prevData) => ({
+        ...prevData,
+        goals: [...(prevData.goals || []), goalData],
+      }));
+      setValue("");
+      setOpen(false);
+      return;
+    }
+
     if (!user?.uid) {
       console.warn("User not logged in, cannot save goal");
       setValue("");
@@ -84,15 +114,6 @@ export default function Goals({ user, tasks = [] }) {
 
     try {
       const goalsCol = collection(db, "users", user.uid, "goals");
-      const goalData = {
-        text: trimmed,
-        targetDate: data.targetDate || null,
-        priority: data.priority || "low",
-        hoursNeeded: data.hoursNeeded || null,
-        timeSpent: 0, // Zeit in Minuten, initialisiert mit 0
-        createdAt: serverTimestamp(),
-      };
-
       await addDoc(goalsCol, goalData);
       console.log("Goal hinzugefügt:", goalData);
 
@@ -124,7 +145,22 @@ export default function Goals({ user, tasks = [] }) {
 
   // Lösche ein Goal nach Bestätigung
   const handleDeleteGoal = async () => {
-    if (!user?.uid || !goalToDelete) return;
+    if (!goalToDelete) return;
+
+    if (isGuestMode) {
+      // Im Guest Mode: Lösche aus guestData
+      updateGuestData((prevData) => ({
+        ...prevData,
+        goals: (prevData.goals || []).filter(
+          (goal) => goal.id !== goalToDelete.id
+        ),
+      }));
+      setDeleteConfirmOpen(false);
+      setGoalToDelete(null);
+      return;
+    }
+
+    if (!user?.uid) return;
 
     try {
       const goalDoc = doc(db, "users", user.uid, "goals", goalToDelete.id);
@@ -159,6 +195,14 @@ export default function Goals({ user, tasks = [] }) {
 
   // Lade Goals aus Firebase mit Echtzeit-Listener
   useEffect(() => {
+    if (isGuestMode) {
+      // Im Guest Mode: Lade Goals aus guestData
+      const guestGoals = guestData?.goals || [];
+      console.log("Loaded guest goals:", guestGoals);
+      setGoals(guestGoals);
+      return;
+    }
+
     if (!user?.uid) {
       setGoals([]);
       return;
@@ -198,7 +242,7 @@ export default function Goals({ user, tasks = [] }) {
       unsubscribe();
       window.removeEventListener("goalsChanged", handleGoalsChanged);
     };
-  }, [user?.uid]);
+  }, [user?.uid, isGuestMode, guestData?.goals]);
 
   // Lese die gespeicherte Zeit für ein Goal (aus dem Goal-Dokument)
   const getTimeSpent = (goal) => {
@@ -251,16 +295,33 @@ export default function Goals({ user, tasks = [] }) {
 
   // Handler für Goal-Erreichungs-Popup
   const handleGoalReachedClose = async (isCompleted = false) => {
-    if (isCompleted && goalReached && user?.uid) {
-      try {
-        const goalDoc = doc(db, "users", user.uid, "goals", goalReached.id);
-        await updateDoc(goalDoc, {
-          completed: true,
-          completedAt: serverTimestamp(),
-        });
-        console.log("Goal marked as completed:", goalReached.id);
-      } catch (e) {
-        console.error("Failed to mark goal as completed", e);
+    if (isCompleted && goalReached) {
+      if (isGuestMode) {
+        // Im Guest Mode: Aktualisiere in guestData
+        updateGuestData((prevData) => ({
+          ...prevData,
+          goals: (prevData.goals || []).map((goal) =>
+            goal.id === goalReached.id
+              ? {
+                  ...goal,
+                  completed: true,
+                  completedAt: { seconds: Math.floor(Date.now() / 1000) },
+                }
+              : goal
+          ),
+        }));
+        console.log("Guest goal marked as completed:", goalReached.id);
+      } else if (user?.uid) {
+        try {
+          const goalDoc = doc(db, "users", user.uid, "goals", goalReached.id);
+          await updateDoc(goalDoc, {
+            completed: true,
+            completedAt: serverTimestamp(),
+          });
+          console.log("Goal marked as completed:", goalReached.id);
+        } catch (e) {
+          console.error("Failed to mark goal as completed", e);
+        }
       }
     }
     setGoalReachedOpen(false);
@@ -275,7 +336,29 @@ export default function Goals({ user, tasks = [] }) {
 
   // Handler für Bestätigung des "Ziel erreicht" Popups
   const handleCompleteConfirm = async () => {
-    if (!user?.uid || !goalToComplete) return;
+    if (!goalToComplete) return;
+
+    if (isGuestMode) {
+      // Im Guest Mode: Aktualisiere in guestData
+      updateGuestData((prevData) => ({
+        ...prevData,
+        goals: (prevData.goals || []).map((goal) =>
+          goal.id === goalToComplete.id
+            ? {
+                ...goal,
+                completed: true,
+                completedAt: { seconds: Math.floor(Date.now() / 1000) },
+              }
+            : goal
+        ),
+      }));
+      console.log("Guest goal marked as completed:", goalToComplete.id);
+      setCompleteConfirmOpen(false);
+      setGoalToComplete(null);
+      return;
+    }
+
+    if (!user?.uid) return;
 
     try {
       const goalDoc = doc(db, "users", user.uid, "goals", goalToComplete.id);
@@ -300,12 +383,22 @@ export default function Goals({ user, tasks = [] }) {
 
   // Handler für "Alle löschen" Button bei erledigten Goals
   const handleClearAllDoneGoals = async () => {
-    if (!user?.uid) return;
-
     const completedGoals = goals.filter((goal) => goal.completed);
     if (completedGoals.length === 0) return;
 
     if (window.confirm("Möchtest du wirklich alle erledigten Goals löschen?")) {
+      if (isGuestMode) {
+        // Im Guest Mode: Lösche aus guestData
+        updateGuestData((prevData) => ({
+          ...prevData,
+          goals: (prevData.goals || []).filter((goal) => !goal.completed),
+        }));
+        console.log("All completed guest goals deleted");
+        return;
+      }
+
+      if (!user?.uid) return;
+
       try {
         const deletePromises = completedGoals.map((goal) => {
           const goalDoc = doc(db, "users", user.uid, "goals", goal.id);

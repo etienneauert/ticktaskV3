@@ -5,6 +5,7 @@ export const useGuestData = (isGuestMode) => {
     tasks: [],
     frequentTemplates: [],
     appointments: [],
+    goals: [],
     weeklyTasks: {
       monday: [],
       tuesday: [],
@@ -81,6 +82,7 @@ export const useGuestData = (isGuestMode) => {
         tasks: [],
         frequentTemplates: [],
         appointments: [],
+        goals: [],
         weeklyTasks: {
           monday: [],
           tuesday: [],
