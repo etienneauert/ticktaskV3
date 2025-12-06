@@ -652,6 +652,21 @@
   flex-wrap: wrap;
 }
 
+/* Unter 900px: Rechter Teil (Buttons) ganz links unterhalb von Erstellt/Ziel */
+@media (max-width: 899px) {
+  .GoalProgressInfo {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px;
+    justify-content: flex-start !important;
+  }
+
+  .GoalProgressRight {
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+}
+
 .GoalActionButtons {
   display: flex;
   align-items: center;

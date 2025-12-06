@@ -6,6 +6,30 @@
   max-width: 400px;
   margin: 0 auto;
   width: 300px;
+  box-sizing: border-box;
+}
+
+/* Media Query für Bildschirme kleiner als 1478px */
+@media (max-width: 1478px) {
+  .dailyContainer {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Media Query für Handyansicht - gleiche Breite wie Tasks */
+@media (max-width: 768px) {
+  .dailyContainer {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dailyContainer {
+    max-width: 100%;
+    width: 100%;
+  }
 }
 
 .checklistHeader {

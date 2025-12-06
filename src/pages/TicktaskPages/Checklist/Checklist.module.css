@@ -14,6 +14,20 @@
   max-width: 400px;
 }
 
+/* Media Query für Bildschirme kleiner als 1478px */
+@media (max-width: 1478px) {
+  .checklistWrapper {
+    width: 85%;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .checklistContainer {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
 .checklistTitle {
   color: #aaa;
   margin-bottom: 15px;
@@ -36,6 +50,8 @@
 @media (max-width: 768px) {
   .checklistWrapper {
     gap: 15px;
+    width: 98%;
+    max-width: 100%;
   }
 
   .checklistContainer {
@@ -58,6 +74,8 @@
 @media (max-width: 480px) {
   .checklistWrapper {
     gap: 12px;
+    width: 100%;
+    max-width: 100%;
   }
 
   .checklistContainer {

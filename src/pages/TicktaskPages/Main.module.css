@@ -56,6 +56,34 @@
   /* background-color: purple; */
 }
 
+/* Media Query für Bildschirme kleiner als 1478px */
+@media (max-width: 1478px) {
+  .MainContent {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .MainTasks {
+    width: 90%;
+    margin-bottom: 20px;
+    order: 1;
+  }
+
+  .MainRoutine {
+    width: 85%;
+    max-width: 900px;
+    order: 2;
+    margin: 0 auto 20px;
+  }
+
+  .MainWeekly {
+    width: 85%;
+    max-width: 900px;
+    order: 3;
+    margin: 0 auto 20px;
+  }
+}
+
 /* Mobile Media Queries */
 @media (max-width: 1024px) {
   .Main {
@@ -99,11 +127,11 @@
 @media (max-width: 768px) {
   .Main {
     margin-top: 50px;
-    padding: 0 10px;
+    padding: 0 5px;
   }
 
   .MainTasks {
-    width: 95%;
+    width: 100%;
     margin-bottom: 20px;
     order: 1;
   }
@@ -126,7 +154,7 @@
   }
 
   .WeekCalendarContainer {
-    padding: 0 5px;
+    padding: 0 15px;
     margin-top: 20px;
   }
 }
@@ -161,7 +189,7 @@
   }
 
   .WeekCalendarContainer {
-    padding: 0;
+    padding: 0 10px;
     margin-top: 20px;
   }
 }
