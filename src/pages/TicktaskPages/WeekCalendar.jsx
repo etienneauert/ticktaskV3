@@ -137,6 +137,9 @@ export default function WeekCalendar({
   user,
   tasks = [],
   runningTaskId = null,
+  isGuestMode = false,
+  updateGuestData,
+  guestData,
 }) {
   const weekDays = [
     "Montag",
@@ -327,15 +330,49 @@ export default function WeekCalendar({
   const timePosition = getCurrentTimePosition();
 
   const scheduledTasksByDay = useMemo(() => {
-    if (!Array.isArray(tasks)) return {};
+    if (!Array.isArray(tasks)) {
+      console.log("[WeekCalendar] Tasks is not an array:", tasks);
+      return {};
+    }
 
-    return tasks
-      .filter((task) => task?.scheduledDateTime)
-      .map((task) => ({
-        ...task,
-        scheduledDate: new Date(task.scheduledDateTime),
-      }))
-      .filter((task) => !Number.isNaN(task.scheduledDate.getTime()))
+    console.log("[WeekCalendar] Processing tasks:", tasks.length);
+    console.log("[WeekCalendar] All tasks:", tasks);
+    const tasksWithSchedule = tasks.filter((task) => task?.scheduledDateTime);
+    console.log(
+      "[WeekCalendar] Tasks with scheduledDateTime:",
+      tasksWithSchedule.length
+    );
+    if (tasksWithSchedule.length > 0) {
+      console.log(
+        "[WeekCalendar] Tasks with schedule details:",
+        tasksWithSchedule.map((t) => ({
+          id: t.id,
+          text: t.text,
+          scheduledDateTime: t.scheduledDateTime,
+          scheduledDayOption: t.scheduledDayOption,
+          scheduledHour: t.scheduledHour,
+          scheduledMinute: t.scheduledMinute,
+        }))
+      );
+    }
+
+    return tasksWithSchedule
+      .map((task) => {
+        try {
+          return {
+            ...task,
+            scheduledDate: new Date(task.scheduledDateTime),
+          };
+        } catch (e) {
+          console.error(
+            "[WeekCalendar] Error parsing scheduledDateTime:",
+            task.scheduledDateTime,
+            e
+          );
+          return null;
+        }
+      })
+      .filter((task) => task && !Number.isNaN(task.scheduledDate.getTime()))
       .reduce((acc, task) => {
         const key = task.scheduledDate.toDateString();
         if (!acc[key]) acc[key] = [];
@@ -344,12 +381,76 @@ export default function WeekCalendar({
       }, {});
   }, [tasks]);
 
+  // Automatisch den Tag auswählen, wenn ein Task mit scheduledDateTime hinzugefügt wird
+  useEffect(() => {
+    if (!Array.isArray(tasks) || tasks.length === 0) return;
+
+    const tasksWithSchedule = tasks.filter((task) => task?.scheduledDateTime);
+    if (tasksWithSchedule.length === 0) return;
+
+    // Finde den neuesten Task (der zuletzt hinzugefügt wurde)
+    const latestTask = tasksWithSchedule[tasksWithSchedule.length - 1];
+    if (!latestTask?.scheduledDateTime) return;
+
+    try {
+      const scheduledDate = new Date(latestTask.scheduledDateTime);
+      if (Number.isNaN(scheduledDate.getTime())) return;
+
+      // Prüfe, ob das Datum in der aktuellen Woche liegt
+      const today = new Date();
+      const currentDay = today.getDay();
+      const monday = new Date(today);
+      monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1));
+      monday.setHours(0, 0, 0, 0);
+
+      const weekDates = [];
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + i);
+        weekDates.push(date);
+      }
+
+      const dayIndex = weekDates.findIndex((date) => {
+        return (
+          date.getDate() === scheduledDate.getDate() &&
+          date.getMonth() === scheduledDate.getMonth() &&
+          date.getFullYear() === scheduledDate.getFullYear()
+        );
+      });
+
+      if (dayIndex !== -1) {
+        setSelectedDayIndex((prevIndex) => {
+          if (prevIndex !== dayIndex) {
+            console.log(
+              `[WeekCalendar] Auto-selecting day index ${dayIndex} for task "${latestTask.text}"`
+            );
+            return dayIndex;
+          }
+          return prevIndex;
+        });
+      }
+    } catch (e) {
+      console.error("[WeekCalendar] Error in auto-select day effect:", e);
+    }
+  }, [tasks]);
+
   const getTaskPosition = (task) => {
-    if (!task?.scheduledDate) return null;
+    if (!task?.scheduledDate) {
+      console.log("[WeekCalendar] Task has no scheduledDate:", task);
+      return null;
+    }
     const taskHour = task.scheduledDate.getHours();
     const taskMinute = task.scheduledDate.getMinutes();
 
+    console.log(
+      `[WeekCalendar] getTaskPosition for "${task.text}": hour=${taskHour}, minute=${taskMinute}, startHour=${startHour}, endHour=${endHour}`
+    );
+
     if (taskHour < startHour || taskHour > endHour) {
+      console.log(
+        `[WeekCalendar] Task hour ${taskHour} outside range [${startHour}, ${endHour}]:`,
+        task.text
+      );
       return null;
     }
 
@@ -408,6 +509,14 @@ export default function WeekCalendar({
   };
 
   const loadAppointments = async () => {
+    if (isGuestMode) {
+      // Im Guest Mode: Lade Termine aus guestData
+      const guestAppointments = guestData?.appointments || [];
+      console.log("Loaded guest appointments:", guestAppointments);
+      setAppointments(guestAppointments);
+      return;
+    }
+
     if (!user?.uid) return;
 
     try {
@@ -429,10 +538,12 @@ export default function WeekCalendar({
   };
 
   useEffect(() => {
-    if (user?.uid) {
+    if (isGuestMode) {
+      loadAppointments();
+    } else if (user?.uid) {
       loadAppointments();
     }
-  }, [user?.uid]);
+  }, [user?.uid, isGuestMode, guestData?.appointments]);
 
   // Verhindere Scrollen im Hintergrund, wenn Popup geöffnet ist
   useEffect(() => {
@@ -610,6 +721,31 @@ export default function WeekCalendar({
       appointmentEndMinute
     );
 
+    const appointmentData = {
+      id: isGuestMode ? `local-${Date.now()}` : undefined,
+      name: appointmentName.trim(),
+      scheduledDateTime: scheduledDate.toISOString(),
+      endDateTime: endDate.toISOString(),
+      scheduledDayOption: selectedDay,
+      scheduledHour: selectedHour,
+      scheduledMinute: selectedMinute || "00",
+      endHour: appointmentEndHour,
+      endMinute: appointmentEndMinute || "00",
+      createdAt: new Date().toISOString(),
+    };
+
+    if (isGuestMode) {
+      // Im Guest Mode: Speichere temporär in guestData
+      console.log("Saving guest appointment:", appointmentData);
+      updateGuestData((prevData) => ({
+        ...prevData,
+        appointments: [...(prevData.appointments || []), appointmentData],
+      }));
+      await loadAppointments();
+      handlePopupCancel();
+      return;
+    }
+
     if (!user?.uid) {
       console.warn("User not logged in, cannot save appointment");
       handlePopupCancel();
@@ -618,17 +754,6 @@ export default function WeekCalendar({
 
     try {
       const appointmentsCol = collection(db, "users", user.uid, "appointments");
-      const appointmentData = {
-        name: appointmentName.trim(),
-        scheduledDateTime: scheduledDate.toISOString(),
-        endDateTime: endDate.toISOString(),
-        scheduledDayOption: selectedDay,
-        scheduledHour: selectedHour,
-        scheduledMinute: selectedMinute || "00",
-        endHour: appointmentEndHour,
-        endMinute: appointmentEndMinute || "00",
-        createdAt: new Date().toISOString(),
-      };
       console.log("Saving appointment:", appointmentData);
       await addDoc(appointmentsCol, appointmentData);
       console.log("Appointment saved successfully");
@@ -641,6 +766,18 @@ export default function WeekCalendar({
   };
 
   const handleDeleteAppointment = async (appointmentId) => {
+    if (isGuestMode) {
+      // Im Guest Mode: Lösche aus guestData
+      updateGuestData((prevData) => ({
+        ...prevData,
+        appointments: (prevData.appointments || []).filter(
+          (apt) => apt.id !== appointmentId
+        ),
+      }));
+      await loadAppointments();
+      return;
+    }
+
     if (!user?.uid) return;
 
     try {
@@ -774,6 +911,16 @@ export default function WeekCalendar({
         {weekDays.map((day, dayIndex) => {
           const dayKey = weekDates[dayIndex].toDateString();
           const tasksForDay = scheduledTasksByDay[dayKey] || [];
+          if (tasksForDay.length > 0) {
+            console.log(
+              `[WeekCalendar] Day ${dayKey} has ${tasksForDay.length} tasks:`,
+              tasksForDay.map((t) => ({
+                text: t.text,
+                scheduledDateTime: t.scheduledDateTime,
+                scheduledDate: t.scheduledDate,
+              }))
+            );
+          }
           const sortedTasks = tasksForDay
             .slice()
             .sort(
@@ -783,6 +930,12 @@ export default function WeekCalendar({
             );
           const isTodayDay = isToday(weekDates[dayIndex]);
           const isSelectedDay = dayIndex === selectedDayIndex;
+
+          if (tasksForDay.length > 0) {
+            console.log(
+              `[WeekCalendar] Day ${dayKey} (index ${dayIndex}) isSelectedDay: ${isSelectedDay}, tasks: ${tasksForDay.length}`
+            );
+          }
 
           return (
             <div
@@ -802,7 +955,19 @@ export default function WeekCalendar({
               <div className={styles.TasksOverlay}>
                 {sortedTasks.map((task) => {
                   const positioning = getTaskPosition(task);
-                  if (!positioning) return null;
+                  if (!positioning) {
+                    console.log(
+                      `[WeekCalendar] Task "${task.text}" has no positioning:`,
+                      {
+                        scheduledDate: task.scheduledDate,
+                        hour: task.scheduledDate?.getHours(),
+                        minute: task.scheduledDate?.getMinutes(),
+                        startHour,
+                        endHour,
+                      }
+                    );
+                    return null;
+                  }
 
                   const hour = task.scheduledDate.getHours();
                   const minutes = task.scheduledDate.getMinutes();

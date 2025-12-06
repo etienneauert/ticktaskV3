@@ -33,6 +33,9 @@ export default function Main({
   onTaskStart,
   onTaskStop,
   onClearAllDone,
+  isGuestMode,
+  updateGuestData,
+  guestData,
 }) {
   const [isCalendarHidden, setIsCalendarHidden] = useState(false);
 
@@ -138,8 +141,11 @@ export default function Main({
         <div id="calendar-section" className={styles.WeekCalendarContainer}>
           <WeekCalendar
             user={user}
-            tasks={tasks}
+            tasks={tasks || []}
             runningTaskId={runningTaskId}
+            isGuestMode={isGuestMode}
+            updateGuestData={updateGuestData}
+            guestData={guestData}
           />
         </div>
       )}

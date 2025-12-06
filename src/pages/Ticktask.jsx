@@ -853,9 +853,40 @@ export function Ticktask({ user, isGuestMode = false }) {
         goalId: task.goalId || null,
         ...scheduleMeta,
       };
+      console.log("[Guest Mode] Adding task:", newTask);
+      console.log(
+        "[Guest Mode] Task has scheduledDateTime:",
+        newTask.scheduledDateTime
+      );
+      console.log(
+        "[Guest Mode] Current tasks before update:",
+        guestData.tasks?.length || 0
+      );
+
+      // Verwende setGuestData direkt für sofortige State-Aktualisierung
+      const updatedTasks = [...(guestData.tasks || []), newTask];
+      console.log("[Guest Mode] Updated tasks count:", updatedTasks.length);
+
       updateGuestData({
-        tasks: [...guestData.tasks, newTask],
+        tasks: updatedTasks,
       });
+
+      // Prüfe localStorage nach dem Update
+      setTimeout(() => {
+        const saved = localStorage.getItem("ticktask_guest_data");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          console.log(
+            "[Guest Mode] Tasks in localStorage:",
+            parsed.tasks?.length || 0
+          );
+          console.log(
+            "[Guest Mode] Tasks with scheduledDateTime in localStorage:",
+            parsed.tasks?.filter((t) => t?.scheduledDateTime).length || 0
+          );
+        }
+      }, 100);
+
       return;
     }
 
@@ -1822,6 +1853,55 @@ export function Ticktask({ user, isGuestMode = false }) {
     }
   }, [dailyCompleted, user?.uid, isGuestMode]);
 
+  // Wrapper-Funktionen für Setter im Guest-Mode
+  const setMorningCompletedWrapper = (value) => {
+    if (isGuestMode) {
+      const currentValue = guestData.morningCompleted || new Set();
+      const newValue =
+        typeof value === "function" ? value(currentValue) : value;
+      updateGuestData({ morningCompleted: newValue });
+      setMorningCompleted(newValue);
+    } else {
+      setMorningCompleted(value);
+    }
+  };
+
+  const setAbendCompletedWrapper = (value) => {
+    if (isGuestMode) {
+      const currentValue = guestData.abendCompleted || new Set();
+      const newValue =
+        typeof value === "function" ? value(currentValue) : value;
+      updateGuestData({ abendCompleted: newValue });
+      setAbendCompleted(newValue);
+    } else {
+      setAbendCompleted(value);
+    }
+  };
+
+  const setWeeklyCompletedWrapper = (value) => {
+    if (isGuestMode) {
+      const currentValue = guestData.weeklyCompleted || new Set();
+      const newValue =
+        typeof value === "function" ? value(currentValue) : value;
+      updateGuestData({ weeklyCompleted: newValue });
+      setWeeklyCompleted(newValue);
+    } else {
+      setWeeklyCompleted(value);
+    }
+  };
+
+  const setDailyCompletedWrapper = (value) => {
+    if (isGuestMode) {
+      const currentValue = guestData.dailyCompleted || new Set();
+      const newValue =
+        typeof value === "function" ? value(currentValue) : value;
+      updateGuestData({ dailyCompleted: newValue });
+      setDailyCompleted(newValue);
+    } else {
+      setDailyCompleted(value);
+    }
+  };
+
   // Synchronisiere Streak zwischen Gast-Modus und normalem Modus
   useEffect(() => {
     if (isGuestMode && guestData.streak !== undefined) {
@@ -1838,6 +1918,30 @@ export function Ticktask({ user, isGuestMode = false }) {
       }
     }
   }, [isGuestMode, guestData.streak, user?.uid]);
+
+  // Debug: Log guestData.tasks changes
+  useEffect(() => {
+    if (isGuestMode) {
+      console.log(
+        "[Guest Mode] guestData.tasks updated:",
+        guestData.tasks?.length || 0,
+        "tasks"
+      );
+      if (guestData.tasks && guestData.tasks.length > 0) {
+        console.log("[Guest Mode] All tasks:", guestData.tasks);
+        console.log(
+          "[Guest Mode] Tasks with scheduledDateTime:",
+          guestData.tasks
+            .filter((t) => t?.scheduledDateTime)
+            .map((t) => ({
+              id: t.id,
+              text: t.text,
+              scheduledDateTime: t.scheduledDateTime,
+            }))
+        );
+      }
+    }
+  }, [isGuestMode, guestData.tasks]);
 
   // Zeige Welcome-Popup im Guest-Mode immer an
   useEffect(() => {
@@ -2102,13 +2206,13 @@ export function Ticktask({ user, isGuestMode = false }) {
           onResetStreak={resetStreak}
           tasks={guestData.tasks}
           morningCompleted={currentMorningCompleted}
-          setMorningCompleted={setMorningCompleted}
+          setMorningCompleted={setMorningCompletedWrapper}
           abendCompleted={currentAbendCompleted}
-          setAbendCompleted={setAbendCompleted}
+          setAbendCompleted={setAbendCompletedWrapper}
           dailyCompleted={currentDailyCompleted}
-          setDailyCompleted={setDailyCompleted}
+          setDailyCompleted={setDailyCompletedWrapper}
           weeklyCompleted={currentWeeklyCompleted}
-          setWeeklyCompleted={setWeeklyCompleted}
+          setWeeklyCompleted={setWeeklyCompletedWrapper}
           increaseStreak={increaseStreak}
           isGuestMode={true}
           showErrorMessage={showErrorMessage}
@@ -2147,8 +2251,8 @@ export function Ticktask({ user, isGuestMode = false }) {
             </>
           )}
         <Main
-          tasks={guestData.tasks}
-          frequentTemplates={guestData.frequentTemplates}
+          tasks={guestData.tasks || []}
+          frequentTemplates={guestData.frequentTemplates || []}
           onDelete={handleDelete}
           onTaskDone={handleTaskDone}
           onEdit={handleEdit}
@@ -2160,13 +2264,13 @@ export function Ticktask({ user, isGuestMode = false }) {
           abendTasks={currentAbendTasks}
           user={null}
           morningCompleted={currentMorningCompleted}
-          setMorningCompleted={setMorningCompleted}
+          setMorningCompleted={setMorningCompletedWrapper}
           abendCompleted={currentAbendCompleted}
-          setAbendCompleted={setAbendCompleted}
+          setAbendCompleted={setAbendCompletedWrapper}
           weeklyCompleted={currentWeeklyCompleted}
-          setWeeklyCompleted={setWeeklyCompleted}
+          setWeeklyCompleted={setWeeklyCompletedWrapper}
           dailyCompleted={currentDailyCompleted}
-          setDailyCompleted={setDailyCompleted}
+          setDailyCompleted={setDailyCompletedWrapper}
           runningTaskId={runningTaskId}
           onTaskStart={handleTaskStart}
           onTaskStop={handleTaskStop}
@@ -2174,6 +2278,9 @@ export function Ticktask({ user, isGuestMode = false }) {
           increaseStreak={increaseStreak}
           canIncreaseStreak={canIncreaseStreak}
           onClearAllDone={clearAllDoneTasks}
+          isGuestMode={isGuestMode}
+          updateGuestData={updateGuestData}
+          guestData={guestData}
         />
         <ErrorMessage
           message={errorMessage}

@@ -4,6 +4,7 @@ export const useGuestData = (isGuestMode) => {
   const [guestData, setGuestData] = useState({
     tasks: [],
     frequentTemplates: [],
+    appointments: [],
     weeklyTasks: {
       monday: [],
       tuesday: [],
@@ -53,18 +54,23 @@ export const useGuestData = (isGuestMode) => {
 
   const updateGuestData = (newData) => {
     if (isGuestMode) {
-      const updated = { ...guestData, ...newData };
-      setGuestData(updated);
-
-      // Speichere in localStorage
-      const dataToSave = {
-        ...updated,
-        morningCompleted: Array.from(updated.morningCompleted),
-        abendCompleted: Array.from(updated.abendCompleted),
-        weeklyCompleted: Array.from(updated.weeklyCompleted),
-        dailyCompleted: Array.from(updated.dailyCompleted),
-      };
-      localStorage.setItem("ticktask_guest_data", JSON.stringify(dataToSave));
+      setGuestData((prevData) => {
+        const updated = typeof newData === 'function' 
+          ? newData(prevData)
+          : { ...prevData, ...newData };
+        
+        // Speichere in localStorage
+        const dataToSave = {
+          ...updated,
+          morningCompleted: Array.from(updated.morningCompleted || new Set()),
+          abendCompleted: Array.from(updated.abendCompleted || new Set()),
+          weeklyCompleted: Array.from(updated.weeklyCompleted || new Set()),
+          dailyCompleted: Array.from(updated.dailyCompleted || new Set()),
+        };
+        localStorage.setItem("ticktask_guest_data", JSON.stringify(dataToSave));
+        
+        return updated;
+      });
     }
   };
 
@@ -74,6 +80,7 @@ export const useGuestData = (isGuestMode) => {
       setGuestData({
         tasks: [],
         frequentTemplates: [],
+        appointments: [],
         weeklyTasks: {
           monday: [],
           tuesday: [],
