@@ -54,6 +54,7 @@ export default function Input({
   return (
     <>
       <form className={styles.InputContainer} onSubmit={handleSubmit}>
+        <label className={styles.inputLabel}>Tasks</label>
         <input
           id="task-input"
           type="text"

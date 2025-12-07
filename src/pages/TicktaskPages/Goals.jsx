@@ -549,6 +549,7 @@ export default function Goals({
     <>
       <div className={styles.GoalsContainer}>
         <form className={styles.GoalsInputContainer} onSubmit={handleSubmit}>
+          <label className={styles.inputLabel}>Goals</label>
           <input
             id="goals-input"
             type="text"

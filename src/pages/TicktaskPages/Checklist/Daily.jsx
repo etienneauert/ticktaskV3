@@ -32,7 +32,7 @@ export default function Daily({
   return (
     <div className={styles.dailyContainer}>
       <div className={styles.checklistHeader}>
-        <h4 className={styles.dailyTitle}>{t("daily")}</h4>
+        <h4 className={styles.dailyTitle}>{t("dailyChecklist")}</h4>
         <img
           id="checklist-pen-icon"
           src={pen}

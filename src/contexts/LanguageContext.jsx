@@ -48,7 +48,7 @@ export const LanguageProvider = ({ children }) => {
       done: "Fertig",
       pause: "Pause",
       play: "Abspielen",
-      reset: "Zurücksetzen",
+      resetTimer: "Zurücksetzen",
 
       // Days
       monday: "Montag",
@@ -66,6 +66,8 @@ export const LanguageProvider = ({ children }) => {
       weeklyTasks: "Wöchentliche Tasks",
       dailyShort: "Tägliche",
       weeklyShort: "Wöchentliche",
+      dailyRoutine: "Täglich",
+      weeklyRoutine: "Wöchentlich",
 
       // Messages
       confirmResetStreak: "Möchtest du den Streak wirklich auf 0 zurücksetzen?",
@@ -103,8 +105,8 @@ export const LanguageProvider = ({ children }) => {
       // Checklist Headings
       morning: "Morgen",
       evening: "Abend",
-      daily: "Täglich",
-      weekly: "Wöchentlich",
+      dailyChecklist: "Täglich",
+      weeklyChecklist: "Wöchentlich",
       noTasksForToday: "Keine Tasks für heute",
 
       // Finish Day
@@ -199,7 +201,7 @@ export const LanguageProvider = ({ children }) => {
       done: "Done",
       pause: "Pause",
       play: "Play",
-      reset: "Reset",
+      resetTimer: "Reset",
 
       // Days
       monday: "Monday",
@@ -217,6 +219,8 @@ export const LanguageProvider = ({ children }) => {
       weeklyTasks: "Weekly Tasks",
       dailyShort: "Daily",
       weeklyShort: "Weekly",
+      dailyRoutine: "Daily",
+      weeklyRoutine: "Weekly",
 
       // Messages
       confirmResetStreak: "Do you really want to reset the streak to 0?",
@@ -254,8 +258,8 @@ export const LanguageProvider = ({ children }) => {
       // Checklist Headings
       morning: "Morning",
       evening: "Evening",
-      daily: "Daily",
-      weekly: "Weekly",
+      dailyChecklist: "Daily",
+      weeklyChecklist: "Weekly",
       noTasksForToday: "No tasks for today",
 
       // Finish Day

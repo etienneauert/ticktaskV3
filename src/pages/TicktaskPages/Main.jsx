@@ -185,16 +185,21 @@ export default function Main({
         </div>
       </div>
       {!isCalendarHidden && (
-        <div id="calendar-section" className={styles.WeekCalendarContainer}>
-          <WeekCalendar
-            user={user}
-            tasks={tasks || []}
-            runningTaskId={runningTaskId}
-            isGuestMode={isGuestMode}
-            updateGuestData={updateGuestData}
-            guestData={guestData}
-          />
-        </div>
+        <>
+          <div id="calendar-section" className={styles.CalendarLabelContainer}>
+            <label className={styles.calendarLabel}>Kalender</label>
+          </div>
+          <div className={styles.WeekCalendarContainer}>
+            <WeekCalendar
+              user={user}
+              tasks={tasks || []}
+              runningTaskId={runningTaskId}
+              isGuestMode={isGuestMode}
+              updateGuestData={updateGuestData}
+              guestData={guestData}
+            />
+          </div>
+        </>
       )}
       {!isGoalsHidden && (
         <div id="goals-section" className={styles.GoalsContainer}>

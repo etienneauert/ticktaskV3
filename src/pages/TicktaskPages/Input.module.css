@@ -3,7 +3,26 @@
   margin-bottom: 0px;
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 30px;
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.inputLabel {
+  color: rgb(171, 171, 171);
+  font-size: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .InputContainer input {
@@ -125,7 +144,12 @@
     gap: 15px;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    padding: 0 15px;
+  }
+
+  .InputContainer .inputLabel {
+    font-size: 18px;
   }
 
   .InputContainer input {
@@ -169,6 +193,10 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+  }
+
+  .InputContainer .inputLabel {
+    font-size: 16px;
   }
 
   .InputContainer input {

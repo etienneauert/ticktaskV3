@@ -328,9 +328,12 @@ export default function Header({
               onClick={() => {
                 const element = document.getElementById("calendar-section");
                 if (element) {
-                  element.scrollIntoView({
+                  const headerHeight = 70; // Geschätzte Header-Höhe
+                  const elementPosition = element.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+                  window.scrollTo({
+                    top: offsetPosition,
                     behavior: "smooth",
-                    block: "start",
                   });
                 }
               }}
