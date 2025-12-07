@@ -34,6 +34,8 @@ export default function Header({
   increaseStreak,
   isGuestMode = false,
   showErrorMessage,
+  updateGuestData,
+  guestData,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [routineCustomizationOpen, setRoutineCustomizationOpen] =
@@ -386,6 +388,10 @@ export default function Header({
         user={user}
         streak={streak}
         onResetStreak={onResetStreak}
+        tasks={tasks}
+        isGuestMode={isGuestMode}
+        updateGuestData={updateGuestData}
+        guestData={guestData}
       />
 
       <RoutineCustomizationPopup

@@ -13,7 +13,7 @@
   color: rgb(171, 171, 171);
   font-size: 14px;
   margin: 0;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   text-align: center;
   background-color: transparent;
 }
@@ -66,7 +66,7 @@
   background: transparent;
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
-  padding: 12px 16px;
+  padding: 8px 16px;
   color: white;
   font-size: 14px;
   display: flex;
@@ -252,7 +252,7 @@
 }
 
 .currentTimeDisplay {
-  color: #d5ff05;
+  color: rgb(171, 171, 171);
   font-size: 18px;
   font-weight: 600;
   margin: 0;
@@ -456,7 +456,7 @@
   color: rgb(171, 171, 171);
   font-size: 14px;
   margin: 0;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   text-align: center;
   background-color: transparent;
 }
@@ -499,7 +499,7 @@
   background: transparent;
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
-  padding: 12px 16px;
+  padding: 8px 16px;
   color: white;
   font-size: 14px;
   display: flex;

@@ -422,10 +422,12 @@
 @media (max-width: 768px) {
   .WeekCalendar {
     padding: 10px;
-    max-width: 400px;
+    max-width: calc(100vw - 20px);
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
+    box-sizing: border-box;
   }
 
   .CalendarHeader {
@@ -492,11 +494,12 @@
 @media (max-width: 480px) {
   .WeekCalendar {
     padding: 5px;
-    max-width: 400px;
+    max-width: calc(100vw - 20px);
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
+    box-sizing: border-box;
   }
 
   .CalendarHeader {

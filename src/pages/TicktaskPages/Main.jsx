@@ -38,29 +38,45 @@ export default function Main({
   guestData,
 }) {
   const [isCalendarHidden, setIsCalendarHidden] = useState(false);
+  const [isGoalsHidden, setIsGoalsHidden] = useState(false);
 
   useEffect(() => {
     if (!user?.uid) {
       // Im Gast-Modus: Standard verwenden
       setIsCalendarHidden(false);
+      setIsGoalsHidden(false);
       return;
     }
     loadCalendarVisibility();
+    loadGoalsVisibility();
 
     // Höre auf Änderungen der Kalender-Einstellungen
-    const handleSettingsChange = (event) => {
+    const handleCalendarSettingsChange = (event) => {
       const { hidden } = event.detail;
       if (hidden !== undefined) {
         setIsCalendarHidden(hidden);
       }
     };
 
-    window.addEventListener("calendarSettingsChanged", handleSettingsChange);
+    // Höre auf Änderungen der Goals-Einstellungen
+    const handleGoalsSettingsChange = (event) => {
+      const { hidden } = event.detail;
+      if (hidden !== undefined) {
+        setIsGoalsHidden(hidden);
+      }
+    };
+
+    window.addEventListener("calendarSettingsChanged", handleCalendarSettingsChange);
+    window.addEventListener("goalsSettingsChanged", handleGoalsSettingsChange);
 
     return () => {
       window.removeEventListener(
         "calendarSettingsChanged",
-        handleSettingsChange
+        handleCalendarSettingsChange
+      );
+      window.removeEventListener(
+        "goalsSettingsChanged",
+        handleGoalsSettingsChange
       );
     };
   }, [user?.uid]);
@@ -93,6 +109,37 @@ export default function Main({
       }
     } catch (e) {
       console.error("Failed to load calendar visibility", e);
+    }
+  };
+
+  const loadGoalsVisibility = async () => {
+    if (!user?.uid) return;
+
+    try {
+      // Versuche zuerst localStorage
+      const localHidden = localStorage.getItem(
+        `ticktask_goals_hidden_${user.uid}`
+      );
+      if (localHidden === "true") {
+        setIsGoalsHidden(true);
+      }
+
+      // Dann Firebase
+      const settingsDoc = doc(db, "users", user.uid, "settings", "goals");
+      const settingsSnap = await getDoc(settingsDoc);
+
+      if (settingsSnap.exists()) {
+        const data = settingsSnap.data();
+        if (data.hidden !== undefined) {
+          setIsGoalsHidden(data.hidden);
+          localStorage.setItem(
+            `ticktask_goals_hidden_${user.uid}`,
+            String(data.hidden)
+          );
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load goals visibility", e);
     }
   };
 
@@ -149,15 +196,17 @@ export default function Main({
           />
         </div>
       )}
-      <div id="goals-section" className={styles.GoalsContainer}>
-        <Goals
-          user={user}
-          tasks={tasks}
-          isGuestMode={isGuestMode}
-          updateGuestData={updateGuestData}
-          guestData={guestData}
-        />
-      </div>
+      {!isGoalsHidden && (
+        <div id="goals-section" className={styles.GoalsContainer}>
+          <Goals
+            user={user}
+            tasks={tasks}
+            isGuestMode={isGuestMode}
+            updateGuestData={updateGuestData}
+            guestData={guestData}
+          />
+        </div>
+      )}
     </div>
   );
 }

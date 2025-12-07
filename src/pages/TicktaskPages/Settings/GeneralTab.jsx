@@ -25,7 +25,6 @@ export default function GeneralTab({ streak, onResetStreak, user }) {
   return (
     <div className={styles.tabPanel}>
       <div className={styles.generalSection}>
-        <h3 className={styles.generalHeading}>Allgemein</h3>
         <div className={styles.streakRow}>
           <span className={styles.currentStreak}>
             {t("streak")}: <span className={styles.streakNumber}>{streak}</span>

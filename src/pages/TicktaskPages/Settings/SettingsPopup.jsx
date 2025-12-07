@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import close3 from "../../../assets/close-3.png";
 import GeneralTab from "./GeneralTab";
 import CalendarTab from "./CalendarTab";
+import GoalsTab from "./GoalsTab";
 import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function SettingsPopup({
@@ -19,6 +20,10 @@ export default function SettingsPopup({
   user,
   streak,
   onResetStreak,
+  tasks,
+  isGuestMode,
+  updateGuestData,
+  guestData,
 }) {
   const [activeTab, setActiveTab] = useState(1); // General Tab
   const buttonRefs = useRef([]);
@@ -42,6 +47,7 @@ export default function SettingsPopup({
 
   const tabs = [
     { id: 1, label: t("general") },
+    { id: 2, label: "Ziele" },
     { id: 4, label: "Kalender" },
   ];
 
@@ -134,6 +140,7 @@ export default function SettingsPopup({
                   user={user}
                 />
               )}
+              {activeTab === 2 && <GoalsTab user={user} />}
               {activeTab === 4 && <CalendarTab user={user} />}
             </div>
           </div>

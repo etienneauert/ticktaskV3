@@ -2249,6 +2249,8 @@ export function Ticktask({ user, isGuestMode = false }) {
           increaseStreak={increaseStreak}
           isGuestMode={true}
           showErrorMessage={showErrorMessage}
+          updateGuestData={updateGuestData}
+          guestData={guestData}
         />
         <Input
           onAdd={handleAdd}
@@ -2399,6 +2401,8 @@ export function Ticktask({ user, isGuestMode = false }) {
         setWeeklyCompleted={setWeeklyCompleted}
         increaseStreak={increaseStreak}
         showErrorMessage={showErrorMessage}
+        updateGuestData={undefined}
+        guestData={undefined}
       ></Header>
       <Input
         onAdd={handleAdd}
