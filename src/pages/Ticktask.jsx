@@ -1629,6 +1629,83 @@ export function Ticktask({ user, isGuestMode = false }) {
         console.error("Failed to load daily completed tasks", e);
       }
 
+      // Lade completed-Tasks auch aus Firebase (falls vorhanden, überschreibt localStorage)
+      try {
+        const today = new Date();
+        const dayNames = [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+        ];
+        const currentDay = dayNames[today.getDay()];
+
+        // Morning completed
+        const morningCompletedDoc = await getDoc(
+          doc(db, "users", user.uid, "completedTasks", "morning")
+        );
+        if (morningCompletedDoc.exists()) {
+          const data = morningCompletedDoc.data();
+          if (Array.isArray(data.tasks)) {
+            setMorningCompleted(new Set(data.tasks));
+            localStorage.setItem(
+              `ticktask_morning_completed_${user.uid}`,
+              JSON.stringify(data.tasks)
+            );
+          }
+        }
+
+        // Abend completed
+        const abendCompletedDoc = await getDoc(
+          doc(db, "users", user.uid, "completedTasks", "abend")
+        );
+        if (abendCompletedDoc.exists()) {
+          const data = abendCompletedDoc.data();
+          if (Array.isArray(data.tasks)) {
+            setAbendCompleted(new Set(data.tasks));
+            localStorage.setItem(
+              `ticktask_abend_completed_${user.uid}`,
+              JSON.stringify(data.tasks)
+            );
+          }
+        }
+
+        // Weekly completed
+        const weeklyCompletedDoc = await getDoc(
+          doc(db, "users", user.uid, "completedTasks", `weekly_${currentDay}`)
+        );
+        if (weeklyCompletedDoc.exists()) {
+          const data = weeklyCompletedDoc.data();
+          if (Array.isArray(data.tasks)) {
+            setWeeklyCompleted(new Set(data.tasks));
+            localStorage.setItem(
+              `ticktask_weekly_completed_${user.uid}_${currentDay}`,
+              JSON.stringify(data.tasks)
+            );
+          }
+        }
+
+        // Daily completed
+        const dailyCompletedDoc = await getDoc(
+          doc(db, "users", user.uid, "completedTasks", "daily")
+        );
+        if (dailyCompletedDoc.exists()) {
+          const data = dailyCompletedDoc.data();
+          if (Array.isArray(data.tasks)) {
+            setDailyCompleted(new Set(data.tasks));
+            localStorage.setItem(
+              `ticktask_daily_completed_${user.uid}`,
+              JSON.stringify(data.tasks)
+            );
+          }
+        }
+      } catch (e) {
+        console.error("Failed to load completed tasks from Firebase", e);
+      }
+
       // Markiere dass States geladen wurden (nach kurzer Verzögerung, damit setState durch ist)
       setTimeout(() => {
         hasLoadedCompletedStates.current = true;
@@ -1756,6 +1833,66 @@ export function Ticktask({ user, isGuestMode = false }) {
       }
     );
 
+    // Firebase Completed Tasks abonnieren für Echtzeit-Synchronisation
+    if (user?.uid && !isGuestMode) {
+      const completedCol = collection(db, "users", user.uid, "completedTasks");
+      const unsubscribeCompleted = onSnapshot(
+        completedCol,
+        (snapshot) => {
+          console.log("Completed tasks snapshot:", snapshot.docs.length, "docs");
+          snapshot.docs.forEach((docSnap) => {
+            const data = docSnap.data();
+            const docId = docSnap.id;
+
+            if (Array.isArray(data.tasks)) {
+              if (docId === "morning") {
+                setMorningCompleted(new Set(data.tasks));
+                localStorage.setItem(
+                  `ticktask_morning_completed_${user.uid}`,
+                  JSON.stringify(data.tasks)
+                );
+              } else if (docId === "abend") {
+                setAbendCompleted(new Set(data.tasks));
+                localStorage.setItem(
+                  `ticktask_abend_completed_${user.uid}`,
+                  JSON.stringify(data.tasks)
+                );
+              } else if (docId === "daily") {
+                setDailyCompleted(new Set(data.tasks));
+                localStorage.setItem(
+                  `ticktask_daily_completed_${user.uid}`,
+                  JSON.stringify(data.tasks)
+                );
+              } else if (docId.startsWith("weekly_")) {
+                const day = docId.replace("weekly_", "");
+                setWeeklyCompleted(new Set(data.tasks));
+                localStorage.setItem(
+                  `ticktask_weekly_completed_${user.uid}_${day}`,
+                  JSON.stringify(data.tasks)
+                );
+              }
+            }
+          });
+        },
+        (error) => {
+          console.error("Failed to subscribe completed tasks", error);
+        }
+      );
+
+      return () => {
+        unsubscribe();
+        unsubscribeRoutine();
+        unsubscribeWeekly();
+        unsubscribeCompleted();
+        // Verbindungsüberwachung stoppen beim Cleanup
+        stopConnectionMonitoring();
+        // Timer aufräumen
+        if (minLoadingTimeRef.current) {
+          clearTimeout(minLoadingTimeRef.current);
+        }
+      };
+    }
+
     return () => {
       unsubscribe();
       unsubscribeRoutine();
@@ -1767,7 +1904,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         clearTimeout(minLoadingTimeRef.current);
       }
     };
-  }, [user?.uid]);
+  }, [user?.uid, isGuestMode]);
 
   // Save completed states to localStorage whenever they change
   // WICHTIG: Nur speichern wenn States wirklich geändert wurden (nicht beim ersten Laden)
@@ -1842,48 +1979,150 @@ export function Ticktask({ user, isGuestMode = false }) {
   // Die Bereinigung passiert bereits in updateMorningTasks, updateAbendTasks, etc.
   // Diese Hooks sind nicht mehr nötig, da die Bereinigung direkt in den update-Funktionen passiert
 
+  // Speichere completed-Tasks in localStorage und Firebase
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
 
-    try {
-      // Weekly completed tasks - tagesspezifisch speichern
-      const today = new Date();
-      const dayNames = [
-        "sunday",
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-      ];
-      const currentDay = dayNames[today.getDay()];
-      const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}_${currentDay}`;
-      const weeklyCompletedArray = Array.from(weeklyCompleted);
-      localStorage.setItem(
-        weeklyCompletedKey,
-        JSON.stringify(weeklyCompletedArray)
-      );
-    } catch (e) {
-      console.error("Failed to save weekly completed tasks", e);
-    }
+    const saveMorningCompleted = async () => {
+      try {
+        const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
+        const morningCompletedArray = Array.from(morningCompleted);
+        localStorage.setItem(
+          morningCompletedKey,
+          JSON.stringify(morningCompletedArray)
+        );
+
+        // Speichere auch in Firebase
+        const completedDoc = doc(
+          db,
+          "users",
+          user.uid,
+          "completedTasks",
+          "morning"
+        );
+        await setDoc(completedDoc, {
+          tasks: morningCompletedArray,
+          lastUpdated: serverTimestamp(),
+        });
+      } catch (e) {
+        console.error("Failed to save morning completed tasks", e);
+      }
+    };
+
+    saveMorningCompleted();
+  }, [morningCompleted, user?.uid, isGuestMode]);
+
+  useEffect(() => {
+    if (!hasLoadedCompletedStates.current) return;
+    if (!user?.uid || isGuestMode) return;
+
+    const saveAbendCompleted = async () => {
+      try {
+        const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
+        const abendCompletedArray = Array.from(abendCompleted);
+        localStorage.setItem(
+          abendCompletedKey,
+          JSON.stringify(abendCompletedArray)
+        );
+
+        // Speichere auch in Firebase
+        const completedDoc = doc(
+          db,
+          "users",
+          user.uid,
+          "completedTasks",
+          "abend"
+        );
+        await setDoc(completedDoc, {
+          tasks: abendCompletedArray,
+          lastUpdated: serverTimestamp(),
+        });
+      } catch (e) {
+        console.error("Failed to save abend completed tasks", e);
+      }
+    };
+
+    saveAbendCompleted();
+  }, [abendCompleted, user?.uid, isGuestMode]);
+
+  useEffect(() => {
+    if (!hasLoadedCompletedStates.current) return;
+    if (!user?.uid || isGuestMode) return;
+
+    const saveWeeklyCompleted = async () => {
+      try {
+        // Weekly completed tasks - tagesspezifisch speichern
+        const today = new Date();
+        const dayNames = [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+        ];
+        const currentDay = dayNames[today.getDay()];
+        const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}_${currentDay}`;
+        const weeklyCompletedArray = Array.from(weeklyCompleted);
+        localStorage.setItem(
+          weeklyCompletedKey,
+          JSON.stringify(weeklyCompletedArray)
+        );
+
+        // Speichere auch in Firebase
+        const completedDoc = doc(
+          db,
+          "users",
+          user.uid,
+          "completedTasks",
+          `weekly_${currentDay}`
+        );
+        await setDoc(completedDoc, {
+          tasks: weeklyCompletedArray,
+          day: currentDay,
+          lastUpdated: serverTimestamp(),
+        });
+      } catch (e) {
+        console.error("Failed to save weekly completed tasks", e);
+      }
+    };
+
+    saveWeeklyCompleted();
   }, [weeklyCompleted, user?.uid, isGuestMode]);
 
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
 
-    try {
-      const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
-      const dailyCompletedArray = Array.from(dailyCompleted);
-      localStorage.setItem(
-        dailyCompletedKey,
-        JSON.stringify(dailyCompletedArray)
-      );
-    } catch (e) {
-      console.error("Failed to save daily completed tasks", e);
-    }
+    const saveDailyCompleted = async () => {
+      try {
+        const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
+        const dailyCompletedArray = Array.from(dailyCompleted);
+        localStorage.setItem(
+          dailyCompletedKey,
+          JSON.stringify(dailyCompletedArray)
+        );
+
+        // Speichere auch in Firebase
+        const completedDoc = doc(
+          db,
+          "users",
+          user.uid,
+          "completedTasks",
+          "daily"
+        );
+        await setDoc(completedDoc, {
+          tasks: dailyCompletedArray,
+          lastUpdated: serverTimestamp(),
+        });
+      } catch (e) {
+        console.error("Failed to save daily completed tasks", e);
+      }
+    };
+
+    saveDailyCompleted();
   }, [dailyCompleted, user?.uid, isGuestMode]);
 
   // Wrapper-Funktionen für Setter im Guest-Mode
