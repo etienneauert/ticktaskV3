@@ -17,6 +17,20 @@ li {
   /* transition: 0.15s ease; */
 }
 
+/* Unter 1478px soll die Taskliste nicht mehr fix 650px sein,
+   sondern wie die Checklist-Boxen dynamisch mit der Spalte skalieren */
+@media (max-width: 1478px) {
+  li {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .doneTask {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 li:hover {
   border: 1px solid rgb(212, 255, 0);
 }

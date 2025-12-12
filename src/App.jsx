@@ -52,7 +52,9 @@ export default function App() {
     <LanguageProvider>
       <div className={styles.app}>
         {!authReady ? (
-          <div>Wird geladen...</div>
+          <div style={{ backgroundColor: "#000", minHeight: "100vh" }}>
+            Wird geladen...
+          </div>
         ) : isLoggedIn ? (
           <Ticktask user={user} isGuestMode={false} />
         ) : isGuestMode ? (

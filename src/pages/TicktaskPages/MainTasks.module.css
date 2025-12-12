@@ -194,8 +194,35 @@
   margin-left: 10px;
 }
 
+/* Sobald die Spalten untereinander gehen (MainContent @ max-width: 1478px):
+   Task-Boxen sollen wie die Checklist-Boxen responsive werden */
+@media (max-width: 1478px) {
+  .emptyMessage,
+  .DoneTasks,
+  .FrequentTasks {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .DoneTasksHeader,
+  .FrequentTasksHeader {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
 /* Mobile Media Queries */
 @media (max-width: 768px) {
+  /* Mobile: globale h3-margin (aus App.module.css) darf die Header nicht aufblähen */
+  .DoneTasksHeader h3,
+  .FrequentTasksHeader h3 {
+    margin: 0 !important;
+  }
+
   .emptyMessage {
     width: 100% !important;
     min-width: 100% !important;
@@ -253,6 +280,11 @@
 }
 
 @media (max-width: 480px) {
+  .DoneTasksHeader h3,
+  .FrequentTasksHeader h3 {
+    margin: 0 !important;
+  }
+
   .emptyMessage {
     width: 100% !important;
     min-width: 100% !important;

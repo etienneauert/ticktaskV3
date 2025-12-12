@@ -18,8 +18,8 @@
 .CalendarHeader {
   display: grid;
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
-  gap: 1px;
-  margin-bottom: 1px;
+  gap: 0;
+  margin-bottom: 0;
   background-color: transparent;
   overflow: hidden;
 }
@@ -33,7 +33,6 @@
   align-items: center;
   justify-content: center;
   color: white;
-  border-right: 1px solid #333;
 }
 
 .DayHeader {
@@ -42,8 +41,10 @@
   text-align: center;
   color: white;
   position: relative;
-  border: 1px solid #333;
-  border-right: 0.5px solid #333;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  border-right: 1px solid #333;
+  border-left: 0;
   height: 60px;
   display: flex;
   flex-direction: row;
@@ -53,8 +54,11 @@
   gap: 8px;
 }
 
-.DayHeader:last-child {
-  border-right: 1px solid #333;
+/* In der Header-Grid-Struktur kommt nach dem letzten DayHeader noch `.RightBar`.
+   Daher ist der letzte DayHeader NICHT `:last-child`, sondern `nth-last-child(2)`. */
+.CalendarHeader > .DayHeader:nth-last-child(2) {
+  /* rechte Außenkante kommt über den RightBar-Balken – sonst doppelt */
+  border-right: 0;
 }
 
 .DayHeaderToday {
@@ -108,7 +112,7 @@
 .CalendarBody {
   display: grid;
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
-  gap: 1px;
+  gap: 0;
   background-color: transparent;
   position: relative;
   overflow: visible;
@@ -121,6 +125,8 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+  /* Trennlinie rechts neben der Uhrzeit-Spalte */
+  border-right: 1px solid #333;
 }
 
 .TimeColumnHeader {
@@ -129,7 +135,10 @@
   text-align: center;
   color: white;
   border: 1px solid #333;
+  /* Trennlinie rechts neben der Uhrzeit-Spalte */
   border-right: 1px solid #333;
+  /* linker Rand kommt vom LeftBar */
+  border-left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -155,7 +164,6 @@
   justify-content: center;
   box-sizing: border-box;
   flex-shrink: 0;
-  border-right: 1px solid #333;
 }
 
 .TimeSlotCurrent {
@@ -171,11 +179,14 @@
   padding: 0;
   overflow: visible;
   position: relative;
-  border-right: 0.2px solid #333;
+  border-right: 1px solid #333;
 }
 
-.DayColumn:last-child {
-  border-right: none;
+/* In der Body-Grid-Struktur kommt nach der letzten DayColumn noch `.RightBarColumn`.
+   Daher ist die letzte DayColumn NICHT `:last-child`, sondern `nth-last-child(2)`. */
+.CalendarBody > .DayColumn:nth-last-child(2) {
+  /* rechte Außenkante kommt über den RightBar-Balken – sonst doppelt */
+  border-right: 0;
 }
 
 .CalendarRow {
@@ -195,7 +206,13 @@
 }
 
 .CalendarCell:hover {
-  background-color: transparent;
+  /* Sichtbares Hover-Feedback (Zelle ist sonst transparent) */
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.CalendarCell:focus-visible {
+  outline: 2px solid rgba(213, 255, 5, 0.65);
+  outline-offset: -2px;
 }
 
 .TasksOverlay {
@@ -325,13 +342,11 @@
 }
 
 .LeftBar {
-  background-color: transparent;
-  border-left: 1px solid #333;
+  background-color: #333;
 }
 
 .RightBar {
-  background-color: transparent;
-  border-right: 1px solid #333;
+  background-color: #333;
 }
 
 .LeftBarColumn {
@@ -341,13 +356,11 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  border-left: 1px solid #333;
 }
 
 .LeftBarCell {
-  background-color: transparent;
+  background-color: #333;
   height: 50px;
-  border-left: 1px solid #333;
 }
 
 .RightBarColumn {
@@ -357,7 +370,6 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  border-right: 1px solid #333;
 }
 
 .RightBarRow {
@@ -367,10 +379,9 @@
 }
 
 .RightBarCell {
-  background-color: transparent;
+  background-color: #333;
   height: 50px;
   flex-shrink: 0;
-  border-right: 1px solid #333;
 }
 
 .HorizontalBar {
@@ -385,7 +396,7 @@
 .BottomBar {
   display: grid;
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
-  gap: 1px;
+  gap: 0;
   background-color: transparent;
   margin-top: 0;
   height: 1px;
@@ -394,17 +405,15 @@
 }
 
 .BottomBarTimeColumn {
-  background-color: transparent;
+  background-color: #333;
   height: 100%;
-  border-bottom: 1px solid #333;
 }
 
 .BottomBarLeft,
 .BottomBarRight,
 .BottomBarCell {
-  background-color: transparent;
+  background-color: #333;
   height: 100%;
-  border-bottom: 1px solid #333;
 }
 
 .CurrentTimeIndicator {
@@ -464,6 +473,16 @@
 
   .DayColumnHidden {
     display: none;
+  }
+
+  /* Mobile zeigt nur 1 Tag-Spalte: die rechte Außenkante kommt über `.RightBar`.
+     Deshalb keine zusätzliche Border am (sichtbaren) Tag selbst -> sonst wirkt sie doppelt. */
+  .DayHeader {
+    border-right: 0;
+  }
+
+  .DayColumn {
+    border-right: 0;
   }
 
   .TimeColumn {

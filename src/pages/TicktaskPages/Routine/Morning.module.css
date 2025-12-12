@@ -54,6 +54,28 @@
   flex: 1;
 }
 
+@media (max-width: 768px) {
+  .checklistHeader {
+    margin-bottom: 22px;
+    padding-top: 6px;
+  }
+
+  .morningTitle {
+    margin-block: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checklistHeader {
+    margin-bottom: 22px;
+    padding-top: 6px;
+  }
+
+  .morningTitle {
+    margin-block: 8px;
+  }
+}
+
 .penIcon {
   width: 20px;
   height: 20px;
