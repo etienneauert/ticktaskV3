@@ -8,13 +8,22 @@
   overflow-y: visible;
 }
 
+/* Border-Radius direkt am Kalender-Frame (ohne zusätzliche Außen-Border).
+   Dadurch werden nur die Ecken abgerundet, ohne eine „2. Border“ zu erzeugen. */
+.WeekCalendarFrame {
+  /* Größerer Radius + echte Außenkante, damit die Border in den Ecken mitrundet */
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid #333;
+  background-color: transparent;
+}
+
 /* Ab 23 Zoll (etwa 1920px Breite): Kalender soll so breit sein wie Task-Komponente */
 @media (min-width: 1920px) {
   .WeekCalendar {
     max-width: 1600px;
   }
 }
-
 .CalendarHeader {
   display: grid;
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
@@ -41,7 +50,8 @@
   text-align: center;
   color: white;
   position: relative;
-  border-top: 1px solid #333;
+  /* Außenkante kommt vom WeekCalendarFrame -> oben keine zusätzliche Linie */
+  border-top: 0;
   border-bottom: 1px solid #333;
   border-right: 1px solid #333;
   border-left: 0;
@@ -135,6 +145,8 @@
   text-align: center;
   color: white;
   border: 1px solid #333;
+  /* Außenkante kommt vom WeekCalendarFrame -> oben keine zusätzliche Linie */
+  border-top: 0;
   /* Trennlinie rechts neben der Uhrzeit-Spalte */
   border-right: 1px solid #333;
   /* linker Rand kommt vom LeftBar */
@@ -342,11 +354,13 @@
 }
 
 .LeftBar {
-  background-color: #333;
+  /* Außenkante kommt vom WeekCalendarFrame */
+  background-color: transparent;
 }
 
 .RightBar {
-  background-color: #333;
+  /* Außenkante kommt vom WeekCalendarFrame */
+  background-color: transparent;
 }
 
 .LeftBarColumn {
@@ -359,7 +373,8 @@
 }
 
 .LeftBarCell {
-  background-color: #333;
+  /* Außenkante kommt vom WeekCalendarFrame */
+  background-color: transparent;
   height: 50px;
 }
 
@@ -379,7 +394,8 @@
 }
 
 .RightBarCell {
-  background-color: #333;
+  /* Außenkante kommt vom WeekCalendarFrame */
+  background-color: transparent;
   height: 50px;
   flex-shrink: 0;
 }
@@ -401,18 +417,19 @@
   margin-top: 0;
   height: 1px;
   width: 100%;
-  border-bottom: 1px solid #333;
+  /* Außenkante kommt vom WeekCalendarFrame */
+  border-bottom: 0;
 }
 
 .BottomBarTimeColumn {
-  background-color: #333;
+  background-color: transparent;
   height: 100%;
 }
 
 .BottomBarLeft,
 .BottomBarRight,
 .BottomBarCell {
-  background-color: #333;
+  background-color: transparent;
   height: 100%;
 }
 

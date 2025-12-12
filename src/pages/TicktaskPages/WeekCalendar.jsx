@@ -805,319 +805,323 @@ export default function WeekCalendar({
 
   return (
     <div className={styles.WeekCalendar}>
-      <div className={styles.CalendarHeader}>
-        <div className={styles.LeftBar}></div>
-        <div className={styles.TimeColumnHeader}>
-          <button
-            id="calendar-plus-icon"
-            className={styles.AddButton}
-            title="Termin hinzufügen"
-            onClick={handleAddButtonClick}
-          >
-            <img src={plusSign} alt="Add" />
-          </button>
-        </div>
-        {weekDays.map((day, index) => {
-          const isTodayDay = isToday(weekDates[index]);
-          const isSelectedDay = index === selectedDayIndex;
-          return (
-            <div
-              key={day}
-              className={`${styles.DayHeader} ${
-                isTodayDay ? styles.DayHeaderToday : ""
-              } ${!isSelectedDay ? styles.DayHeaderHidden : ""}`}
+      <div className={styles.WeekCalendarFrame}>
+        <div className={styles.CalendarHeader}>
+          <div className={styles.LeftBar}></div>
+          <div className={styles.TimeColumnHeader}>
+            <button
+              id="calendar-plus-icon"
+              className={styles.AddButton}
+              title="Termin hinzufügen"
+              onClick={handleAddButtonClick}
             >
-              <button
-                className={styles.DayNavigationButton}
-                onClick={handlePreviousDay}
-                aria-label="Vorheriger Tag"
-              >
-                <img
-                  src={leftArrow}
-                  alt=""
-                  className={styles.DayNavigationArrow}
-                />
-              </button>
-              <div className={styles.DayHeaderContent}>
-                <div className={styles.DayName}>{day}</div>
-                <div className={styles.DayDate}>
-                  {weekDates[index].getDate()}.
-                  {String(weekDates[index].getMonth() + 1).padStart(2, "0")}
-                </div>
-              </div>
-              <button
-                className={styles.DayNavigationButton}
-                onClick={handleNextDay}
-                aria-label="Nächster Tag"
-              >
-                <img
-                  src={rightArrow}
-                  alt=""
-                  className={styles.DayNavigationArrow}
-                />
-              </button>
-            </div>
-          );
-        })}
-        <div className={styles.RightBar}></div>
-      </div>
-      <div className={styles.CalendarBody}>
-        {timePosition && (
-          <div
-            className={styles.CurrentTimeIndicator}
-            style={{
-              top: `${timePosition.top}px`,
-            }}
-          />
-        )}
-        <div className={styles.LeftBarColumn}>
-          {hours.map((hour, index) => (
-            <div key={hour}>
-              <div className={styles.LeftBarCell}></div>
-              {index < hours.length - 1 && (
-                <div className={styles.HorizontalBar}></div>
-              )}
-            </div>
-          ))}
-        </div>
-        <div className={styles.TimeColumn}>
-          {hours.map((hour, index) => {
-            const isCurrentHour =
-              timePosition && currentTime.getHours() === hour;
-            const currentMinute = currentTime.getMinutes();
+              <img src={plusSign} alt="Add" />
+            </button>
+          </div>
+          {weekDays.map((day, index) => {
+            const isTodayDay = isToday(weekDates[index]);
+            const isSelectedDay = index === selectedDayIndex;
             return (
-              <div key={hour} className={styles.TimeRow}>
-                <div
-                  className={`${styles.TimeSlot} ${
-                    isCurrentHour ? styles.TimeSlotCurrent : ""
-                  }`}
+              <div
+                key={day}
+                className={`${styles.DayHeader} ${
+                  isTodayDay ? styles.DayHeaderToday : ""
+                } ${!isSelectedDay ? styles.DayHeaderHidden : ""}`}
+              >
+                <button
+                  className={styles.DayNavigationButton}
+                  onClick={handlePreviousDay}
+                  aria-label="Vorheriger Tag"
                 >
-                  {isCurrentHour
-                    ? `${String(hour).padStart(2, "0")}:${String(
-                        currentMinute
-                      ).padStart(2, "0")}`
-                    : `${String(hour).padStart(2, "0")}:00`}
+                  <img
+                    src={leftArrow}
+                    alt=""
+                    className={styles.DayNavigationArrow}
+                  />
+                </button>
+                <div className={styles.DayHeaderContent}>
+                  <div className={styles.DayName}>{day}</div>
+                  <div className={styles.DayDate}>
+                    {weekDates[index].getDate()}.
+                    {String(weekDates[index].getMonth() + 1).padStart(2, "0")}
+                  </div>
                 </div>
+                <button
+                  className={styles.DayNavigationButton}
+                  onClick={handleNextDay}
+                  aria-label="Nächster Tag"
+                >
+                  <img
+                    src={rightArrow}
+                    alt=""
+                    className={styles.DayNavigationArrow}
+                  />
+                </button>
+              </div>
+            );
+          })}
+          <div className={styles.RightBar}></div>
+        </div>
+        <div className={styles.CalendarBody}>
+          {timePosition && (
+            <div
+              className={styles.CurrentTimeIndicator}
+              style={{
+                top: `${timePosition.top}px`,
+              }}
+            />
+          )}
+          <div className={styles.LeftBarColumn}>
+            {hours.map((hour, index) => (
+              <div key={hour}>
+                <div className={styles.LeftBarCell}></div>
                 {index < hours.length - 1 && (
                   <div className={styles.HorizontalBar}></div>
                 )}
               </div>
-            );
-          })}
-        </div>
-        {weekDays.map((day, dayIndex) => {
-          const dayKey = weekDates[dayIndex].toDateString();
-          const tasksForDay = scheduledTasksByDay[dayKey] || [];
-          if (tasksForDay.length > 0) {
-            console.log(
-              `[WeekCalendar] Day ${dayKey} has ${tasksForDay.length} tasks:`,
-              tasksForDay.map((t) => ({
-                text: t.text,
-                scheduledDateTime: t.scheduledDateTime,
-                scheduledDate: t.scheduledDate,
-              }))
-            );
-          }
-          const sortedTasks = tasksForDay
-            .slice()
-            .sort(
-              (a, b) =>
-                a.scheduledDate - b.scheduledDate ||
-                (a.text || "").localeCompare(b.text || "")
-            );
-          const isTodayDay = isToday(weekDates[dayIndex]);
-          const isSelectedDay = dayIndex === selectedDayIndex;
-
-          if (tasksForDay.length > 0) {
-            console.log(
-              `[WeekCalendar] Day ${dayKey} (index ${dayIndex}) isSelectedDay: ${isSelectedDay}, tasks: ${tasksForDay.length}`
-            );
-          }
-
-          return (
-            <div
-              key={day}
-              className={`${styles.DayColumn} ${
-                !isSelectedDay ? styles.DayColumnHidden : ""
-              }`}
-            >
-              {hours.map((hour, index) => (
-                <div key={`${day}-${hour}`} className={styles.CalendarRow}>
-                  <div className={styles.CalendarCell}></div>
+            ))}
+          </div>
+          <div className={styles.TimeColumn}>
+            {hours.map((hour, index) => {
+              const isCurrentHour =
+                timePosition && currentTime.getHours() === hour;
+              const currentMinute = currentTime.getMinutes();
+              return (
+                <div key={hour} className={styles.TimeRow}>
+                  <div
+                    className={`${styles.TimeSlot} ${
+                      isCurrentHour ? styles.TimeSlotCurrent : ""
+                    }`}
+                  >
+                    {isCurrentHour
+                      ? `${String(hour).padStart(2, "0")}:${String(
+                          currentMinute
+                        ).padStart(2, "0")}`
+                      : `${String(hour).padStart(2, "0")}:00`}
+                  </div>
                   {index < hours.length - 1 && (
                     <div className={styles.HorizontalBar}></div>
                   )}
                 </div>
-              ))}
-              <div className={styles.TasksOverlay}>
-                {sortedTasks.map((task) => {
-                  const positioning = getTaskPosition(task);
-                  if (!positioning) {
-                    console.log(
-                      `[WeekCalendar] Task "${task.text}" has no positioning:`,
-                      {
-                        scheduledDate: task.scheduledDate,
-                        hour: task.scheduledDate?.getHours(),
-                        minute: task.scheduledDate?.getMinutes(),
-                        startHour,
-                        endHour,
-                      }
-                    );
-                    return null;
-                  }
+              );
+            })}
+          </div>
+          {weekDays.map((day, dayIndex) => {
+            const dayKey = weekDates[dayIndex].toDateString();
+            const tasksForDay = scheduledTasksByDay[dayKey] || [];
+            if (tasksForDay.length > 0) {
+              console.log(
+                `[WeekCalendar] Day ${dayKey} has ${tasksForDay.length} tasks:`,
+                tasksForDay.map((t) => ({
+                  text: t.text,
+                  scheduledDateTime: t.scheduledDateTime,
+                  scheduledDate: t.scheduledDate,
+                }))
+              );
+            }
+            const sortedTasks = tasksForDay
+              .slice()
+              .sort(
+                (a, b) =>
+                  a.scheduledDate - b.scheduledDate ||
+                  (a.text || "").localeCompare(b.text || "")
+              );
+            const isTodayDay = isToday(weekDates[dayIndex]);
+            const isSelectedDay = dayIndex === selectedDayIndex;
 
-                  const hour = task.scheduledDate.getHours();
-                  const minutes = task.scheduledDate.getMinutes();
-                  const formattedTime = `${String(hour).padStart(
-                    2,
-                    "0"
-                  )}:${String(minutes).padStart(2, "0")}`;
-                  const taskText = (task.text || "Task").trim() || "Task";
-                  const approxWidthPx = Math.max(
-                    100,
-                    (positioning.width ?? 140) - 40
-                  ); // subtract time/gap
-                  const approxCharWidthPx = 6.5;
-                  const estimatedTextWidth =
-                    taskText.length * approxCharWidthPx;
-                  const shouldScroll = estimatedTextWidth > approxWidthPx;
-                  const scrollDurationSeconds = Math.min(
-                    24,
-                    Math.max(8, (estimatedTextWidth - approxWidthPx) / 4)
-                  );
+            if (tasksForDay.length > 0) {
+              console.log(
+                `[WeekCalendar] Day ${dayKey} (index ${dayIndex}) isSelectedDay: ${isSelectedDay}, tasks: ${tasksForDay.length}`
+              );
+            }
 
-                  const isRunningTask =
-                    runningTaskId && task.id === runningTaskId;
-                  const isDoneTask = task.done === true && !isRunningTask;
+            return (
+              <div
+                key={day}
+                className={`${styles.DayColumn} ${
+                  !isSelectedDay ? styles.DayColumnHidden : ""
+                }`}
+              >
+                {hours.map((hour, index) => (
+                  <div key={`${day}-${hour}`} className={styles.CalendarRow}>
+                    <div className={styles.CalendarCell}></div>
+                    {index < hours.length - 1 && (
+                      <div className={styles.HorizontalBar}></div>
+                    )}
+                  </div>
+                ))}
+                <div className={styles.TasksOverlay}>
+                  {sortedTasks.map((task) => {
+                    const positioning = getTaskPosition(task);
+                    if (!positioning) {
+                      console.log(
+                        `[WeekCalendar] Task "${task.text}" has no positioning:`,
+                        {
+                          scheduledDate: task.scheduledDate,
+                          hour: task.scheduledDate?.getHours(),
+                          minute: task.scheduledDate?.getMinutes(),
+                          startHour,
+                          endHour,
+                        }
+                      );
+                      return null;
+                    }
 
-                  return (
-                    <div
-                      key={
-                        task.id ||
-                        `${formattedTime}-${task.text ?? "task"}-${
-                          task.scheduledDateTime ?? ""
-                        }`
-                      }
-                      className={`${styles.ScheduledTask} ${
-                        isDoneTask ? styles.ScheduledTaskDone : ""
-                      } ${isRunningTask ? styles.ScheduledTaskRunning : ""}`}
-                      style={{
-                        top: `${positioning.top}px`,
-                        height: `${positioning.height}px`,
-                      }}
-                    >
-                      <span className={styles.ScheduledTaskTime}>
-                        {formattedTime}
-                      </span>
-                      <span
-                        className={`${styles.ScheduledTaskText} ${
-                          shouldScroll ? styles.ScheduledTaskTextScrollable : ""
-                        }`}
-                      >
-                        {shouldScroll ? (
-                          <span
-                            className={styles.ScheduledTaskTextInner}
-                            style={{
-                              animationDuration: `${scrollDurationSeconds}s`,
-                            }}
-                          >
-                            <span>{taskText}</span>
-                            <span aria-hidden="true">{taskText}</span>
-                          </span>
-                        ) : (
-                          taskText
-                        )}
-                      </span>
-                    </div>
-                  );
-                })}
-                {(() => {
-                  const appointmentsForDay = appointmentsByDay[dayKey] || [];
-                  const sortedAppointments = appointmentsForDay
-                    .slice()
-                    .sort(
-                      (a, b) =>
-                        a.scheduledDate - b.scheduledDate ||
-                        (a.name || "").localeCompare(b.name || "")
-                    );
-
-                  return sortedAppointments.map((appointment) => {
-                    const positioning = getAppointmentPosition(appointment);
-                    if (!positioning) return null;
-
-                    const startHour = appointment.scheduledDate.getHours();
-                    const startMinutes = appointment.scheduledDate.getMinutes();
-                    const formattedTime = `${String(startHour).padStart(
+                    const hour = task.scheduledDate.getHours();
+                    const minutes = task.scheduledDate.getMinutes();
+                    const formattedTime = `${String(hour).padStart(
                       2,
                       "0"
-                    )}:${String(startMinutes).padStart(2, "0")}`;
-                    const appointmentName =
-                      (appointment.name || "Termin").trim() || "Termin";
+                    )}:${String(minutes).padStart(2, "0")}`;
+                    const taskText = (task.text || "Task").trim() || "Task";
+                    const approxWidthPx = Math.max(
+                      100,
+                      (positioning.width ?? 140) - 40
+                    ); // subtract time/gap
+                    const approxCharWidthPx = 6.5;
+                    const estimatedTextWidth =
+                      taskText.length * approxCharWidthPx;
+                    const shouldScroll = estimatedTextWidth > approxWidthPx;
+                    const scrollDurationSeconds = Math.min(
+                      24,
+                      Math.max(8, (estimatedTextWidth - approxWidthPx) / 4)
+                    );
 
-                    // Prüfe, ob die aktuelle Zeit innerhalb des Zeitraums liegt
-                    const now = currentTime;
-                    const startDate = appointment.scheduledDate;
-                    const endDate = appointment.endDate;
-                    const isActive =
-                      endDate &&
-                      now >= startDate &&
-                      now <= endDate &&
-                      startDate.toDateString() === now.toDateString();
+                    const isRunningTask =
+                      runningTaskId && task.id === runningTaskId;
+                    const isDoneTask = task.done === true && !isRunningTask;
 
                     return (
                       <div
-                        key={appointment.id || appointment.scheduledDateTime}
-                        className={`${styles.ScheduledAppointment} ${
-                          isActive ? styles.ScheduledAppointmentActive : ""
-                        }`}
+                        key={
+                          task.id ||
+                          `${formattedTime}-${task.text ?? "task"}-${
+                            task.scheduledDateTime ?? ""
+                          }`
+                        }
+                        className={`${styles.ScheduledTask} ${
+                          isDoneTask ? styles.ScheduledTaskDone : ""
+                        } ${isRunningTask ? styles.ScheduledTaskRunning : ""}`}
                         style={{
                           top: `${positioning.top}px`,
                           height: `${positioning.height}px`,
                         }}
                       >
-                        <span className={styles.ScheduledAppointmentTime}>
+                        <span className={styles.ScheduledTaskTime}>
                           {formattedTime}
                         </span>
-                        <span className={styles.ScheduledAppointmentText}>
-                          {appointmentName}
-                        </span>
-                        <button
-                          className={styles.AppointmentDeleteButton}
-                          onClick={() =>
-                            handleDeleteAppointment(appointment.id)
-                          }
-                          title="Termin löschen"
+                        <span
+                          className={`${styles.ScheduledTaskText} ${
+                            shouldScroll
+                              ? styles.ScheduledTaskTextScrollable
+                              : ""
+                          }`}
                         >
-                          <img src={trashBin} alt="Delete" />
-                        </button>
+                          {shouldScroll ? (
+                            <span
+                              className={styles.ScheduledTaskTextInner}
+                              style={{
+                                animationDuration: `${scrollDurationSeconds}s`,
+                              }}
+                            >
+                              <span>{taskText}</span>
+                              <span aria-hidden="true">{taskText}</span>
+                            </span>
+                          ) : (
+                            taskText
+                          )}
+                        </span>
                       </div>
                     );
-                  });
-                })()}
+                  })}
+                  {(() => {
+                    const appointmentsForDay = appointmentsByDay[dayKey] || [];
+                    const sortedAppointments = appointmentsForDay
+                      .slice()
+                      .sort(
+                        (a, b) =>
+                          a.scheduledDate - b.scheduledDate ||
+                          (a.name || "").localeCompare(b.name || "")
+                      );
+
+                    return sortedAppointments.map((appointment) => {
+                      const positioning = getAppointmentPosition(appointment);
+                      if (!positioning) return null;
+
+                      const startHour = appointment.scheduledDate.getHours();
+                      const startMinutes =
+                        appointment.scheduledDate.getMinutes();
+                      const formattedTime = `${String(startHour).padStart(
+                        2,
+                        "0"
+                      )}:${String(startMinutes).padStart(2, "0")}`;
+                      const appointmentName =
+                        (appointment.name || "Termin").trim() || "Termin";
+
+                      // Prüfe, ob die aktuelle Zeit innerhalb des Zeitraums liegt
+                      const now = currentTime;
+                      const startDate = appointment.scheduledDate;
+                      const endDate = appointment.endDate;
+                      const isActive =
+                        endDate &&
+                        now >= startDate &&
+                        now <= endDate &&
+                        startDate.toDateString() === now.toDateString();
+
+                      return (
+                        <div
+                          key={appointment.id || appointment.scheduledDateTime}
+                          className={`${styles.ScheduledAppointment} ${
+                            isActive ? styles.ScheduledAppointmentActive : ""
+                          }`}
+                          style={{
+                            top: `${positioning.top}px`,
+                            height: `${positioning.height}px`,
+                          }}
+                        >
+                          <span className={styles.ScheduledAppointmentTime}>
+                            {formattedTime}
+                          </span>
+                          <span className={styles.ScheduledAppointmentText}>
+                            {appointmentName}
+                          </span>
+                          <button
+                            className={styles.AppointmentDeleteButton}
+                            onClick={() =>
+                              handleDeleteAppointment(appointment.id)
+                            }
+                            title="Termin löschen"
+                          >
+                            <img src={trashBin} alt="Delete" />
+                          </button>
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
               </div>
-            </div>
-          );
-        })}
-        <div className={styles.RightBarColumn}>
-          {hours.map((hour, index) => (
-            <div key={hour} className={styles.RightBarRow}>
-              <div className={styles.RightBarCell}></div>
-              {index < hours.length - 1 && (
-                <div className={styles.HorizontalBar}></div>
-              )}
-            </div>
+            );
+          })}
+          <div className={styles.RightBarColumn}>
+            {hours.map((hour, index) => (
+              <div key={hour} className={styles.RightBarRow}>
+                <div className={styles.RightBarCell}></div>
+                {index < hours.length - 1 && (
+                  <div className={styles.HorizontalBar}></div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className={styles.BottomBar}>
+          <div className={styles.BottomBarLeft}></div>
+          <div className={styles.BottomBarTimeColumn}></div>
+          {weekDays.map((day) => (
+            <div key={day} className={styles.BottomBarCell}></div>
           ))}
+          <div className={styles.BottomBarRight}></div>
         </div>
       </div>
-      <div className={styles.BottomBar}>
-        <div className={styles.BottomBarLeft}></div>
-        <div className={styles.BottomBarTimeColumn}></div>
-        {weekDays.map((day) => (
-          <div key={day} className={styles.BottomBarCell}></div>
-        ))}
-        <div className={styles.BottomBarRight}></div>
-      </div>
-
       {popupOpen && (
         <div className={popupStyles.overlay}>
           <div
