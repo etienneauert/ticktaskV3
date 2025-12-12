@@ -175,26 +175,41 @@
   }
 
   .GoalsInputContainer {
-    gap: 15px;
-    flex-direction: row;
+    /* Label zentriert oberhalb, Input + Button darunter */
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 52px;
     align-items: center;
-    justify-content: center;
+    justify-items: stretch;
   }
 
   .GoalsInputContainer .inputLabel {
     font-size: 18px;
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    grid-column: 1 / -1;
+    text-align: center;
+    width: 100%;
+    padding-block: 18px;
   }
 
   .GoalsInputContainer input {
-    min-width: 250px;
+    min-width: 0;
+    width: 100%;
     font-size: 18px;
     padding: 10px 15px;
     height: 50px;
+    grid-column: 1;
   }
 
   .GoalsInputContainer button {
     width: 50px;
     height: 50px;
+    grid-column: 2;
   }
 
   .GoalsInputContainer button img {
@@ -215,27 +230,41 @@
   }
 
   .GoalsInputContainer {
-    gap: 10px;
     padding: 0 10px;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 50px;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 52px;
     align-items: center;
-    justify-content: center;
+    justify-items: stretch;
   }
 
   .GoalsInputContainer .inputLabel {
     font-size: 16px;
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    grid-column: 1 / -1;
+    text-align: center;
+    width: 100%;
+    padding-block: 18px;
   }
 
   .GoalsInputContainer input {
-    min-width: 200px;
+    min-width: 0;
+    width: 100%;
     font-size: 16px;
     padding: 8px 12px;
     height: 50px;
+    grid-column: 1;
   }
 
   .GoalsInputContainer button {
     width: 50px;
     height: 50px;
+    grid-column: 2;
   }
 
   .GoalsInputContainer button img {

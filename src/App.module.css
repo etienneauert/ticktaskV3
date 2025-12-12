@@ -3,7 +3,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: #161616;
+  /* background-color: #161616; */
+  background-color: #000000;
 }
 
 /* Scrollbalken ausblenden */
@@ -73,6 +74,14 @@ html {
     padding: 0 10px;
   }
 
+  /* Global: mehr Luft für Überschriften auf Mobile */
+  :global(h1),
+  :global(h2),
+  :global(h3),
+  :global(h4) {
+    margin-block: 44px;
+  }
+
   .switchButton {
     top: 10px;
     left: 10px;
@@ -83,6 +92,14 @@ html {
 }
 
 @media (max-width: 480px) {
+  /* Global: etwas kompakter auf sehr kleinen Screens */
+  :global(h1),
+  :global(h2),
+  :global(h3),
+  :global(h4) {
+    margin-block: 40px;
+  }
+
   .switchButton {
     top: 5px;
     left: 5px;

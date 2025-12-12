@@ -20,7 +20,7 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: #161616;
+  background-color: transparent;
   box-sizing: border-box;
   height: 40px;
   display: flex;
@@ -157,6 +157,24 @@
     padding: 0 5px;
   }
 
+  .CalendarLabelContainer {
+    justify-content: center;
+    margin: 40px auto 0;
+    padding: 26px 10px;
+    height: auto;
+  }
+
+  .calendarLabel {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    padding-block: 18px;
+  }
+
   .MainTasks {
     width: 100%;
     margin-bottom: 20px;
@@ -182,7 +200,7 @@
 
   .WeekCalendarContainer {
     padding: 0 5px;
-    margin-top: 20px;
+    margin-top: 52px;
     overflow-x: visible;
   }
 }
@@ -191,6 +209,24 @@
   .Main {
     margin-top: 40px;
     padding: 0 5px;
+  }
+
+  .CalendarLabelContainer {
+    justify-content: center;
+    margin: 30px auto 0;
+    padding: 26px 10px;
+    height: auto;
+  }
+
+  .calendarLabel {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    text-align: center;
+    font-size: 16px;
+    padding-block: 18px;
   }
 
   .MainTasks {

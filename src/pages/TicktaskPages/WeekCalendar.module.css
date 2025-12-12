@@ -3,7 +3,7 @@
   max-width: 1400px;
   margin: 40px auto 40px;
   padding: 20px;
-  background-color: #161616;
+  background-color: transparent;
   overflow-x: hidden;
   overflow-y: visible;
 }
@@ -20,12 +20,12 @@
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
   gap: 1px;
   margin-bottom: 1px;
-  background-color: #333;
+  background-color: transparent;
   overflow: hidden;
 }
 
 .TimeColumn {
-  background-color: #161616;
+  background-color: transparent;
   padding: 10px;
   font-weight: 600;
   text-align: center;
@@ -33,10 +33,11 @@
   align-items: center;
   justify-content: center;
   color: white;
+  border-right: 1px solid #333;
 }
 
 .DayHeader {
-  background-color: #161616;
+  background-color: transparent;
   padding: 10px;
   text-align: center;
   color: white;
@@ -108,7 +109,7 @@
   display: grid;
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
   gap: 1px;
-  background-color: #333;
+  background-color: transparent;
   position: relative;
   overflow: visible;
 }
@@ -123,11 +124,12 @@
 }
 
 .TimeColumnHeader {
-  background-color: #161616;
+  background-color: transparent;
   padding: 10px;
   text-align: center;
   color: white;
   border: 1px solid #333;
+  border-right: 1px solid #333;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,7 +144,7 @@
 }
 
 .TimeSlot {
-  background-color: #161616;
+  background-color: transparent;
   padding: 4px;
   text-align: center;
   font-size: 12px;
@@ -153,6 +155,7 @@
   justify-content: center;
   box-sizing: border-box;
   flex-shrink: 0;
+  border-right: 1px solid #333;
 }
 
 .TimeSlotCurrent {
@@ -182,7 +185,7 @@
 }
 
 .CalendarCell {
-  background-color: #161616;
+  background-color: transparent;
   height: 50px;
   padding: 4px;
   cursor: pointer;
@@ -192,7 +195,7 @@
 }
 
 .CalendarCell:hover {
-  background-color: #1f1f1f;
+  background-color: transparent;
 }
 
 .TasksOverlay {
@@ -322,11 +325,13 @@
 }
 
 .LeftBar {
-  background-color: #333;
+  background-color: transparent;
+  border-left: 1px solid #333;
 }
 
 .RightBar {
-  background-color: #333;
+  background-color: transparent;
+  border-right: 1px solid #333;
 }
 
 .LeftBarColumn {
@@ -336,11 +341,13 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+  border-left: 1px solid #333;
 }
 
 .LeftBarCell {
-  background-color: #333;
+  background-color: transparent;
   height: 50px;
+  border-left: 1px solid #333;
 }
 
 .RightBarColumn {
@@ -350,6 +357,7 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+  border-right: 1px solid #333;
 }
 
 .RightBarRow {
@@ -359,9 +367,10 @@
 }
 
 .RightBarCell {
-  background-color: #333;
+  background-color: transparent;
   height: 50px;
   flex-shrink: 0;
+  border-right: 1px solid #333;
 }
 
 .HorizontalBar {
@@ -377,22 +386,25 @@
   display: grid;
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
   gap: 1px;
-  background-color: #333;
+  background-color: transparent;
   margin-top: 0;
   height: 1px;
   width: 100%;
+  border-bottom: 1px solid #333;
 }
 
 .BottomBarTimeColumn {
-  background-color: #333;
+  background-color: transparent;
   height: 100%;
+  border-bottom: 1px solid #333;
 }
 
 .BottomBarLeft,
 .BottomBarRight,
 .BottomBarCell {
-  background-color: #333;
+  background-color: transparent;
   height: 100%;
+  border-bottom: 1px solid #333;
 }
 
 .CurrentTimeIndicator {
@@ -426,6 +438,7 @@
     width: 100%;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 0;
     overflow-x: visible;
     box-sizing: border-box;
   }
@@ -498,6 +511,7 @@
     width: 100%;
     margin-left: auto;
     margin-right: auto;
+    margin-top: 0;
     overflow-x: visible;
     box-sizing: border-box;
   }
