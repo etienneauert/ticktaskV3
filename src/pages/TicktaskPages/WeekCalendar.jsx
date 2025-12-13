@@ -691,7 +691,7 @@ export default function WeekCalendar({
     );
 
     const appointmentData = {
-      id: isGuestMode ? `local-${Date.now()}` : undefined,
+      ...(isGuestMode ? { id: `local-${Date.now()}` } : {}),
       name: appointmentName.trim(),
       scheduledDateTime: scheduledDate.toISOString(),
       endDateTime: endDate.toISOString(),

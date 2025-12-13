@@ -61,7 +61,7 @@ export default function Goals({
     if (!trimmed) return;
 
     const goalData = {
-      id: isGuestMode ? `local-${Date.now()}` : undefined,
+      ...(isGuestMode ? { id: `local-${Date.now()}` } : {}),
       text: trimmed,
       targetDate: data.targetDate || null,
       priority: data.priority || "low",
@@ -270,7 +270,6 @@ export default function Goals({
 
       const timeSpent = getTimeSpent(goal);
       const maxHours = goal.hoursNeeded || 0;
-
 
       // Prüfe, ob das Goal erreicht wurde und noch nicht angezeigt wurde
       // Verwende eine kleine Toleranz (0.01) für Rundungsfehler
@@ -504,7 +503,7 @@ export default function Goals({
                   maxHours > 0
                     ? Math.min((timeSpent / maxHours) * 100, 100)
                     : 0;
-
+                const daysUntilTarget = getDaysUntilTarget(goal);
 
                 if (isGuestMode) {
                   const allTasks = tasks || [];
@@ -550,48 +549,63 @@ export default function Goals({
                       </div>
                       <div className={styles.GoalProgressInfo}>
                         <div className={styles.GoalDatesContainer}>
-                          {formatCreatedDate(goal) && (
-                            <div className={styles.GoalDate}>
-                              <span className={styles.GoalDateLabel}>
-                                Erstellt:
-                              </span>
-                              <span className={styles.GoalDateValue}>
-                                {formatCreatedDate(goal)}
-                              </span>
-                            </div>
-                          )}
-                          {goal.targetDate && (
-                            <div className={styles.GoalDate}>
-                              <span className={styles.GoalDateLabel}>
-                                Ziel:
-                              </span>
-                              <span className={styles.GoalDateValue}>
-                                {formatDate(goal.targetDate)}
-                              </span>
-                              {getDaysUntilTarget(goal) !== null && (
-                                <span
-                                  className={`${styles.GoalDaysRemaining} ${
-                                    getDaysUntilTarget(goal) > 0 &&
-                                    getDaysUntilTarget(goal) <= 10
-                                      ? styles.GoalDaysRemainingUrgent
-                                      : ""
-                                  }`}
-                                >
-                                  {getDaysUntilTarget(goal) > 0
-                                    ? `${getDaysUntilTarget(
-                                        goal
-                                      )} Tage verbleibend`
-                                    : getDaysUntilTarget(goal) === 0
-                                    ? "Heute"
-                                    : `${Math.abs(
-                                        getDaysUntilTarget(goal)
-                                      )} Tage überfällig`}
+                          <div
+                            className={`${styles.GoalDate} ${styles.GoalDateCreated}`}
+                          >
+                            {formatCreatedDate(goal) && (
+                              <>
+                                <span className={styles.GoalDateLabel}>
+                                  Erstellt:
                                 </span>
-                              )}
-                            </div>
-                          )}
+                                <span className={styles.GoalDateValue}>
+                                  {formatCreatedDate(goal)}
+                                </span>
+                              </>
+                            )}
+                          </div>
+
+                          <div
+                            className={`${styles.GoalDate} ${styles.GoalDateTarget}`}
+                          >
+                            {goal.targetDate && (
+                              <>
+                                <span className={styles.GoalDateLabel}>
+                                  Ziel:
+                                </span>
+                                <span className={styles.GoalDateValue}>
+                                  {formatDate(goal.targetDate)}
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
                         <div className={styles.GoalProgressRight}>
+                          <div className={styles.GoalProgressMetaRow}>
+                            {daysUntilTarget !== null && (
+                              <span
+                                className={`${styles.GoalDaysRemaining} ${
+                                  daysUntilTarget > 0 && daysUntilTarget <= 10
+                                    ? styles.GoalDaysRemainingUrgent
+                                    : ""
+                                }`}
+                              >
+                                {daysUntilTarget > 0
+                                  ? `${daysUntilTarget} Tage verbleibend`
+                                  : daysUntilTarget === 0
+                                  ? "Heute"
+                                  : `${Math.abs(
+                                      daysUntilTarget
+                                    )} Tage überfällig`}
+                              </span>
+                            )}
+
+                            {maxHours > 0 && (
+                              <div className={styles.GoalProgressText}>
+                                {timeSpent.toFixed(1)}h / {maxHours}h
+                              </div>
+                            )}
+                          </div>
+
                           <div className={styles.GoalActionButtons}>
                             <button
                               className={styles.GoalCompletedButton}
@@ -625,11 +639,6 @@ export default function Goals({
                               />
                             </button>
                           </div>
-                          {maxHours > 0 && (
-                            <div className={styles.GoalProgressText}>
-                              {timeSpent.toFixed(1)}h / {maxHours}h
-                            </div>
-                          )}
                         </div>
                       </div>
                     </div>
