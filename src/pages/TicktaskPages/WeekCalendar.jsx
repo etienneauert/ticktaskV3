@@ -690,6 +690,16 @@ export default function WeekCalendar({
       appointmentEndMinute
     );
 
+    // Validierung: Endzeit muss nach Startzeit liegen
+    if (!(endDate instanceof Date) || Number.isNaN(endDate.getTime())) {
+      alert("Bitte wählen Sie eine gültige Endzeit.");
+      return;
+    }
+    if (endDate.getTime() <= scheduledDate.getTime()) {
+      alert("Die Endzeit muss nach der Startzeit liegen.");
+      return;
+    }
+
     const appointmentData = {
       ...(isGuestMode ? { id: `local-${Date.now()}` } : {}),
       name: appointmentName.trim(),
@@ -1067,6 +1077,19 @@ export default function WeekCalendar({
           <div className={styles.BottomBarRight}></div>
         </div>
       </div>
+
+      {/* Legende unterhalb des Kalenders */}
+      <div className={styles.Legend}>
+        <div className={styles.LegendItem}>
+          <div className={styles.LegendBoxTasks} aria-hidden="true" />
+          <div className={styles.LegendText}>Tasks</div>
+        </div>
+        <div className={styles.LegendItem}>
+          <div className={styles.LegendBoxRoutines} aria-hidden="true" />
+          <div className={styles.LegendText}>Alltagstermin</div>
+        </div>
+      </div>
+
       {popupOpen && (
         <div className={popupStyles.overlay}>
           <div

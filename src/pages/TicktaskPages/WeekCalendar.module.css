@@ -242,8 +242,9 @@
   left: 4px;
   right: 4px;
   border-radius: 6px;
-  border: 1px solid rgba(174, 200, 46, 0.557);
-  background-color: #aaaaaa;
+  /* Leicht gelber Hintergrund für Tasks im Kalender */
+  border: 1px solid rgba(213, 255, 5, 0.35);
+  background-color: rgba(213, 255, 5, 0.18);
   color: #fff;
   font-size: 11px;
   display: flex;
@@ -640,6 +641,7 @@
   left: 4px;
   right: 4px;
   border-radius: 6px;
+  /* Alltagstermine: grau (siehe Legende) */
   border: 1px solid rgba(160, 160, 160, 0.6);
   background-color: #292929;
   color: #fff;
@@ -737,16 +739,16 @@
 .LegendBoxTasks {
   width: 24px;
   height: 16px;
-  background-color: #0f1206;
-  border: 1px solid #d5ff05;
+  background-color: rgba(213, 255, 5, 0.18);
+  border: 1px solid rgba(213, 255, 5, 0.35);
   border-radius: 4px;
 }
 
 .LegendBoxRoutines {
   width: 24px;
   height: 16px;
-  background-color: #0f0f0f;
-  border: 2px solid #323232;
+  background-color: #292929;
+  border: 1px solid rgba(160, 160, 160, 0.6);
   border-radius: 4px;
 }
 
