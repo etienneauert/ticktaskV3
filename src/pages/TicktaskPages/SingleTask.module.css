@@ -5,7 +5,8 @@ li {
 
   border-radius: 10px;
   padding: 10px;
-  height: auto;
+  /* Desktop: feste Zeilenhöhe, damit beim Start (mehr Controls/Done-Button) nichts nach unten springt */
+  height: 45px;
   min-height: 45px;
   min-width: 100%;
   max-width: 100%;
@@ -90,6 +91,11 @@ li.running .countdown {
   background-color: inherit;
   color: rgb(255, 255, 255);
   font-size: 17px;
+  /* Wichtig: Höhe stabil halten, auch wenn beim Start mehr Controls erscheinen */
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .timer {
@@ -190,11 +196,16 @@ li.running .countdown {
 .FinishButton {
   background-color: inherit;
   border: 2px solid black;
-  padding: 5px 10px;
+  /* Fixe Button-Höhe, damit die Row nicht größer wird als nötig */
+  box-sizing: border-box;
+  height: 26px;
+  padding: 0 10px;
   border-radius: 20px;
   font-weight: 800;
   cursor: pointer;
   transition: 0.3s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .FinishButton:hover {
@@ -339,6 +350,11 @@ li.running .countdown {
     padding: 8px !important;
   }
 
+  /* Mobile/Tablet: Umbrüche erlauben */
+  .text {
+    white-space: normal;
+  }
+
   .doneTask {
     height: auto !important;
     min-height: 45px !important;
@@ -443,6 +459,8 @@ li.running .countdown {
     font-size: 14px;
     margin-right: 4px;
     max-width: 200px;
+    /* Mobile: Umbrüche erlauben (hier ist Höhe ohnehin dynamischer) */
+    white-space: normal;
   }
 
   .countdown {

@@ -3,10 +3,19 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+}
+
+/* Safari Workaround: backdrop-filter kann Cursor/Hit-Testing nach Interaktionen "kaputt" machen */
+@supports (-webkit-touch-callout: none) {
+  .overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 /* Verhindere Scrolling nur auf Desktop */
@@ -46,6 +55,16 @@
   width: 2000px !important;
   max-width: 1460px !important;
   overflow: visible !important;
+}
+
+.routineModal .tabsHeader {
+  /* Mehr Abstand zwischen "Navbar" (Tabs) und Inhalt im Routine/Checklist-Customize Popup */
+  margin-bottom: 44px;
+}
+
+.routineModal .tabContent {
+  /* Extra Luft unter der sticky Tabs-Leiste */
+  padding-top: 8px;
 }
 
 .modalcloseandinfo {
