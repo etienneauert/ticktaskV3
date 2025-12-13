@@ -18,43 +18,13 @@ import close3 from "../../assets/close-3.png";
 import arrowDown from "../../assets/arrowdown-yellow.png";
 import leftArrow from "../../assets/left-arrow-4.png";
 import rightArrow from "../../assets/right-arrow-4.png";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 const CELL_HEIGHT = 50;
 const BAR_HEIGHT = 1;
 const PX_PER_MINUTE = CELL_HEIGHT / 60;
 
-const DAY_OPTIONS = [
-  { value: "", label: "Bitte wählen" },
-  { value: "today", label: "Heute" },
-  { value: "tomorrow", label: "Morgen" },
-  { value: "monday", label: "Montag" },
-  { value: "tuesday", label: "Dienstag" },
-  { value: "wednesday", label: "Mittwoch" },
-  { value: "thursday", label: "Donnerstag" },
-  { value: "friday", label: "Freitag" },
-  { value: "saturday", label: "Samstag" },
-  { value: "sunday", label: "Sonntag" },
-];
-
-const APPOINTMENT_DAY_OPTIONS = [
-  { value: "everyday", label: "Jeden Tag" },
-  { value: "weekdays", label: "Montag bis Freitag" },
-  { value: "monday", label: "Montag" },
-  { value: "tuesday", label: "Dienstag" },
-  { value: "wednesday", label: "Mittwoch" },
-  { value: "thursday", label: "Donnerstag" },
-  { value: "friday", label: "Freitag" },
-  { value: "saturday", label: "Samstag" },
-  { value: "sunday", label: "Sonntag" },
-];
-
-const HOUR_OPTIONS = [
-  { value: "", label: "Stunde" },
-  ...Array.from({ length: 24 }, (_, i) => {
-    const value = String(i).padStart(2, "0");
-    return { value, label: value };
-  }),
-];
+// Options werden im Component per `t()` lokalisiert.
 
 const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5).map(
   (min) => {
@@ -141,15 +111,43 @@ export default function WeekCalendar({
   updateGuestData,
   guestData,
 }) {
+  const { t } = useLanguage();
+
   const weekDays = [
-    "Montag",
-    "Dienstag",
-    "Mittwoch",
-    "Donnerstag",
-    "Freitag",
-    "Samstag",
-    "Sonntag",
+    t("monday"),
+    t("tuesday"),
+    t("wednesday"),
+    t("thursday"),
+    t("friday"),
+    t("saturday"),
+    t("sunday"),
   ];
+
+  const appointmentDayOptions = useMemo(
+    () => [
+      { value: "everyday", label: t("everyDay") },
+      { value: "weekdays", label: t("weekdays") },
+      { value: "monday", label: t("monday") },
+      { value: "tuesday", label: t("tuesday") },
+      { value: "wednesday", label: t("wednesday") },
+      { value: "thursday", label: t("thursday") },
+      { value: "friday", label: t("friday") },
+      { value: "saturday", label: t("saturday") },
+      { value: "sunday", label: t("sunday") },
+    ],
+    [t]
+  );
+
+  const hourOptions = useMemo(
+    () => [
+      { value: "", label: t("hour") },
+      ...Array.from({ length: 24 }, (_, i) => {
+        const value = String(i).padStart(2, "0");
+        return { value, label: value };
+      }),
+    ],
+    [t]
+  );
 
   const [startHour, setStartHour] = useState(5); // Default: 05:00
   const [endHour, setEndHour] = useState(23); // Default: 23:00
@@ -675,7 +673,7 @@ export default function WeekCalendar({
       !selectedHour ||
       !appointmentEndHour
     ) {
-      alert("Bitte füllen Sie alle Pflichtfelder aus.");
+      alert(t("requiredFieldsAlert"));
       return;
     }
 
@@ -692,11 +690,11 @@ export default function WeekCalendar({
 
     // Validierung: Endzeit muss nach Startzeit liegen
     if (!(endDate instanceof Date) || Number.isNaN(endDate.getTime())) {
-      alert("Bitte wählen Sie eine gültige Endzeit.");
+      alert(t("invalidEndTimeAlert"));
       return;
     }
     if (endDate.getTime() <= scheduledDate.getTime()) {
-      alert("Die Endzeit muss nach der Startzeit liegen.");
+      alert(t("endAfterStartAlert"));
       return;
     }
 
@@ -737,7 +735,7 @@ export default function WeekCalendar({
       handlePopupCancel();
     } catch (error) {
       console.error("Failed to save appointment:", error);
-      alert("Fehler beim Speichern des Termins: " + error.message);
+      alert(t("saveAppointmentErrorPrefix") + error.message);
     }
   };
 
@@ -788,7 +786,7 @@ export default function WeekCalendar({
             <button
               id="calendar-plus-icon"
               className={styles.AddButton}
-              title="Termin hinzufügen"
+              title={t("addAppointment")}
               onClick={handleAddButtonClick}
             >
               <img src={plusSign} alt="Add" />
@@ -807,7 +805,7 @@ export default function WeekCalendar({
                 <button
                   className={styles.DayNavigationButton}
                   onClick={handlePreviousDay}
-                  aria-label="Vorheriger Tag"
+                  aria-label={t("previousDay")}
                 >
                   <img
                     src={leftArrow}
@@ -825,7 +823,7 @@ export default function WeekCalendar({
                 <button
                   className={styles.DayNavigationButton}
                   onClick={handleNextDay}
-                  aria-label="Nächster Tag"
+                  aria-label={t("nextDay")}
                 >
                   <img
                     src={rightArrow}
@@ -1011,7 +1009,8 @@ export default function WeekCalendar({
                         "0"
                       )}:${String(startMinutes).padStart(2, "0")}`;
                       const appointmentName =
-                        (appointment.name || "Termin").trim() || "Termin";
+                        (appointment.name || t("appointmentDefaultName")).trim() ||
+                        t("appointmentDefaultName");
 
                       // Prüfe, ob die aktuelle Zeit innerhalb des Zeitraums liegt
                       const now = currentTime;
@@ -1045,7 +1044,7 @@ export default function WeekCalendar({
                             onClick={() =>
                               handleDeleteAppointment(appointment.id)
                             }
-                            title="Termin löschen"
+                            title={t("deleteAppointment")}
                           >
                             <img src={trashBin} alt="Delete" />
                           </button>
@@ -1082,11 +1081,13 @@ export default function WeekCalendar({
       <div className={styles.Legend}>
         <div className={styles.LegendItem}>
           <div className={styles.LegendBoxTasks} aria-hidden="true" />
-          <div className={styles.LegendText}>Tasks</div>
+          <div className={styles.LegendText}>{t("legendTasks")}</div>
         </div>
         <div className={styles.LegendItem}>
           <div className={styles.LegendBoxRoutines} aria-hidden="true" />
-          <div className={styles.LegendText}>Alltagstermin</div>
+          <div className={styles.LegendText}>
+            {t("legendRoutineAppointment")}
+          </div>
         </div>
       </div>
 
@@ -1107,35 +1108,37 @@ export default function WeekCalendar({
             <div
               className={`${popupStyles.scheduleSection} ${popupStyles.appointmentSection}`}
             >
-              <h2>Alltagstermin hinzufügen</h2>
+              <h2>{t("addRoutineAppointmentTitle")}</h2>
               <div className={popupStyles.appointmentInputs}>
                 <div className={popupStyles.scheduleInput}>
-                  <label className={popupStyles.scheduleLabel}>Name:</label>
+                  <label className={popupStyles.scheduleLabel}>
+                    {t("appointmentNameLabel")}
+                  </label>
                   <input
                     type="text"
                     value={appointmentName}
                     onChange={(e) => setAppointmentName(e.target.value)}
-                    placeholder="z.B. Fußballtraining, Schule"
+                    placeholder={t("appointmentNamePlaceholder")}
                     className={popupStyles.appointmentInput}
                   />
                 </div>
                 <TransparentSelect
-                  label="Tag:"
+                  label={t("selectDay")}
                   value={selectedDay}
                   onChange={setSelectedDay}
-                  options={APPOINTMENT_DAY_OPTIONS}
-                  placeholder="Tag wählen"
+                  options={appointmentDayOptions}
+                  placeholder={t("selectDay")}
                 />
                 <div className={popupStyles.scheduleInput}>
                   <label className={popupStyles.scheduleLabel}>
-                    Start Uhrzeit:
+                    {t("startTime")}
                   </label>
                   <div className={popupStyles.timeInputs}>
                     <TransparentSelect
                       value={selectedHour}
                       onChange={setSelectedHour}
-                      options={HOUR_OPTIONS}
-                      placeholder="Stunde"
+                      options={hourOptions}
+                      placeholder={t("hour")}
                       className={popupStyles.timeSelect}
                     />
                     <span className={popupStyles.timeSeparator}>:</span>
@@ -1143,21 +1146,21 @@ export default function WeekCalendar({
                       value={selectedMinute}
                       onChange={setSelectedMinute}
                       options={MINUTE_OPTIONS}
-                      placeholder="Minute"
+                      placeholder={t("minute")}
                       className={popupStyles.timeSelect}
                     />
                   </div>
                 </div>
                 <div className={popupStyles.scheduleInput}>
                   <label className={popupStyles.scheduleLabel}>
-                    End Uhrzeit:
+                    {t("endTime")}
                   </label>
                   <div className={popupStyles.timeInputs}>
                     <TransparentSelect
                       value={appointmentEndHour}
                       onChange={setAppointmentEndHour}
-                      options={HOUR_OPTIONS}
-                      placeholder="Stunde"
+                      options={hourOptions}
+                      placeholder={t("hour")}
                       className={popupStyles.timeSelect}
                     />
                     <span className={popupStyles.timeSeparator}>:</span>
@@ -1165,7 +1168,7 @@ export default function WeekCalendar({
                       value={appointmentEndMinute}
                       onChange={setAppointmentEndMinute}
                       options={MINUTE_OPTIONS}
-                      placeholder="Minute"
+                      placeholder={t("minute")}
                       className={popupStyles.timeSelect}
                     />
                   </div>
@@ -1182,7 +1185,7 @@ export default function WeekCalendar({
                     !appointmentEndHour
                   }
                 >
-                  Speichern
+                  {t("save")}
                 </button>
               </div>
             </div>

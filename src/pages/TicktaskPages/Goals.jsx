@@ -7,6 +7,7 @@ import starWhite from "../../assets/star-white.png";
 import arrowDown from "../../assets/arrow-down.png";
 import GoalsPopup from "./GoalsPopup";
 import { db } from "../../firebase/firebase";
+import { useLanguage } from "../../contexts/LanguageContext";
 import {
   collection,
   addDoc,
@@ -25,6 +26,7 @@ export default function Goals({
   updateGuestData,
   guestData,
 }) {
+  const { t } = useLanguage();
   const [value, setValue] = useState("");
   const [isShaking, setIsShaking] = useState(false);
   const [open, setOpen] = useState(false);
@@ -462,13 +464,13 @@ export default function Goals({
     <>
       <div className={styles.GoalsContainer}>
         <form className={styles.GoalsInputContainer} onSubmit={handleSubmit}>
-          <label className={styles.inputLabel}>Goals</label>
+          <label className={styles.inputLabel}>{t("goals")}</label>
           <input
             id="goals-input"
             type="text"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            placeholder="Goal hinzufügen..."
+            placeholder={t("addGoalPlaceholder")}
             className={isShaking ? styles.shake : ""}
           />
           <button
@@ -485,7 +487,7 @@ export default function Goals({
         <div className={styles.GoalsList}>
           {goals.filter((goal) => !goal.completed).length === 0 ? (
             <div className={styles.GoalsEmptyState}>
-              Noch keine Ziele definiert
+              {t("noGoalsDefined")}
             </div>
           ) : (
             goals
@@ -555,7 +557,7 @@ export default function Goals({
                             {formatCreatedDate(goal) && (
                               <>
                                 <span className={styles.GoalDateLabel}>
-                                  Erstellt:
+                                  {t("createdLabel")}
                                 </span>
                                 <span className={styles.GoalDateValue}>
                                   {formatCreatedDate(goal)}
@@ -570,7 +572,7 @@ export default function Goals({
                             {goal.targetDate && (
                               <>
                                 <span className={styles.GoalDateLabel}>
-                                  Ziel:
+                                  {t("targetLabel")}
                                 </span>
                                 <span className={styles.GoalDateValue}>
                                   {formatDate(goal.targetDate)}
@@ -590,12 +592,12 @@ export default function Goals({
                                 }`}
                               >
                                 {daysUntilTarget > 0
-                                  ? `${daysUntilTarget} Tage verbleibend`
+                                  ? `${daysUntilTarget} ${t("daysRemainingSuffix")}`
                                   : daysUntilTarget === 0
-                                  ? "Heute"
+                                  ? t("today")
                                   : `${Math.abs(
                                       daysUntilTarget
-                                    )} Tage überfällig`}
+                                    )} ${t("daysOverdueSuffix")}`}
                               </span>
                             )}
 
@@ -611,7 +613,7 @@ export default function Goals({
                               className={styles.GoalCompletedButton}
                               onClick={() => handleGoalCompleted(goal)}
                             >
-                              Ziel erreicht
+                              {t("goalReachedButton")}
                             </button>
                             <button
                               className={styles.ShowTasksButton}
@@ -627,7 +629,9 @@ export default function Goals({
                                 });
                               }}
                             >
-                              Tasks anzeigen
+                              {expandedGoalIds.has(goal.id)
+                                ? t("hideTasksForGoal")
+                                : t("showTasksForGoal")}
                               <img
                                 src={arrowDown}
                                 alt=""
@@ -665,7 +669,7 @@ export default function Goals({
                                   <div className={styles.GoalTaskDuration}>
                                     {durationInHours >= 1
                                       ? `${durationInHours.toFixed(1)}h`
-                                      : `${taskDuration}min`}
+                                      : `${taskDuration}${t("min")}`}
                                   </div>
                                 )}
                               </div>
@@ -675,7 +679,7 @@ export default function Goals({
                           (task) => task.goalId === goal.id && task.done
                         ).length === 0 && (
                           <div className={styles.GoalTaskEmpty}>
-                            An diesem Ziel wurde noch nicht gearbeitet
+                            {t("noWorkOnGoalYet")}
                           </div>
                         )}
                       </div>
@@ -695,7 +699,7 @@ export default function Goals({
             >
               <div className={styles.DoneGoalsHeaderLeft}>
                 <h3>
-                  Erledigte Goals
+                  {t("doneGoals")}
                   <span className={styles.length}>
                     {goals.filter((goal) => goal.completed).length}
                   </span>
@@ -708,7 +712,7 @@ export default function Goals({
                       handleClearAllDoneGoals();
                     }}
                   >
-                    Alle löschen
+                    {t("clearAll")}
                   </button>
                 )}
               </div>
@@ -767,7 +771,7 @@ export default function Goals({
               />
             </div>
             <div className={styles.deleteConfirmContent}>
-              <h2>Goal löschen?</h2>
+              <h2>{t("deleteGoalTitle")}</h2>
             </div>
             <div className={styles.deleteConfirmActions}>
               <button
@@ -847,7 +851,7 @@ export default function Goals({
               />
             </div>
             <div className={styles.deleteConfirmContent}>
-              <h2>Ziel erreicht?</h2>
+              <h2>{t("goalReachedTitle")}</h2>
             </div>
             <div className={styles.deleteConfirmActions}>
               <button

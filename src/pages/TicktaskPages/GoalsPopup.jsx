@@ -4,8 +4,10 @@ import close3 from "../../assets/close-3.png";
 import arrowDown from "../../assets/arrow-down.png";
 import { db } from "../../firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 function CustomDatePicker({ value, onChange, className = "" }) {
+  const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState("day"); // "day", "month", "year"
   const [selectedDay, setSelectedDay] = useState(null);
@@ -55,12 +57,13 @@ function CustomDatePicker({ value, onChange, className = "" }) {
   }, [isOpen]);
 
   const formatDate = (dateString) => {
-    if (!dateString) return "Datum auswählen";
+    if (!dateString) return t("selectDate");
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}`;
+    try {
+      return date.toLocaleDateString(language === "de" ? "de-DE" : "en-US");
+    } catch {
+      return dateString;
+    }
   };
 
   const validateDate = (day, month, year) => {
@@ -104,12 +107,12 @@ function CustomDatePicker({ value, onChange, className = "" }) {
         date.getFullYear() === selectedYear;
 
       if (!isValidDate) {
-        return "Ungültiges Datum";
+        return t("invalidDate");
       }
       if (date < today) {
-        return "Datum liegt in der Vergangenheit";
+        return t("dateInPast");
       }
-      return "Ungültiges Datum";
+      return t("invalidDate");
     }
     if (selectedDay && selectedMonth && selectedYear) {
       return formatDate(
@@ -126,7 +129,7 @@ function CustomDatePicker({ value, onChange, className = "" }) {
     if (selectedDay) {
       return `${String(selectedDay).padStart(2, "0")}...`;
     }
-    return "Datum auswählen";
+    return t("selectDate");
   };
 
   const handleDaySelect = (day) => {
@@ -163,18 +166,18 @@ function CustomDatePicker({ value, onChange, className = "" }) {
 
   // Generiere Monate
   const months = [
-    { value: 1, label: "Januar" },
-    { value: 2, label: "Februar" },
-    { value: 3, label: "März" },
-    { value: 4, label: "April" },
-    { value: 5, label: "Mai" },
-    { value: 6, label: "Juni" },
-    { value: 7, label: "Juli" },
-    { value: 8, label: "August" },
-    { value: 9, label: "September" },
-    { value: 10, label: "Oktober" },
-    { value: 11, label: "November" },
-    { value: 12, label: "Dezember" },
+    { value: 1, label: t("january") },
+    { value: 2, label: t("february") },
+    { value: 3, label: t("march") },
+    { value: 4, label: t("april") },
+    { value: 5, label: t("may") },
+    { value: 6, label: t("june") },
+    { value: 7, label: t("july") },
+    { value: 8, label: t("august") },
+    { value: 9, label: t("september") },
+    { value: 10, label: t("october") },
+    { value: 11, label: t("november") },
+    { value: 12, label: t("december") },
   ];
 
   // Generiere Jahre (aktuelles Jahr bis 10 Jahre in die Zukunft)
@@ -269,6 +272,7 @@ export default function GoalsPopup({
   goalText,
   user,
 }) {
+  const { t } = useLanguage();
   const [targetDate, setTargetDate] = useState("");
   const [priority, setPriority] = useState("low");
   const [hoursNeeded, setHoursNeeded] = useState("");
@@ -342,7 +346,7 @@ export default function GoalsPopup({
 
         {/* Hours Needed */}
         <div className={styles.scheduleSection}>
-          <h2>Benötigte Stunden</h2>
+          <h2>{t("hoursNeeded")}</h2>
           <input
             type="text"
             className={styles.dateInput}
@@ -354,20 +358,20 @@ export default function GoalsPopup({
                 setHoursNeeded(value);
               }
             }}
-            placeholder="z.B. 10"
+            placeholder={t("hoursExamplePlaceholder")}
             inputMode="numeric"
           />
         </div>
 
         {/* Target Date */}
         <div className={styles.scheduleSection}>
-          <h2>Zieldatum</h2>
+          <h2>{t("targetDate")}</h2>
           <CustomDatePicker value={targetDate} onChange={setTargetDate} />
         </div>
 
         {/* Priority */}
         <div className={styles.scheduleSection}>
-          <h2>Priorität</h2>
+          <h2>{t("priority")}</h2>
           <div className={styles.priorityButtons}>
             <button
               type="button"
@@ -376,7 +380,7 @@ export default function GoalsPopup({
               }`}
               onClick={() => setPriority("low")}
             >
-              Niedrig
+              {t("priorityLow")}
             </button>
             <button
               type="button"
@@ -385,14 +389,14 @@ export default function GoalsPopup({
               }`}
               onClick={() => setPriority("high")}
             >
-              Hoch
+              {t("priorityHigh")}
             </button>
           </div>
         </div>
 
         <div className={styles.actions}>
           <button onClick={handleSubmit} className={styles.addButton}>
-            Goal hinzufügen
+            {t("addGoal")}
           </button>
         </div>
       </div>

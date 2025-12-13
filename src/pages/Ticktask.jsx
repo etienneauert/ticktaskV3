@@ -15,6 +15,7 @@ import WelcomePopup from "./TicktaskPages/WelcomePopup.jsx";
 import TutorialTooltip from "./TicktaskPages/TutorialTooltip.jsx";
 import tutorialOverlayStyles from "./TicktaskPages/TutorialOverlay.module.css";
 import { useGuestData } from "../hooks/useGuestData.js";
+import { useLanguage } from "../contexts/LanguageContext.jsx";
 import { useEffect, useState, useRef } from "react";
 import { Ring2 } from "ldrs/react";
 import "ldrs/react/Ring2.css";
@@ -119,6 +120,7 @@ const buildScheduledMetadata = (dayOption, hour, minute) => {
 };
 
 export function Ticktask({ user, isGuestMode = false }) {
+  const { t } = useLanguage();
   const isInitialLoad = useRef(true);
   const hasLoadedCompletedStates = useRef(false);
   const isUpdatingFromFirebase = useRef(false);
@@ -163,20 +165,20 @@ export function Ticktask({ user, isGuestMode = false }) {
   const [abendCompleted, setAbendCompleted] = useState(new Set());
   const [weeklyCompleted, setWeeklyCompleted] = useState(new Set());
   const [dailyCompleted, setDailyCompleted] = useState(new Set());
-  
+
   // Aktualisiere Refs wenn sich die States ändern
   useEffect(() => {
     morningCompletedRef.current = morningCompleted;
   }, [morningCompleted]);
-  
+
   useEffect(() => {
     abendCompletedRef.current = abendCompleted;
   }, [abendCompleted]);
-  
+
   useEffect(() => {
     weeklyCompletedRef.current = weeklyCompleted;
   }, [weeklyCompleted]);
-  
+
   useEffect(() => {
     dailyCompletedRef.current = dailyCompleted;
   }, [dailyCompleted]);
@@ -303,7 +305,6 @@ export function Ticktask({ user, isGuestMode = false }) {
     const canIncrease =
       activeTasks.length === 0 && morningOk && abendOk && weeklyOk && dailyOk;
 
-
     return canIncrease;
   };
 
@@ -410,10 +411,8 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   // Task running management
   const handleTaskStart = (taskId) => {
-
     // If there's already a running task, validate if it's actually running
     if (runningTaskId && runningTaskId !== taskId) {
-
       // First, check if the task still exists in the list
       const currentTasks = isGuestMode ? guestData.tasks : tasks;
       const currentFrequentTemplates = isGuestMode
@@ -480,10 +479,16 @@ export function Ticktask({ user, isGuestMode = false }) {
       } catch (e) {
         console.error("Failed to save running task to localStorage", e);
       }
-      
+
       // Speichere auch in Firebase für Synchronisation zwischen Geräten
       try {
-        const runningTaskDoc = doc(db, "users", user.uid, "settings", "runningTask");
+        const runningTaskDoc = doc(
+          db,
+          "users",
+          user.uid,
+          "settings",
+          "runningTask"
+        );
         setDoc(runningTaskDoc, {
           taskId: taskId,
           lastUpdated: serverTimestamp(),
@@ -496,7 +501,6 @@ export function Ticktask({ user, isGuestMode = false }) {
   };
 
   const handleTaskStop = (taskId) => {
-
     if (runningTaskId === taskId) {
       setRunningTaskId(null);
       // Clear from localStorage
@@ -506,10 +510,16 @@ export function Ticktask({ user, isGuestMode = false }) {
         } catch (e) {
           console.error("Failed to clear running task from localStorage", e);
         }
-        
+
         // Lösche auch aus Firebase für Synchronisation zwischen Geräten
         try {
-          const runningTaskDoc = doc(db, "users", user.uid, "settings", "runningTask");
+          const runningTaskDoc = doc(
+            db,
+            "users",
+            user.uid,
+            "settings",
+            "runningTask"
+          );
           setDoc(runningTaskDoc, {
             taskId: null,
             lastUpdated: serverTimestamp(),
@@ -538,7 +548,6 @@ export function Ticktask({ user, isGuestMode = false }) {
   };
 
   const updateWeeklyTasks = async (day, tasks) => {
-
     // Bereinige completed Set: entferne Tasks, die für diesen Tag gelöscht wurden
     // und nicht mehr für andere Tage existieren
     let allOtherDaysTasks = new Set();
@@ -1323,15 +1332,20 @@ export function Ticktask({ user, isGuestMode = false }) {
       // Lade runningTaskId aus Firebase (hat Priorität über localStorage)
       const loadRunningTaskFromFirebase = async () => {
         try {
-          const runningTaskDoc = doc(db, "users", user.uid, "settings", "runningTask");
+          const runningTaskDoc = doc(
+            db,
+            "users",
+            user.uid,
+            "settings",
+            "runningTask"
+          );
           const docSnap = await getDoc(runningTaskDoc);
-          
+
           if (docSnap.exists()) {
             const data = docSnap.data();
             const firebaseRunningTaskId = data.taskId || null;
-            
+
             if (firebaseRunningTaskId) {
-              
               // Check if timer is actually still running
               const timerKey = `timer_${firebaseRunningTaskId}`;
               const timerState = localStorage.getItem(timerKey);
@@ -1389,7 +1403,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           }
         }
       };
-      
+
       loadRunningTaskFromFirebase();
     }
 
@@ -1817,7 +1831,6 @@ export function Ticktask({ user, isGuestMode = false }) {
       const unsubscribeCompleted = onSnapshot(
         completedCol,
         (snapshot) => {
-          
           snapshot.docs.forEach((docSnap) => {
             const data = docSnap.data();
             const docId = docSnap.id;
@@ -1828,18 +1841,18 @@ export function Ticktask({ user, isGuestMode = false }) {
               if (isUpdatingFromFirebase.current) {
                 return;
               }
-              
+
               let hasChanged = false;
               let currentSet = new Set();
-              
+
               if (docId === "morning") {
                 currentSet = morningCompletedRef.current;
                 const newSet = new Set(data.tasks);
-                hasChanged = currentSet.size !== newSet.size || 
-                  Array.from(currentSet).some(item => !newSet.has(item)) ||
-                  Array.from(newSet).some(item => !currentSet.has(item));
-                
-                
+                hasChanged =
+                  currentSet.size !== newSet.size ||
+                  Array.from(currentSet).some((item) => !newSet.has(item)) ||
+                  Array.from(newSet).some((item) => !currentSet.has(item));
+
                 if (hasChanged) {
                   isUpdatingFromFirebase.current = true;
                   setMorningCompleted(newSet);
@@ -1856,10 +1869,11 @@ export function Ticktask({ user, isGuestMode = false }) {
               } else if (docId === "abend") {
                 currentSet = abendCompletedRef.current;
                 const newSet = new Set(data.tasks);
-                hasChanged = currentSet.size !== newSet.size || 
-                  Array.from(currentSet).some(item => !newSet.has(item)) ||
-                  Array.from(newSet).some(item => !currentSet.has(item));
-                
+                hasChanged =
+                  currentSet.size !== newSet.size ||
+                  Array.from(currentSet).some((item) => !newSet.has(item)) ||
+                  Array.from(newSet).some((item) => !currentSet.has(item));
+
                 if (hasChanged) {
                   isUpdatingFromFirebase.current = true;
                   setAbendCompleted(newSet);
@@ -1875,10 +1889,11 @@ export function Ticktask({ user, isGuestMode = false }) {
               } else if (docId === "daily") {
                 currentSet = dailyCompletedRef.current;
                 const newSet = new Set(data.tasks);
-                hasChanged = currentSet.size !== newSet.size || 
-                  Array.from(currentSet).some(item => !newSet.has(item)) ||
-                  Array.from(newSet).some(item => !currentSet.has(item));
-                
+                hasChanged =
+                  currentSet.size !== newSet.size ||
+                  Array.from(currentSet).some((item) => !newSet.has(item)) ||
+                  Array.from(newSet).some((item) => !currentSet.has(item));
+
                 if (hasChanged) {
                   isUpdatingFromFirebase.current = true;
                   setDailyCompleted(newSet);
@@ -1895,10 +1910,11 @@ export function Ticktask({ user, isGuestMode = false }) {
                 const day = docId.replace("weekly_", "");
                 currentSet = weeklyCompletedRef.current;
                 const newSet = new Set(data.tasks);
-                hasChanged = currentSet.size !== newSet.size || 
-                  Array.from(currentSet).some(item => !newSet.has(item)) ||
-                  Array.from(newSet).some(item => !currentSet.has(item));
-                
+                hasChanged =
+                  currentSet.size !== newSet.size ||
+                  Array.from(currentSet).some((item) => !newSet.has(item)) ||
+                  Array.from(newSet).some((item) => !currentSet.has(item));
+
                 if (hasChanged) {
                   isUpdatingFromFirebase.current = true;
                   setWeeklyCompleted(newSet);
@@ -1922,20 +1938,24 @@ export function Ticktask({ user, isGuestMode = false }) {
       );
 
       // Firebase Running Task abonnieren für Echtzeit-Synchronisation
-      const runningTaskDoc = doc(db, "users", user.uid, "settings", "runningTask");
+      const runningTaskDoc = doc(
+        db,
+        "users",
+        user.uid,
+        "settings",
+        "runningTask"
+      );
       const unsubscribeRunningTask = onSnapshot(
         runningTaskDoc,
         (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
             const firebaseRunningTaskId = data.taskId || null;
-            
-            
+
             // Verwende Ref um aktuellen Wert zu prüfen, ohne Dependency-Problem
             setRunningTaskId((currentRunningTaskId) => {
               // Nur updaten wenn sich der Wert geändert hat
               if (firebaseRunningTaskId !== currentRunningTaskId) {
-                
                 // Aktualisiere auch localStorage
                 if (firebaseRunningTaskId) {
                   try {
@@ -1944,16 +1964,24 @@ export function Ticktask({ user, isGuestMode = false }) {
                       JSON.stringify(firebaseRunningTaskId)
                     );
                   } catch (e) {
-                    console.error("Failed to save running task to localStorage", e);
+                    console.error(
+                      "Failed to save running task to localStorage",
+                      e
+                    );
                   }
                 } else {
                   try {
-                    localStorage.removeItem(`ticktask_running_task_${user.uid}`);
+                    localStorage.removeItem(
+                      `ticktask_running_task_${user.uid}`
+                    );
                   } catch (e) {
-                    console.error("Failed to remove running task from localStorage", e);
+                    console.error(
+                      "Failed to remove running task from localStorage",
+                      e
+                    );
                   }
                 }
-                
+
                 return firebaseRunningTaskId;
               }
               return currentRunningTaskId;
@@ -1998,59 +2026,71 @@ export function Ticktask({ user, isGuestMode = false }) {
     if (!user?.uid || isGuestMode) return;
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         // Firebase-Verbindung erneut prüfen und aktivieren
         checkFirebaseConnection().then((connected) => {
           if (connected) {
             // Force refresh der completed tasks von Firebase
-            const completedCol = collection(db, "users", user.uid, "completedTasks");
-            getDocs(completedCol).then((snapshot) => {
-              snapshot.docs.forEach((docSnap) => {
-                const data = docSnap.data();
-                const docId = docSnap.id;
+            const completedCol = collection(
+              db,
+              "users",
+              user.uid,
+              "completedTasks"
+            );
+            getDocs(completedCol)
+              .then((snapshot) => {
+                snapshot.docs.forEach((docSnap) => {
+                  const data = docSnap.data();
+                  const docId = docSnap.id;
 
-                if (Array.isArray(data.tasks)) {
-                  if (docId === "morning") {
-                    const newSet = new Set(data.tasks);
-                    setMorningCompleted(newSet);
-                    morningCompletedRef.current = newSet;
-                    localStorage.setItem(
-                      `ticktask_morning_completed_${user.uid}`,
-                      JSON.stringify(data.tasks)
-                    );
-                  } else if (docId === "abend") {
-                    const newSet = new Set(data.tasks);
-                    setAbendCompleted(newSet);
-                    abendCompletedRef.current = newSet;
-                    localStorage.setItem(
-                      `ticktask_abend_completed_${user.uid}`,
-                      JSON.stringify(data.tasks)
-                    );
-                  } else if (docId === "daily") {
-                    const newSet = new Set(data.tasks);
-                    setDailyCompleted(newSet);
-                    dailyCompletedRef.current = newSet;
-                    localStorage.setItem(
-                      `ticktask_daily_completed_${user.uid}`,
-                      JSON.stringify(data.tasks)
-                    );
-                  } else if (docId.startsWith("weekly_")) {
-                    const newSet = new Set(data.tasks);
-                    setWeeklyCompleted(newSet);
-                    weeklyCompletedRef.current = newSet;
-                    const day = docId.replace("weekly_", "");
-                    localStorage.setItem(
-                      `ticktask_weekly_completed_${user.uid}_${day}`,
-                      JSON.stringify(data.tasks)
-                    );
+                  if (Array.isArray(data.tasks)) {
+                    if (docId === "morning") {
+                      const newSet = new Set(data.tasks);
+                      setMorningCompleted(newSet);
+                      morningCompletedRef.current = newSet;
+                      localStorage.setItem(
+                        `ticktask_morning_completed_${user.uid}`,
+                        JSON.stringify(data.tasks)
+                      );
+                    } else if (docId === "abend") {
+                      const newSet = new Set(data.tasks);
+                      setAbendCompleted(newSet);
+                      abendCompletedRef.current = newSet;
+                      localStorage.setItem(
+                        `ticktask_abend_completed_${user.uid}`,
+                        JSON.stringify(data.tasks)
+                      );
+                    } else if (docId === "daily") {
+                      const newSet = new Set(data.tasks);
+                      setDailyCompleted(newSet);
+                      dailyCompletedRef.current = newSet;
+                      localStorage.setItem(
+                        `ticktask_daily_completed_${user.uid}`,
+                        JSON.stringify(data.tasks)
+                      );
+                    } else if (docId.startsWith("weekly_")) {
+                      const newSet = new Set(data.tasks);
+                      setWeeklyCompleted(newSet);
+                      weeklyCompletedRef.current = newSet;
+                      const day = docId.replace("weekly_", "");
+                      localStorage.setItem(
+                        `ticktask_weekly_completed_${user.uid}_${day}`,
+                        JSON.stringify(data.tasks)
+                      );
+                    }
                   }
-                }
+                });
+              })
+              .catch((error) => {
+                console.error(
+                  "❌ Fehler beim Aktualisieren der completed tasks:",
+                  error
+                );
               });
-            }).catch((error) => {
-              console.error("❌ Fehler beim Aktualisieren der completed tasks:", error);
-            });
           } else {
-            console.warn("⚠️ Firebase-Verbindung konnte nicht wiederhergestellt werden");
+            console.warn(
+              "⚠️ Firebase-Verbindung konnte nicht wiederhergestellt werden"
+            );
           }
         });
       }
@@ -2060,12 +2100,12 @@ export function Ticktask({ user, isGuestMode = false }) {
       checkFirebaseConnection();
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
     };
   }, [user?.uid, isGuestMode]);
 
@@ -2110,7 +2150,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
-    
+
     // Kurze Verzögerung, um zu prüfen ob das Flag noch gesetzt ist
     const timeoutId = setTimeout(() => {
       if (isUpdatingFromFirebase.current) {
@@ -2125,7 +2165,10 @@ export function Ticktask({ user, isGuestMode = false }) {
         try {
           const storedArray = JSON.parse(stored);
           // Wenn localStorage bereits die aktuellen Werte hat, wurde bereits direkt gespeichert
-          if (JSON.stringify(storedArray.sort()) === JSON.stringify(currentArray.sort())) {
+          if (
+            JSON.stringify(storedArray.sort()) ===
+            JSON.stringify(currentArray.sort())
+          ) {
             return; // Bereits gespeichert, kein erneutes Speichern nötig
           }
         } catch (e) {
@@ -2166,7 +2209,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
-    
+
     // Kurze Verzögerung, um zu prüfen ob das Flag noch gesetzt ist
     const timeoutId = setTimeout(() => {
       if (isUpdatingFromFirebase.current) {
@@ -2208,7 +2251,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
-    
+
     // Kurze Verzögerung, um zu prüfen ob das Flag noch gesetzt ist
     const timeoutId = setTimeout(() => {
       if (isUpdatingFromFirebase.current) {
@@ -2263,7 +2306,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     if (!hasLoadedCompletedStates.current) return;
     if (!user?.uid || isGuestMode) return;
-    
+
     // Kurze Verzögerung, um zu prüfen ob das Flag noch gesetzt ist
     const timeoutId = setTimeout(() => {
       if (isUpdatingFromFirebase.current) {
@@ -2432,23 +2475,28 @@ export function Ticktask({ user, isGuestMode = false }) {
       setMorningCompleted(newValue);
       morningCompletedRef.current = newValue;
     } else {
-      const newValue = typeof value === "function" ? value(morningCompleted) : value;
+      const newValue =
+        typeof value === "function" ? value(morningCompleted) : value;
       setMorningCompleted(newValue);
       morningCompletedRef.current = newValue;
-      
+
       // Direkt zu Firebase speichern (wie bei Tasks) - mit await für PWA-Kompatibilität
       const completedArray = Array.from(newValue);
       const morningCompletedKey = `ticktask_morning_completed_${user.uid}`;
       try {
-        localStorage.setItem(morningCompletedKey, JSON.stringify(completedArray));
+        localStorage.setItem(
+          morningCompletedKey,
+          JSON.stringify(completedArray)
+        );
       } catch (e) {
         console.error("Failed to save morning completed to localStorage", e);
       }
       // Wichtig: Promise nicht ignorieren, damit es in PWAs ausgeführt wird
-      saveMorningCompletedToFirebase(completedArray).then(() => {
-      }).catch((e) => {
-        console.error("❌ Failed to save morning completed to Firebase", e);
-      });
+      saveMorningCompletedToFirebase(completedArray)
+        .then(() => {})
+        .catch((e) => {
+          console.error("❌ Failed to save morning completed to Firebase", e);
+        });
     }
   };
 
@@ -2461,10 +2509,11 @@ export function Ticktask({ user, isGuestMode = false }) {
       setAbendCompleted(newValue);
       abendCompletedRef.current = newValue;
     } else {
-      const newValue = typeof value === "function" ? value(abendCompleted) : value;
+      const newValue =
+        typeof value === "function" ? value(abendCompleted) : value;
       setAbendCompleted(newValue);
       abendCompletedRef.current = newValue;
-      
+
       // Direkt zu Firebase speichern (wie bei Tasks) - mit await für PWA-Kompatibilität
       const completedArray = Array.from(newValue);
       const abendCompletedKey = `ticktask_abend_completed_${user.uid}`;
@@ -2489,10 +2538,11 @@ export function Ticktask({ user, isGuestMode = false }) {
       setWeeklyCompleted(newValue);
       weeklyCompletedRef.current = newValue;
     } else {
-      const newValue = typeof value === "function" ? value(weeklyCompleted) : value;
+      const newValue =
+        typeof value === "function" ? value(weeklyCompleted) : value;
       setWeeklyCompleted(newValue);
       weeklyCompletedRef.current = newValue;
-      
+
       // Direkt zu Firebase speichern (wie bei Tasks) - mit await für PWA-Kompatibilität
       const completedArray = Array.from(newValue);
       const today = new Date();
@@ -2508,7 +2558,10 @@ export function Ticktask({ user, isGuestMode = false }) {
       const currentDay = dayNames[today.getDay()];
       const weeklyCompletedKey = `ticktask_weekly_completed_${user.uid}_${currentDay}`;
       try {
-        localStorage.setItem(weeklyCompletedKey, JSON.stringify(completedArray));
+        localStorage.setItem(
+          weeklyCompletedKey,
+          JSON.stringify(completedArray)
+        );
       } catch (e) {
         console.error("Failed to save weekly completed to localStorage", e);
       }
@@ -2528,10 +2581,11 @@ export function Ticktask({ user, isGuestMode = false }) {
       setDailyCompleted(newValue);
       dailyCompletedRef.current = newValue;
     } else {
-      const newValue = typeof value === "function" ? value(dailyCompleted) : value;
+      const newValue =
+        typeof value === "function" ? value(dailyCompleted) : value;
       setDailyCompleted(newValue);
       dailyCompletedRef.current = newValue;
-      
+
       // Direkt zu Firebase speichern (wie bei Tasks) - mit await für PWA-Kompatibilität
       const completedArray = Array.from(newValue);
       const dailyCompletedKey = `ticktask_daily_completed_${user.uid}`;
@@ -2675,51 +2729,44 @@ export function Ticktask({ user, isGuestMode = false }) {
   const tutorialSteps = [
     {
       targetId: "task-input",
-      message:
-        "Hier kannst du deine Tasks definieren. Gib einfach den Namen deines Tasks ein und klicke auf den Pfeil.",
+      message: t("tutorialStepTaskInput"),
       position: "top",
       openPopup: false,
     },
     {
       targetId: "task-popup",
-      message:
-        "Anschließend kannst du deinen Task anpassen: Zeitdauer festlegen, Termin planen, als wichtig markieren oder einem Ziel zuweisen.",
+      message: t("tutorialStepTaskPopup"),
       position: "left",
       openPopup: true,
     },
     {
       targetId: "checklist-pen-icon",
-      message:
-        "Mit diesem Stift-Icon kannst du deine Routinen und Checklisten anpassen.",
+      message: t("tutorialStepChecklist"),
       position: "top",
       openPopup: false,
     },
     {
       targetId: "calendar-plus-icon",
-      message:
-        "Hier kannst du Alltagstermine hinzufügen, die regelmäßig stattfinden.",
+      message: t("tutorialStepAppointments"),
       position: "top",
       openPopup: false,
       maxWidth: 250,
     },
     {
       targetId: "goals-input",
-      message:
-        "Hier kannst du deine Ziele definieren, die du erreichen möchtest.",
+      message: t("tutorialStepGoals"),
       position: "top",
       openPopup: false,
     },
     {
       targetId: "finish-day-button",
-      message:
-        "Mit diesem Button kannst du den Tag beenden, wenn alle Aufgaben und Routinen abgeschlossen sind, um deinen Streak zu erhalten.",
+      message: t("tutorialStepFinishDay"),
       position: "top",
       openPopup: false,
     },
     {
       targetId: "info-button",
-      message:
-        "Hier findest du weitere Informationen über die App und wie sie funktioniert.",
+      message: t("tutorialStepInfo"),
       position: "top",
       openPopup: false,
       maxWidth: 220,

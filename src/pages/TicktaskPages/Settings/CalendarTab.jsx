@@ -2,11 +2,13 @@ import styles from "./SettingsPopup.module.css";
 import { useState, useEffect } from "react";
 import { db } from "../../../firebase/firebase";
 import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function CalendarTab({ user }) {
   const [startHour, setStartHour] = useState(5); // Default: 05:00
   const [endHour, setEndHour] = useState(23); // Default: 23:00
   const [isHidden, setIsHidden] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!user?.uid) return;
@@ -66,7 +68,7 @@ export default function CalendarTab({ user }) {
     const hidden = newHidden !== undefined ? newHidden : isHidden;
 
     if (start >= end) {
-      alert("Die Startzeit muss vor der Endzeit liegen!");
+      alert(t("startBeforeEndError"));
       return;
     }
 
@@ -125,7 +127,7 @@ export default function CalendarTab({ user }) {
     <div className={styles.tabPanel}>
       <div className={styles.generalSection}>
         <div className={styles.languageRow}>
-          <span className={styles.languageLabel}>Startzeit:</span>
+          <span className={styles.languageLabel}>{t("startTime")}</span>
           <select
             value={startHour}
             onChange={(e) => handleStartHourChange(Number(e.target.value))}
@@ -140,7 +142,7 @@ export default function CalendarTab({ user }) {
         </div>
 
         <div className={styles.languageRow}>
-          <span className={styles.languageLabel}>Endzeit:</span>
+          <span className={styles.languageLabel}>{t("endTime")}</span>
           <select
             value={endHour}
             onChange={(e) => handleEndHourChange(Number(e.target.value))}
@@ -155,12 +157,12 @@ export default function CalendarTab({ user }) {
         </div>
 
         <div className={styles.streakRow}>
-          <span className={styles.languageLabel}>Sichtbarkeit:</span>
+          <span className={styles.languageLabel}>{t("visibility")}</span>
           <button
             className={styles.calendarToggleButton}
             onClick={handleHiddenToggle}
           >
-            {isHidden ? "Einblenden" : "Ausblenden"}
+            {isHidden ? t("show") : t("hide")}
           </button>
         </div>
       </div>

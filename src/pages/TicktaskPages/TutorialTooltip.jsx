@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./TutorialTooltip.module.css";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function TutorialTooltip({
   targetId,
@@ -15,6 +16,7 @@ export default function TutorialTooltip({
   currentStep = 1,
   totalSteps = 1,
 }) {
+  const { t } = useLanguage();
   // Initiale Position außerhalb des Viewports, damit kein "Springen" sichtbar ist
   const [tooltipStyle, setTooltipStyle] = useState({
     top: "-9999px",
@@ -274,12 +276,12 @@ export default function TutorialTooltip({
           <div className={styles.buttons}>
             {showNext && (
               <button className={styles.nextButton} onClick={onNext}>
-                Weiter
+                {t("next")}
               </button>
             )}
             {showSkip && (
               <button className={styles.continueButton} onClick={onNext}>
-                {isLastStep ? "Beenden" : "Weiter"}
+                {isLastStep ? t("finish") : t("next")}
               </button>
             )}
           </div>

@@ -12,9 +12,9 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(() => {
-    // Lade Sprache aus localStorage oder verwende Deutsch als Standard
+    // Lade Sprache aus localStorage oder verwende Englisch als Standard (First Visit)
     const savedLanguage = localStorage.getItem("ticktask_language");
-    return savedLanguage || "de";
+    return savedLanguage || "en";
   });
 
   useEffect(() => {
@@ -30,6 +30,11 @@ export const LanguageProvider = ({ children }) => {
       // Header
       settings: "Einstellungen",
       logout: "Abmelden",
+      demoMode: "Demo-Modus",
+      navTasks: "Tasks",
+      navCalendar: "Kalender",
+      navGoals: "Ziele",
+      exampleTask: "Beispiel-Task",
 
       // General Tab
       streak: "Streak",
@@ -43,6 +48,7 @@ export const LanguageProvider = ({ children }) => {
       doneTasks: "Erledigte Tasks",
       frequentTasks: "Wiederkehrende Tasks",
       clearAll: "Alle löschen",
+      taskListEmpty: "Die Taskliste ist leer",
 
       // Timer
       done: "Fertig",
@@ -101,6 +107,13 @@ export const LanguageProvider = ({ children }) => {
       edit: "Bearbeiten",
       save: "Speichern",
       cancel: "Abbrechen",
+      pleaseSelect: "Bitte wählen",
+      today: "Heute",
+      tomorrow: "Morgen",
+      hour: "Stunde",
+      minute: "Minute",
+      previousDay: "Vorheriger Tag",
+      nextDay: "Nächster Tag",
 
       // Checklist Headings
       morning: "Morgen",
@@ -122,6 +135,102 @@ export const LanguageProvider = ({ children }) => {
       urgent: "Dringend",
       recurring: "Wiederkehrend",
       submit: "Absenden",
+      addTasksToMainList: "Tasks zur Hauptliste hinzufügen",
+      scheduleTaskQuestion:
+        "An welchem Tag und zu welcher Uhrzeit soll dieser Task ausgeführt werden?",
+      assignGoal: "Ziel zuweisen",
+      noGoal: "Kein Ziel",
+      selectGoal: "Ziel auswählen",
+      unnamedGoal: "Unbenanntes Ziel",
+
+      // Goals
+      goals: "Ziele",
+      addGoalPlaceholder: "Ziel hinzufügen...",
+      noGoalsDefined: "Noch keine Ziele definiert",
+      deleteGoalTitle: "Ziel löschen?",
+      goalReachedTitle: "Ziel erreicht?",
+      createdLabel: "Erstellt:",
+      targetLabel: "Ziel:",
+      daysRemainingSuffix: "Tage verbleibend",
+      daysOverdueSuffix: "Tage überfällig",
+      goalReachedButton: "Ziel erreicht",
+      showTasksForGoal: "Tasks anzeigen",
+      hideTasksForGoal: "Tasks ausblenden",
+      noWorkOnGoalYet: "An diesem Ziel wurde noch nicht gearbeitet",
+      doneGoals: "Erledigte Ziele",
+
+      // Calendar (Settings + WeekCalendar)
+      startTime: "Startzeit:",
+      endTime: "Endzeit:",
+      visibility: "Sichtbarkeit:",
+      show: "Einblenden",
+      hide: "Ausblenden",
+      startBeforeEndError: "Die Startzeit muss vor der Endzeit liegen!",
+      addAppointment: "Termin hinzufügen",
+      deleteAppointment: "Termin löschen",
+      addRoutineAppointmentTitle: "Alltagstermin hinzufügen",
+      appointmentNameLabel: "Name:",
+      appointmentNamePlaceholder: "z.B. Fußballtraining, Schule",
+      appointmentDefaultName: "Termin",
+      selectDay: "Tag wählen",
+      requiredFieldsAlert: "Bitte füllen Sie alle Pflichtfelder aus.",
+      invalidEndTimeAlert: "Bitte wählen Sie eine gültige Endzeit.",
+      endAfterStartAlert: "Die Endzeit muss nach der Startzeit liegen.",
+      saveAppointmentErrorPrefix: "Fehler beim Speichern des Termins: ",
+      legendTasks: "Tasks",
+      legendRoutineAppointment: "Alltagstermin",
+      everyDay: "Jeden Tag",
+      weekdays: "Montag bis Freitag",
+      // Welcome / Tutorial
+      welcomeTitle: "Willkommen bei TickTask",
+      welcomeP1:
+        "TickTask ist deine persönliche Task-Management-App, die dir hilft, deine Aufgaben zu organisieren und produktiver zu werden.",
+      welcomeP2:
+        "Mit TickTask kannst du Aufgaben erstellen, Routinen planen, Ziele setzen und deinen Fortschritt verfolgen. Alles an einem Ort, einfach und übersichtlich.",
+      welcomeP3:
+        "Wir zeigen dir gleich die wichtigsten Funktionen, damit du sofort loslegen kannst!",
+      skipTutorial: "Tutorial überspringen",
+      startTutorial: "Tutorial starten",
+      start: "Start",
+      next: "Weiter",
+      finish: "Beenden",
+      // Tutorial step messages
+      tutorialStepTaskInput:
+        "Hier kannst du deine Tasks definieren. Gib einfach den Namen deines Tasks ein und klicke auf den Pfeil.",
+      tutorialStepTaskPopup:
+        "Anschließend kannst du deinen Task anpassen: Zeitdauer festlegen, Termin planen, als wichtig markieren oder einem Ziel zuweisen.",
+      tutorialStepChecklist:
+        "Mit diesem Stift-Icon kannst du deine Routinen und Checklisten anpassen.",
+      tutorialStepAppointments:
+        "Hier kannst du Alltagstermine hinzufügen, die regelmäßig stattfinden.",
+      tutorialStepGoals: "Hier kannst du deine Ziele definieren, die du erreichen möchtest.",
+      tutorialStepFinishDay:
+        "Mit diesem Button kannst du den Tag beenden, wenn alle Aufgaben und Routinen abgeschlossen sind, um deinen Streak zu erhalten.",
+      tutorialStepInfo:
+        "Hier findest du weitere Informationen über die App und wie sie funktioniert.",
+      // Date picker / Goals popup
+      selectDate: "Datum auswählen",
+      invalidDate: "Ungültiges Datum",
+      dateInPast: "Datum liegt in der Vergangenheit",
+      january: "Januar",
+      february: "Februar",
+      march: "März",
+      april: "April",
+      may: "Mai",
+      june: "Juni",
+      july: "Juli",
+      august: "August",
+      september: "September",
+      october: "Oktober",
+      november: "November",
+      december: "Dezember",
+      hoursNeeded: "Benötigte Stunden",
+      hoursExamplePlaceholder: "z.B. 10",
+      targetDate: "Zieldatum",
+      priority: "Priorität",
+      priorityLow: "Niedrig",
+      priorityHigh: "Hoch",
+      addGoal: "Ziel hinzufügen",
 
       // Login/Auth
       ticktaskLogin: "TickTask Login",
@@ -152,9 +261,9 @@ export const LanguageProvider = ({ children }) => {
 
       // Info Popup
       info: "Info",
-      ideaBehindTickTask: "Idea behind TickTask",
+      ideaBehindTickTask: "Idee hinter TickTask",
       ideaDescription: "Fokus statt Overload: TickTask hilft dir, Aufgaben schlank zu planen, einen Task nach dem anderen fertig zu machen und Routinen klar abzuschließen. Die App ist darauf ausgelegt, dich dabei zu unterstützen, produktiver zu werden ohne dabei überwältigt zu werden.",
-      howItWorks: "How it works",
+      howItWorks: "So funktioniert’s",
       createTasks: "Erstelle Tasks:",
       createTasksDesc: "Füge deine Aufgaben hinzu oder nutze Vorlagen (Frequent Tasks), die du regelmäßig benötigst.",
       timerSystem: "Timer-System:",
@@ -163,7 +272,7 @@ export const LanguageProvider = ({ children }) => {
       routinesDesc: "Arbeite deine Routinen ab (Morning, Daily, Weekly, Abend) und halte deine Gewohnheiten aufrecht.",
       finishDayFeature: "Finish Day:",
       finishDayDesc: "Beende den Tag mit \"Finish Day\", wenn alle Aufgaben und Routinen abgeschlossen sind, um deinen Streak zu erhalten.",
-      features: "Features",
+      features: "Funktionen",
       timeTracking: "Zeit-Tracking:",
       timeTrackingDesc: "Plane Zeit für jeden Task und verfolge, wie viel Zeit tatsächlich benötigt wurde.",
       priorities: "Prioritäten:",
@@ -183,6 +292,11 @@ export const LanguageProvider = ({ children }) => {
       // Header
       settings: "Settings",
       logout: "Logout",
+      demoMode: "Demo Mode",
+      navTasks: "Tasks",
+      navCalendar: "Calendar",
+      navGoals: "Goals",
+      exampleTask: "Example task",
 
       // General Tab
       streak: "Streak",
@@ -196,6 +310,7 @@ export const LanguageProvider = ({ children }) => {
       doneTasks: "Done Tasks",
       frequentTasks: "Recurring Tasks",
       clearAll: "Clear All",
+      taskListEmpty: "The task list is empty",
 
       // Timer
       done: "Done",
@@ -254,6 +369,13 @@ export const LanguageProvider = ({ children }) => {
       edit: "Edit",
       save: "Save",
       cancel: "Cancel",
+      pleaseSelect: "Please select",
+      today: "Today",
+      tomorrow: "Tomorrow",
+      hour: "Hour",
+      minute: "Minute",
+      previousDay: "Previous day",
+      nextDay: "Next day",
 
       // Checklist Headings
       morning: "Morning",
@@ -275,6 +397,102 @@ export const LanguageProvider = ({ children }) => {
       urgent: "Urgent",
       recurring: "Recurring",
       submit: "Submit",
+      addTasksToMainList: "Add tasks to main list",
+      scheduleTaskQuestion:
+        "On which day and at what time should this task be executed?",
+      assignGoal: "Assign goal",
+      noGoal: "No goal",
+      selectGoal: "Select goal",
+      unnamedGoal: "Unnamed goal",
+
+      // Goals
+      goals: "Goals",
+      addGoalPlaceholder: "Add goal...",
+      noGoalsDefined: "No goals defined yet",
+      deleteGoalTitle: "Delete goal?",
+      goalReachedTitle: "Goal reached?",
+      createdLabel: "Created:",
+      targetLabel: "Target:",
+      daysRemainingSuffix: "days remaining",
+      daysOverdueSuffix: "days overdue",
+      goalReachedButton: "Goal reached",
+      showTasksForGoal: "Show tasks",
+      hideTasksForGoal: "Hide tasks",
+      noWorkOnGoalYet: "No work has been done on this goal yet",
+      doneGoals: "Done goals",
+
+      // Calendar (Settings + WeekCalendar)
+      startTime: "Start time:",
+      endTime: "End time:",
+      visibility: "Visibility:",
+      show: "Show",
+      hide: "Hide",
+      startBeforeEndError: "Start time must be before end time!",
+      addAppointment: "Add appointment",
+      deleteAppointment: "Delete appointment",
+      addRoutineAppointmentTitle: "Add routine appointment",
+      appointmentNameLabel: "Name:",
+      appointmentNamePlaceholder: "e.g. football training, school",
+      appointmentDefaultName: "Appointment",
+      selectDay: "Select day",
+      requiredFieldsAlert: "Please fill in all required fields.",
+      invalidEndTimeAlert: "Please choose a valid end time.",
+      endAfterStartAlert: "End time must be after start time.",
+      saveAppointmentErrorPrefix: "Error saving appointment: ",
+      legendTasks: "Tasks",
+      legendRoutineAppointment: "Routine appointment",
+      everyDay: "Every day",
+      weekdays: "Monday to Friday",
+      // Welcome / Tutorial
+      welcomeTitle: "Welcome to TickTask",
+      welcomeP1:
+        "TickTask is your personal task manager that helps you organize your tasks and become more productive.",
+      welcomeP2:
+        "With TickTask you can create tasks, plan routines, set goals, and track your progress — all in one place, simple and clear.",
+      welcomeP3:
+        "We’ll quickly show you the most important features so you can get started right away!",
+      skipTutorial: "Skip tutorial",
+      startTutorial: "Start tutorial",
+      start: "Start",
+      next: "Next",
+      finish: "Finish",
+      // Tutorial step messages
+      tutorialStepTaskInput:
+        "Here you can define your tasks. Just type the task name and click the arrow.",
+      tutorialStepTaskPopup:
+        "Then you can customize your task: set a duration, schedule it, mark it as important, or assign it to a goal.",
+      tutorialStepChecklist:
+        "With this pen icon you can customize your routines and checklists.",
+      tutorialStepAppointments:
+        "Here you can add routine appointments that happen regularly.",
+      tutorialStepGoals: "Here you can define goals you want to achieve.",
+      tutorialStepFinishDay:
+        "With this button you can finish the day once all tasks and routines are completed to keep your streak.",
+      tutorialStepInfo:
+        "Here you can find more information about the app and how it works.",
+      // Date picker / Goals popup
+      selectDate: "Select date",
+      invalidDate: "Invalid date",
+      dateInPast: "Date is in the past",
+      january: "January",
+      february: "February",
+      march: "March",
+      april: "April",
+      may: "May",
+      june: "June",
+      july: "July",
+      august: "August",
+      september: "September",
+      october: "October",
+      november: "November",
+      december: "December",
+      hoursNeeded: "Hours needed",
+      hoursExamplePlaceholder: "e.g. 10",
+      targetDate: "Target date",
+      priority: "Priority",
+      priorityLow: "Low",
+      priorityHigh: "High",
+      addGoal: "Add goal",
 
       // Login/Auth
       ticktaskLogin: "TickTask Login",

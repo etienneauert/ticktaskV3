@@ -1,7 +1,9 @@
 import styles from "./WelcomePopup.module.css";
 import { useEffect } from "react";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function WelcomePopup({ open, onClose, onStartTutorial }) {
+  const { t } = useLanguage();
   // Verhindere Body-Scroll wenn Popup offen ist (nur auf Desktop)
   useEffect(() => {
     if (open) {
@@ -36,28 +38,18 @@ export default function WelcomePopup({ open, onClose, onStartTutorial }) {
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <h1>Willkommen bei Ticktask</h1>
+          <h1>{t("welcomeTitle")}</h1>
         </div>
 
         <div className={styles.content}>
-          <p>
-            Ticktask ist deine persönliche Task-Management-App, die dir hilft,
-            deine Aufgaben zu organisieren und produktiver zu werden.
-          </p>
-          <p>
-            Mit Ticktask kannst du Aufgaben erstellen, Routinen planen, Ziele
-            setzen und deinen Fortschritt verfolgen. Alles an einem Ort, einfach
-            und übersichtlich.
-          </p>
-          <p>
-            Wir zeigen dir gleich die wichtigsten Funktionen, damit du sofort
-            loslegen kannst!
-          </p>
+          <p>{t("welcomeP1")}</p>
+          <p>{t("welcomeP2")}</p>
+          <p>{t("welcomeP3")}</p>
         </div>
 
         <div className={styles.buttonContainer}>
           <button className={styles.skipButton} onClick={onClose}>
-            Skip Tutorial
+            {t("skipTutorial")}
           </button>
           <button
             className={styles.startButton}
@@ -69,10 +61,10 @@ export default function WelcomePopup({ open, onClose, onStartTutorial }) {
               }
             }}
           >
-            Start Tutorial
+            {t("startTutorial")}
           </button>
           <button className={styles.startButtonSmall} onClick={onClose}>
-            Start
+            {t("start")}
           </button>
         </div>
       </div>

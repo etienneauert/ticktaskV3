@@ -46,7 +46,7 @@ export default function Header({
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
   const finishDayButtonRef = useRef(null);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Aktualisiere die aktuelle Uhrzeit jede Minute
   useEffect(() => {
@@ -299,11 +299,14 @@ export default function Header({
           </div>
           <div className={styles.currentTimeHeader}>
             <span className={styles.currentDate}>
-              {currentTime.toLocaleDateString("de-DE", {
+              {currentTime.toLocaleDateString(
+                language === "de" ? "de-DE" : "en-US",
+                {
                 day: "2-digit",
                 month: "2-digit",
                 year: "numeric",
-              })}
+                }
+              )}
             </span>
             <span className={styles.timeSeparator}>|</span>
             <span className={styles.currentTime}>
@@ -312,7 +315,9 @@ export default function Header({
             </span>
           </div>
         </div>
-        {isGuestMode && <div className={styles.guestModeLabel}>Demo Mode</div>}
+        {isGuestMode && (
+          <div className={styles.guestModeLabel}>{t("demoMode")}</div>
+        )}
         <div className={styles.buttonsRight}>
           <nav className={styles.headerNav}>
             <button
@@ -321,7 +326,7 @@ export default function Header({
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
             >
-              Tasks
+              {t("navTasks")}
             </button>
             <button
               className={styles.navLink}
@@ -338,7 +343,7 @@ export default function Header({
                 }
               }}
             >
-              Kalender
+              {t("navCalendar")}
             </button>
             <button
               className={styles.navLink}
@@ -352,7 +357,7 @@ export default function Header({
                 }
               }}
             >
-              Ziele
+              {t("navGoals")}
             </button>
           </nav>
           <button

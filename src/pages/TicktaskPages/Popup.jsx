@@ -12,16 +12,9 @@ import playgrey from "../../assets/play-grey.png";
 import trashgrey from "../../assets/trash-grey.png";
 import reloadneon from "../../assets/reloadneon.png";
 import arrowDown from "../../assets/arrowdown-yellow.png";
+import { useLanguage } from "../../contexts/LanguageContext";
 
-const DAY_OPTIONS = [
-  { value: "monday", label: "Montag" },
-  { value: "tuesday", label: "Dienstag" },
-  { value: "wednesday", label: "Mittwoch" },
-  { value: "thursday", label: "Donnerstag" },
-  { value: "friday", label: "Freitag" },
-  { value: "saturday", label: "Samstag" },
-  { value: "sunday", label: "Sonntag" },
-];
+// Options werden im Component per `t()` lokalisiert.
 
 const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5).map(
   (min) => {
@@ -111,6 +104,7 @@ export default function Popup({
   updateGuestData,
   guestData,
 }) {
+  const { t } = useLanguage();
   const [urgent, setUrgent] = useState(false);
   const [taskDuration, setTaskDuration] = useState(0);
   const [frequent, setFrequent] = useState(false);
@@ -124,6 +118,19 @@ export default function Popup({
   const [isShaking, setIsShaking] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState("");
   const [goals, setGoals] = useState([]);
+
+  const dayOptions = useMemo(
+    () => [
+      { value: "monday", label: t("monday") },
+      { value: "tuesday", label: t("tuesday") },
+      { value: "wednesday", label: t("wednesday") },
+      { value: "thursday", label: t("thursday") },
+      { value: "friday", label: t("friday") },
+      { value: "saturday", label: t("saturday") },
+      { value: "sunday", label: t("sunday") },
+    ],
+    [t]
+  );
 
   // Debug: Log props
   useEffect(() => {
@@ -388,14 +395,14 @@ export default function Popup({
     // Filtere nur nicht abgeschlossene Goals
     const activeGoals = goals.filter((goal) => !goal.completed);
     const options = [
-      { value: "", label: "Kein Goal" },
+      { value: "", label: t("noGoal") },
       ...activeGoals.map((goal) => ({
         value: goal.id,
-        label: goal.text || goal.name || "Unbenanntes Goal",
+        label: goal.text || goal.name || t("unnamedGoal"),
       })),
     ];
     return options;
-  }, [goals]);
+  }, [goals, t]);
 
   if (!open) return null;
 
@@ -430,7 +437,7 @@ export default function Popup({
               {urgent && (
                 <img src={starWhite} alt="" className={styles.urgentIcon} />
               )}
-              {taskText || "Enter task name..."}
+              {taskText || t("enterTaskName")}
             </div>
             {taskDuration > 0 && (
               <div className={styles.demoTimer}>
@@ -449,7 +456,7 @@ export default function Popup({
         </div>
 
         <div className={styles.Duration}>
-          <h2>How much time do you need to complete the task?</h2>
+          <h2>{t("howMuchTime")}</h2>
 
           <div
             className={`${styles.durationButtons} ${
@@ -461,14 +468,14 @@ export default function Popup({
               className={styles.durationBtn}
               onClick={() => setTaskDuration((prev) => prev + 1)}
             >
-              <img src={plusSign} alt="" />1 min
+              <img src={plusSign} alt="" />1 {t("min")}
             </button>
             <button
               type="button"
               className={styles.durationBtn}
               onClick={() => setTaskDuration((prev) => prev + 5)}
             >
-              <img src={plusSign} alt="" />5 min
+              <img src={plusSign} alt="" />5 {t("min")}
             </button>
             <button
               type="button"
@@ -476,7 +483,7 @@ export default function Popup({
               onClick={() => setTaskDuration((prev) => prev + 15)}
             >
               <img src={plusSign} alt="" />
-              15 min
+              15 {t("min")}
             </button>
             <button
               type="button"
@@ -484,7 +491,7 @@ export default function Popup({
               onClick={() => setTaskDuration((prev) => prev + 30)}
             >
               <img src={plusSign} alt="" />
-              30 min
+              30 {t("min")}
             </button>
             <button
               type="button"
@@ -492,7 +499,7 @@ export default function Popup({
               onClick={() => setTaskDuration((prev) => prev + 60)}
             >
               <img src={plusSign} alt="" />
-              60 min
+              60 {t("min")}
             </button>
 
             <img
@@ -506,22 +513,19 @@ export default function Popup({
           </div>
         </div>
         <div className={styles.scheduleSection}>
-          <h2>
-            An welchem Tag und zu welcher Uhrzeit soll dieser Task ausgeführt
-            werden?
-          </h2>
+          <h2>{t("scheduleTaskQuestion")}</h2>
           <div className={styles.scheduleInputs}>
             <TransparentSelect
               value={selectedDay}
               onChange={setSelectedDay}
-              options={DAY_OPTIONS}
-              placeholder="Tag wählen"
+              options={dayOptions}
+              placeholder={t("selectDay")}
             />
             <TransparentSelect
               value={selectedHour}
               onChange={setSelectedHour}
               options={HOUR_OPTIONS}
-              placeholder="Stunde"
+              placeholder={t("hour")}
               className={styles.timeSelect}
             />
             <span className={styles.timeSeparator}>:</span>
@@ -529,19 +533,19 @@ export default function Popup({
               value={selectedMinute}
               onChange={setSelectedMinute}
               options={MINUTE_OPTIONS}
-              placeholder="Minute"
+              placeholder={t("minute")}
               className={styles.timeSelect}
             />
           </div>
         </div>
 
         <div className={styles.goalSection}>
-          <h2>Goal zuweisen</h2>
+          <h2>{t("assignGoal")}</h2>
           <TransparentSelect
             value={selectedGoal}
             onChange={setSelectedGoal}
             options={GOAL_OPTIONS}
-            placeholder="Goal auswählen"
+            placeholder={t("selectGoal")}
           />
         </div>
 
@@ -554,7 +558,7 @@ export default function Popup({
                 onChange={(e) => setUrgent(e.target.checked)}
                 className={styles.checkboxInput}
               />
-              <span className={styles.grey}>Urgent</span>
+              <span className={styles.grey}>{t("urgent")}</span>
             </label>
           </div>
 
@@ -566,14 +570,14 @@ export default function Popup({
                 onChange={(e) => setFrequent(e.target.checked)}
                 className={styles.checkboxInput}
               />
-              <span className={styles.grey}>Reccuring</span>
+              <span className={styles.grey}>{t("recurring")}</span>
             </label>
           </div>
         </div>
 
         <div className={styles.actions}>
           <button onClick={handleSubmit} className={styles.addButton}>
-            Submit
+            {t("submit")}
           </button>
         </div>
       </div>

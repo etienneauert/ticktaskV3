@@ -53,7 +53,7 @@ export default function Input({
   return (
     <>
       <form className={styles.InputContainer} onSubmit={handleSubmit}>
-        <label className={styles.inputLabel}>Tasks</label>
+        <label className={styles.inputLabel}>{t("navTasks")}</label>
         <input
           id="task-input"
           type="text"
@@ -75,7 +75,7 @@ export default function Input({
         open={open || tutorialPopupOpen}
         onConfirm={confirmAdd}
         onCancel={tutorialPopupOpen ? onTutorialPopupClose : cancelAdd}
-        taskText={value || "Beispiel Task"}
+        taskText={value || t("exampleTask")}
         user={user}
         isTutorialMode={tutorialPopupOpen}
         isGuestMode={isGuestMode}

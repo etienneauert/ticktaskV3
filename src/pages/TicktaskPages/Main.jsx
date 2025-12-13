@@ -7,6 +7,7 @@ import styles from "./Main.module.css";
 import { useState, useEffect } from "react";
 import { db } from "../../firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function Main({
   tasks,
@@ -37,6 +38,7 @@ export default function Main({
   updateGuestData,
   guestData,
 }) {
+  const { t } = useLanguage();
   const [isCalendarHidden, setIsCalendarHidden] = useState(false);
   const [isGoalsHidden, setIsGoalsHidden] = useState(false);
 
@@ -187,7 +189,7 @@ export default function Main({
       {!isCalendarHidden && (
         <>
           <div id="calendar-section" className={styles.CalendarLabelContainer}>
-            <label className={styles.calendarLabel}>Kalender</label>
+            <label className={styles.calendarLabel}>{t("navCalendar")}</label>
           </div>
           <div className={styles.WeekCalendarContainer}>
             <WeekCalendar
