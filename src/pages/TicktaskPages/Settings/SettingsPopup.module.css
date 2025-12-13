@@ -37,7 +37,8 @@
     20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7),
     0 0 0 4px rgba(255, 255, 255, 0.1);
   transition: width 0.3s ease;
-  background-color: transparent;
+  /* Einheitlicher Popup-Hintergrund wie in `Popup.jsx` (`popup.module.css`) */
+  background-color: rgba(10, 10, 10, 0.95);
   overflow: hidden;
   display: flex;
   flex-direction: column;

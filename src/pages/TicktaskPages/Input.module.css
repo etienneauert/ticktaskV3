@@ -33,7 +33,15 @@
   font-size: 20px;
   outline: none;
   min-width: 400px;
+  height: 50px;
   transition: 0.3s ease;
+}
+
+.InputContainer input::placeholder {
+  /* Chrome rendert Placeholder oft kleiner/anders -> explizit angleichen */
+  font-size: inherit;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .InputContainer input:focus {

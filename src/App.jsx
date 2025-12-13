@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { auth } from "./firebase/firebase.js";
 import { onAuthStateChanged } from "firebase/auth";
-import Auth from "./pages/auth";
+import Auth from "./pages/Auth";
 import { Ticktask } from "./pages/Ticktask.jsx";
 import { Login } from "./pages/Login";
 import styles from "./App.module.css";
@@ -34,18 +34,57 @@ export default function App() {
     }
   }, [isGuestMode]);
 
+  // Safari (macOS/iOS): Class setzen, um CSS Workarounds sauber zu targeten
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsLoggedIn(!!user);
-      setUser(user);
+    try {
+      const ua = navigator.userAgent || "";
+      const isSafari =
+        /Safari/i.test(ua) && !/Chrome|Chromium|Edg|OPR|CriOS|FxiOS/i.test(ua);
+      document.documentElement.classList.toggle("isSafari", isSafari);
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    let unsubscribe = null;
+    let didFinish = false;
+
+    // Fallback: nie im Loader hängen bleiben (z.B. wenn onAuthStateChanged wirft oder nie feuert)
+    const fallbackTimer = window.setTimeout(() => {
+      if (didFinish) return;
+      console.warn("⚠️ Auth init timeout – proceeding without auth state");
+      setAuthInitError((prev) => prev || new Error("Auth init timeout"));
       setAuthReady(true);
-      
-      // Wenn ein Benutzer eingeloggt ist, verlasse den Guest-Mode
-      if (user) {
-        setIsGuestMode(false);
-      }
-    });
-    return () => unsubscribe();
+      didFinish = true;
+    }, 4000);
+
+    try {
+      unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (didFinish) return;
+        window.clearTimeout(fallbackTimer);
+        setIsLoggedIn(!!user);
+        setUser(user);
+        setAuthReady(true);
+        didFinish = true;
+
+        // Wenn ein Benutzer eingeloggt ist, verlasse den Guest-Mode
+        if (user) {
+          setIsGuestMode(false);
+        }
+      });
+    } catch (e) {
+      console.error("❌ Failed to init Firebase Auth listener", e);
+      window.clearTimeout(fallbackTimer);
+      setAuthInitError(e);
+      setAuthReady(true);
+      didFinish = true;
+    }
+
+    return () => {
+      window.clearTimeout(fallbackTimer);
+      if (typeof unsubscribe === "function") unsubscribe();
+    };
   }, []);
 
   return (
@@ -53,7 +92,7 @@ export default function App() {
       <div className={styles.app}>
         {!authReady ? (
           <div style={{ backgroundColor: "#000", minHeight: "100vh" }}>
-            Wird geladen...
+            Loading...
           </div>
         ) : isLoggedIn ? (
           <Ticktask user={user} isGuestMode={false} />
@@ -65,8 +104,8 @@ export default function App() {
             onGuestLogin={() => setIsGuestMode(true)}
           />
         ) : (
-          <Auth 
-            onSwitchToLogin={() => setShowLogin(true)} 
+          <Auth
+            onSwitchToLogin={() => setShowLogin(true)}
             onGuestLogin={() => setIsGuestMode(true)}
           />
         )}

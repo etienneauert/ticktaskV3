@@ -1,16 +1,47 @@
 import styles from "./InfoPopup.module.css";
 import close from "../../../assets/close-3.png";
 import { useState, useEffect, useRef } from "react";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 export default function InfoPopup({ open, onClose }) {
   const [activeTab, setActiveTab] = useState(0);
   const buttonRefs = useRef([]);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const { t } = useLanguage();
 
   const tabs = [
-    { id: 0, label: "Über Ticktask" },
-    { id: 1, label: "Wie es funktioniert" },
+    { id: 0, label: t("infoTabAbout") },
+    { id: 1, label: t("infoTabHowItWorks") },
   ];
+
+  // Hintergrund-Scroll verhindern, wenn Info-Popup offen ist
+  useEffect(() => {
+    if (!open) return;
+
+    const scrollY = window.scrollY;
+    try {
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+    } catch (e) {
+      console.warn("Failed to lock body scroll for InfoPopup", e);
+    }
+
+    return () => {
+      try {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflow = "";
+        document.documentElement.style.overflow = "";
+        window.scrollTo(0, scrollY);
+      } catch (e) {
+        console.warn("Failed to restore body scroll for InfoPopup", e);
+      }
+    };
+  }, [open]);
 
   useEffect(() => {
     const el = buttonRefs.current[activeTab];
@@ -62,11 +93,13 @@ export default function InfoPopup({ open, onClose }) {
                 width: indicatorStyle.width,
               }}
             />
-              </div>
+          </div>
           <div className={styles.tabContent}>
             {activeTab === 0 && (
               <div className={styles.tabPanel}>
-                {/* Inhalt für "Über Ticktask" */}
+                <div className={styles.content}>
+                  <p>{t("ideaDescription")}</p>
+                </div>
               </div>
             )}
             {activeTab === 1 && (
@@ -74,7 +107,7 @@ export default function InfoPopup({ open, onClose }) {
                 {/* Inhalt für "Wie es funktioniert" */}
               </div>
             )}
-            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -16,6 +16,32 @@
   .GoalsContainer {
     max-width: 1600px;
   }
+
+  /* Desktop (1920px): Meta-Infos (Days remaining + Progress) links neben Created/Target,
+     Buttons dürfen weiterhin rechts bleiben */
+  .GoalProgressInfo {
+    justify-content: flex-start;
+    gap: 18px;
+  }
+
+  .GoalProgressRight {
+    flex: 1;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+  }
+
+  .GoalActionButtons {
+    margin-left: auto;
+  }
+
+  .GoalDaysRemaining {
+    margin-left: 0;
+  }
+
+  .GoalProgressText {
+    text-align: left;
+    white-space: nowrap;
+  }
 }
 
 .GoalsTitle {
@@ -60,10 +86,17 @@
   font-size: 20px;
   outline: none;
   min-width: 400px;
+  height: 50px;
   transition: 0.3s ease;
   background-color: transparent;
   position: relative;
   z-index: 0;
+}
+
+.GoalsInputContainer input::placeholder {
+  font-size: inherit;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.45);
 }
 
 .GoalsInputContainer input:focus {
@@ -676,6 +709,13 @@
   background-color: transparent;
 }
 
+.GoalProgressMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: transparent;
+}
+
 .GoalDaysRemainingUrgent {
   color: #ff4444;
 }
@@ -728,20 +768,59 @@
 
 /* Ab 454px: Tage verbleibend unter Erstellt anzeigen und Zeitfortschritt über Ziel erreicht */
 @media (max-width: 454px) {
+  /* Mobile: oben nur Erstellt | Zieldatum */
   .GoalDatesContainer {
-    flex-direction: column;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 10px;
+    align-items: center;
+    width: 100%;
+    margin-top: 12px;
   }
 
-  .GoalDate {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+  .GoalDateCreated {
+    justify-self: start;
+  }
+
+  .GoalDateTarget {
+    justify-self: end;
+    text-align: right;
   }
 
   .GoalDaysRemaining {
     margin-left: 0;
-    margin-top: 4px;
+    margin-top: 0;
+    white-space: nowrap;
+  }
+
+  /* Mobile: Tage verbleibend links + Fortschritt rechts in derselben Zeile (unter den Dates) */
+  .GoalProgressMetaRow {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 10px;
+    align-items: center;
+  }
+
+  .GoalProgressMetaRow .GoalDaysRemaining {
+    justify-self: start;
+  }
+
+  .GoalProgressText {
+    justify-self: end;
+    text-align: right;
+  }
+
+  /* Mobile: mehr Luft zwischen Meta-Zeile (Tage/Fortschritt) und den Buttons */
+  .GoalActionButtons {
+    margin-top: 14px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Mobile: "Tasks anzeigen" ganz rechts in der Button-Zeile */
+  .ShowTasksButton {
+    margin-left: auto;
   }
 
   .GoalProgressRight {

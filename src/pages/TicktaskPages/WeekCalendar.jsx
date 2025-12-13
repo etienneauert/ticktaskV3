@@ -873,12 +873,12 @@ export default function WeekCalendar({
         <div className={styles.CalendarBody} ref={calendarBodyRef}>
           {timePosition && (
             <>
-              <div
-                className={styles.CurrentTimeIndicator}
-                style={{
-                  top: `${timePosition.top}px`,
-                }}
-              />
+            <div
+              className={styles.CurrentTimeIndicator}
+              style={{
+                top: `${timePosition.top}px`,
+              }}
+            />
               {todayIndicator && (
                 <div
                   className={`${styles.CurrentTimeIndicator} ${styles.CurrentTimeIndicatorToday}`}
