@@ -127,12 +127,6 @@ export default function Popup({
 
   // Debug: Log props
   useEffect(() => {
-    console.log("Popup: Props received:", {
-      isGuestMode,
-      hasGuestData: !!guestData,
-      guestGoalsCount: guestData?.goals?.length || 0,
-      open,
-    });
   }, [isGuestMode, guestData, open]);
 
   // Reset state when popup opens
@@ -155,14 +149,12 @@ export default function Popup({
           try {
             const parsed = JSON.parse(saved);
             const guestGoals = parsed.goals || [];
-            console.log("Popup: Reloading goals when popup opens:", guestGoals);
             setGoals(guestGoals);
           } catch (e) {
             console.error("Popup: Failed to parse guest data on open", e);
           }
         } else {
           const guestGoals = guestData?.goals || [];
-          console.log("Popup: Using guestData prop on open:", guestGoals);
           setGoals(guestGoals);
         }
       }
@@ -199,48 +191,26 @@ export default function Popup({
 
   // Lade Goals aus Firebase oder guestData
   useEffect(() => {
-    console.log("Popup: useEffect for loading goals triggered", {
-      isGuestMode,
-      open,
-      hasGuestData: !!guestData,
-      guestGoalsCount: guestData?.goals?.length || 0,
-    });
 
     if (isGuestMode) {
       // Im Guest Mode: Lade Goals aus guestData
       const loadGuestGoals = () => {
         // Versuche zuerst aus guestData prop
         let guestGoals = guestData?.goals || [];
-        console.log("Popup: Initial guestGoals from prop:", guestGoals);
 
         // Falls guestData leer ist, versuche localStorage
         if (guestGoals.length === 0) {
           const saved = localStorage.getItem("ticktask_guest_data");
-          console.log(
-            "Popup: guestData prop empty, checking localStorage:",
-            saved ? "found" : "not found"
-          );
           if (saved) {
             try {
               const parsed = JSON.parse(saved);
               guestGoals = parsed.goals || [];
-              console.log("Popup: Loaded from localStorage:", guestGoals);
             } catch (e) {
               console.error("Popup: Failed to parse guest data", e);
             }
           }
         }
 
-        console.log("Popup: Final guest goals to set:", guestGoals);
-        console.log("Popup: Guest goals count:", guestGoals.length);
-        console.log(
-          "Popup: Guest goals details:",
-          guestGoals.map((g) => ({
-            id: g.id,
-            text: g.text,
-            completed: g.completed,
-          }))
-        );
         setGoals(guestGoals);
       };
 
@@ -248,17 +218,12 @@ export default function Popup({
 
       // Höre auch auf Goals-Änderungen im Guest Mode
       const handleGoalsChanged = () => {
-        console.log("Popup: goalsChanged event received");
         // Lade direkt aus localStorage, da guestData möglicherweise noch nicht aktualisiert ist
         const saved = localStorage.getItem("ticktask_guest_data");
         if (saved) {
           try {
             const parsed = JSON.parse(saved);
             const updatedGoals = parsed.goals || [];
-            console.log(
-              "Popup: Goals changed event, loaded from localStorage:",
-              updatedGoals
-            );
             setGoals(updatedGoals);
           } catch (e) {
             console.error(
@@ -269,10 +234,6 @@ export default function Popup({
         } else {
           // Falls localStorage leer ist, versuche guestData prop
           const guestGoals = guestData?.goals || [];
-          console.log(
-            "Popup: No localStorage, using guestData prop:",
-            guestGoals
-          );
           setGoals(guestGoals);
         }
       };
@@ -426,16 +387,6 @@ export default function Popup({
   const GOAL_OPTIONS = useMemo(() => {
     // Filtere nur nicht abgeschlossene Goals
     const activeGoals = goals.filter((goal) => !goal.completed);
-    console.log(
-      "Popup: GOAL_OPTIONS - all goals:",
-      goals.length,
-      "active goals:",
-      activeGoals.length,
-      "goals array:",
-      goals,
-      "activeGoals array:",
-      activeGoals
-    );
     const options = [
       { value: "", label: "Kein Goal" },
       ...activeGoals.map((goal) => ({
@@ -443,7 +394,6 @@ export default function Popup({
         label: goal.text || goal.name || "Unbenanntes Goal",
       })),
     ];
-    console.log("Popup: GOAL_OPTIONS result:", options);
     return options;
   }, [goals]);
 

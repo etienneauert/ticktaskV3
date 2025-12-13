@@ -68,7 +68,6 @@ export default function GoalsTab({ user }) {
         hidden: hidden,
         lastUpdated: serverTimestamp(),
       });
-      console.log("Saved goals settings to Firebase:", { hidden });
 
       // Dispatch Event für automatische Aktualisierung
       window.dispatchEvent(

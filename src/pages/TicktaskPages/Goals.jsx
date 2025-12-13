@@ -41,37 +41,8 @@ export default function Goals({
 
   // Debug: Log tasks when they change
   useEffect(() => {
-    console.log("[Goals] Tasks updated:", tasks.length, "tasks");
-    console.log(
-      "[Goals] All tasks:",
-      tasks.map((t) => ({
-        id: t.id,
-        text: t.text,
-        goalId: t.goalId,
-        done: t.done,
-        actualTimeUsed: t.actualTimeUsed,
-        taskDuration: t.taskDuration,
-      }))
-    );
     const tasksWithGoals = tasks.filter((t) => t.goalId);
-    console.log(
-      "[Goals] Tasks with goals:",
-      tasksWithGoals.length,
-      tasksWithGoals
-    );
     const completedTasksWithGoals = tasks.filter((t) => t.goalId && t.done);
-    console.log(
-      "[Goals] Completed tasks with goals:",
-      completedTasksWithGoals.length,
-      completedTasksWithGoals.map((t) => ({
-        id: t.id,
-        text: t.text,
-        goalId: t.goalId,
-        done: t.done,
-        actualTimeUsed: t.actualTimeUsed,
-        taskDuration: t.taskDuration,
-      }))
-    );
   }, [tasks]);
 
   const handleSubmit = (e) => {
@@ -103,7 +74,6 @@ export default function Goals({
 
     if (isGuestMode) {
       // Im Guest Mode: Speichere temporär in guestData
-      console.log("Saving guest goal:", goalData);
       updateGuestData((prevData) => ({
         ...prevData,
         goals: [...(prevData.goals || []), goalData],
@@ -129,7 +99,6 @@ export default function Goals({
     try {
       const goalsCol = collection(db, "users", user.uid, "goals");
       await addDoc(goalsCol, goalData);
-      console.log("Goal hinzugefügt:", goalData);
 
       // Dispatch Event für automatische Aktualisierung im Popup
       window.dispatchEvent(
@@ -179,7 +148,6 @@ export default function Goals({
     try {
       const goalDoc = doc(db, "users", user.uid, "goals", goalToDelete.id);
       await deleteDoc(goalDoc);
-      console.log("Goal gelöscht:", goalToDelete.id);
 
       // Aktualisiere die Goals-Liste
       setGoals((prev) => prev.filter((goal) => goal.id !== goalToDelete.id));
@@ -212,16 +180,6 @@ export default function Goals({
     if (isGuestMode) {
       // Im Guest Mode: Lade Goals aus guestData
       const guestGoals = guestData?.goals || [];
-      console.log("Loaded guest goals:", guestGoals);
-      console.log(
-        "Guest goals with timeSpent:",
-        guestGoals.map((g) => ({
-          id: g.id,
-          text: g.text,
-          timeSpent: g.timeSpent,
-          hoursNeeded: g.hoursNeeded,
-        }))
-      );
       setGoals(guestGoals);
 
       // Höre auch auf Goals-Änderungen im Guest Mode
@@ -232,19 +190,6 @@ export default function Goals({
           try {
             const parsed = JSON.parse(saved);
             const updatedGoals = parsed.goals || [];
-            console.log(
-              "Goals changed event - reloading goals from localStorage:",
-              updatedGoals
-            );
-            console.log(
-              "Updated goals with timeSpent:",
-              updatedGoals.map((g) => ({
-                id: g.id,
-                text: g.text,
-                timeSpent: g.timeSpent,
-                hoursNeeded: g.hoursNeeded,
-              }))
-            );
             setGoals(updatedGoals);
           } catch (e) {
             console.error("Failed to parse guest data on goalsChanged", e);
@@ -255,10 +200,6 @@ export default function Goals({
         } else {
           // Fallback: Verwende guestData prop
           const updatedGoals = guestData?.goals || [];
-          console.log(
-            "Goals changed event - no localStorage, using guestData prop:",
-            updatedGoals
-          );
           setGoals(updatedGoals);
         }
       };
@@ -285,11 +226,6 @@ export default function Goals({
           ...doc.data(),
         }));
         setGoals(goalsList);
-        console.log(
-          "✅ Goals updated from Firebase:",
-          goalsList.length,
-          "goals"
-        );
       },
       (error) => {
         console.error("Failed to subscribe to goals", error);
@@ -299,7 +235,6 @@ export default function Goals({
     // Höre auch auf Custom Events für zusätzliche Updates (z.B. beim Hinzufügen/Löschen)
     const handleGoalsChanged = () => {
       // onSnapshot aktualisiert automatisch, aber wir können hier zusätzliche Logik hinzufügen
-      console.log("Goals changed event received");
     };
 
     window.addEventListener("goalsChanged", handleGoalsChanged);
@@ -318,13 +253,6 @@ export default function Goals({
     const timeSpentHours = timeSpentMinutes / 60;
 
     if (isGuestMode) {
-      console.log(
-        `[Goals] Guest Mode: Goal "${
-          goal.text
-        }" - timeSpent=${timeSpentMinutes}min = ${timeSpentHours.toFixed(
-          2
-        )}h, hoursNeeded=${goal.hoursNeeded}h`
-      );
     }
 
     return timeSpentHours;
@@ -343,13 +271,6 @@ export default function Goals({
       const timeSpent = getTimeSpent(goal);
       const maxHours = goal.hoursNeeded || 0;
 
-      console.log(
-        `[Goal Reached Check] Goal: ${
-          goal.text
-        }, timeSpent: ${timeSpent}h, maxHours: ${maxHours}h, shown: ${shownGoalReachedIds.has(
-          goal.id
-        )}`
-      );
 
       // Prüfe, ob das Goal erreicht wurde und noch nicht angezeigt wurde
       // Verwende eine kleine Toleranz (0.01) für Rundungsfehler
@@ -358,7 +279,6 @@ export default function Goals({
         timeSpent >= maxHours - 0.01 &&
         !shownGoalReachedIds.has(goal.id)
       ) {
-        console.log(`[Goal Reached] Showing popup for goal: ${goal.text}`);
         setGoalReached(goal);
         setGoalReachedOpen(true);
         setShownGoalReachedIds((prev) => {
@@ -388,7 +308,6 @@ export default function Goals({
               : goal
           ),
         }));
-        console.log("Guest goal marked as completed:", goalReached.id);
       } else if (user?.uid) {
         try {
           const goalDoc = doc(db, "users", user.uid, "goals", goalReached.id);
@@ -396,7 +315,6 @@ export default function Goals({
             completed: true,
             completedAt: serverTimestamp(),
           });
-          console.log("Goal marked as completed:", goalReached.id);
         } catch (e) {
           console.error("Failed to mark goal as completed", e);
         }
@@ -430,7 +348,6 @@ export default function Goals({
             : goal
         ),
       }));
-      console.log("Guest goal marked as completed:", goalToComplete.id);
       setCompleteConfirmOpen(false);
       setGoalToComplete(null);
       return;
@@ -444,7 +361,6 @@ export default function Goals({
         completed: true,
         completedAt: serverTimestamp(),
       });
-      console.log("Goal marked as completed:", goalToComplete.id);
     } catch (e) {
       console.error("Failed to mark goal as completed", e);
     } finally {
@@ -471,7 +387,6 @@ export default function Goals({
           ...prevData,
           goals: (prevData.goals || []).filter((goal) => !goal.completed),
         }));
-        console.log("All completed guest goals deleted");
         return;
       }
 
@@ -483,7 +398,6 @@ export default function Goals({
           return deleteDoc(goalDoc);
         });
         await Promise.all(deletePromises);
-        console.log("All completed goals deleted");
       } catch (e) {
         console.error("Failed to delete completed goals", e);
       }
@@ -591,9 +505,6 @@ export default function Goals({
                     ? Math.min((timeSpent / maxHours) * 100, 100)
                     : 0;
 
-                console.log(
-                  `[Goals] Rendering goal "${goal.text}": timeSpent=${timeSpent}h, maxHours=${maxHours}h, progress=${progress}%, goalId=${goal.id}`
-                );
 
                 if (isGuestMode) {
                   const allTasks = tasks || [];
@@ -601,19 +512,6 @@ export default function Goals({
                     (t) => t.goalId === goal.id
                   );
                   const completedTasks = tasksWithGoalId.filter((t) => t.done);
-                  console.log(`[Goals] Guest Mode Debug for "${goal.text}":`, {
-                    allTasksCount: allTasks.length,
-                    tasksWithGoalId: tasksWithGoalId.length,
-                    completedTasks: completedTasks.length,
-                    completedTasksDetails: completedTasks.map((t) => ({
-                      id: t.id,
-                      text: t.text,
-                      done: t.done,
-                      actualTimeUsed: t.actualTimeUsed,
-                      taskDuration: t.taskDuration,
-                      goalId: t.goalId,
-                    })),
-                  });
                 }
 
                 return (

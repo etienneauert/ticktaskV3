@@ -91,7 +91,6 @@ export default function CalendarTab({ user }) {
         hidden: hidden,
         lastUpdated: serverTimestamp(),
       });
-      console.log("Saved calendar settings to Firebase:", { hours, hidden });
 
       // Dispatch Event für automatische Aktualisierung
       window.dispatchEvent(

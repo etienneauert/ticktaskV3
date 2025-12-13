@@ -27,7 +27,6 @@ export default function Input({
       setTimeout(() => setIsShaking(false), 500);
       return;
     }
-    console.log("Submitting:", trimmed);
     setOpen(true);
   };
 

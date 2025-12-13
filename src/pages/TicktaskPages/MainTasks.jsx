@@ -31,8 +31,6 @@ export default function MainTasks({
   ];
 
   // Debug: Log frequent tasks
-  console.log("All tasks:", tasks);
-  console.log("Frequent tasks:", frequentTasks);
 
   // Auto-close Frequent Tasks nach 10 Sekunden
   useEffect(() => {

@@ -153,9 +153,6 @@ export default function SingleTask({
           const remaining = Math.max(0, parsed.initialTimeLeft - elapsed);
 
           // Timer Recovery - berechne verbleibende Zeit basierend auf echter Zeit
-          console.log(
-            `Timer Recovery für ${taskId}: elapsed=${elapsed}s, remaining=${remaining}s`
-          );
 
           return {
             timeLeft: remaining,
@@ -548,7 +545,6 @@ export default function SingleTask({
                     // timeLeft ist in Sekunden, taskDuration ist in Minuten
                     // Verbrauchte Zeit = geplante Zeit - verbleibende Zeit (in Minuten)
                     const actualTimeUsed = Math.max(0, taskDuration - (timeLeft / 60));
-                    console.log(`[SingleTask] Task done: taskDuration=${taskDuration}min, timeLeft=${timeLeft}s (${timeLeft/60}min), actualTimeUsed=${actualTimeUsed}min`);
 
                     // Timer-State zurücksetzen
                     setIsRunning(false);

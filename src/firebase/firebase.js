@@ -34,7 +34,6 @@ try {
   db = getFirestore(app);
 
   // Konfiguriere Firestore für bessere CORS-Kompatibilität
-  console.log("✅ Firestore initialized with CORS optimizations");
 } catch (error) {
   console.error("❌ Failed to initialize Firestore:", error);
   // Fallback auf Standard-Firestore
@@ -46,7 +45,6 @@ export const checkFirebaseConnection = async (retries = 3) => {
   for (let i = 0; i < retries; i++) {
     try {
       await enableNetwork(db);
-      console.log("✅ Firebase connection active");
       return true;
     } catch (error) {
       console.warn(
