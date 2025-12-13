@@ -1,5 +1,5 @@
 import styles from "./WeekCalendar.module.css";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { db } from "../../firebase/firebase";
 import {
   doc,
@@ -112,6 +112,9 @@ export default function WeekCalendar({
   guestData,
 }) {
   const { t } = useLanguage();
+  const calendarBodyRef = useRef(null);
+  const todayDayColumnRef = useRef(null);
+  const [todayIndicator, setTodayIndicator] = useState(null);
 
   const weekDays = [
     t("monday"),
@@ -777,6 +780,37 @@ export default function WeekCalendar({
     setSelectedDayIndex((prev) => (prev < 6 ? prev + 1 : 0));
   };
 
+  const updateTodayIndicator = useCallback(() => {
+    const bodyEl = calendarBodyRef.current;
+    const todayColEl = todayDayColumnRef.current;
+    if (!bodyEl || !todayColEl) {
+      setTodayIndicator(null);
+      return;
+    }
+
+    const bodyRect = bodyEl.getBoundingClientRect();
+    const colRect = todayColEl.getBoundingClientRect();
+    const width = colRect.width;
+
+    // Wenn Today-Column gerade nicht sichtbar ist (z.B. andere DayColumn ausgewählt), kein Highlight.
+    if (!width || width <= 0) {
+      setTodayIndicator(null);
+      return;
+    }
+
+    const left = colRect.left - bodyRect.left;
+    setTodayIndicator({
+      left: `${Math.max(0, left)}px`,
+      width: `${Math.max(0, width)}px`,
+    });
+  }, []);
+
+  useEffect(() => {
+    updateTodayIndicator();
+    window.addEventListener("resize", updateTodayIndicator);
+    return () => window.removeEventListener("resize", updateTodayIndicator);
+  }, [updateTodayIndicator, selectedDayIndex, weekDates]);
+
   return (
     <div className={styles.WeekCalendar}>
       <div className={styles.WeekCalendarFrame}>
@@ -836,14 +870,26 @@ export default function WeekCalendar({
           })}
           <div className={styles.RightBar}></div>
         </div>
-        <div className={styles.CalendarBody}>
+        <div className={styles.CalendarBody} ref={calendarBodyRef}>
           {timePosition && (
-            <div
-              className={styles.CurrentTimeIndicator}
-              style={{
-                top: `${timePosition.top}px`,
-              }}
-            />
+            <>
+              <div
+                className={styles.CurrentTimeIndicator}
+                style={{
+                  top: `${timePosition.top}px`,
+                }}
+              />
+              {todayIndicator && (
+                <div
+                  className={`${styles.CurrentTimeIndicator} ${styles.CurrentTimeIndicatorToday}`}
+                  style={{
+                    top: `${timePosition.top}px`,
+                    left: todayIndicator.left,
+                    width: todayIndicator.width,
+                  }}
+                />
+              )}
+            </>
           )}
           <div className={styles.LeftBarColumn}>
             {hours.map((hour, index) => (
@@ -904,6 +950,11 @@ export default function WeekCalendar({
                 className={`${styles.DayColumn} ${
                   !isSelectedDay ? styles.DayColumnHidden : ""
                 }`}
+                ref={(el) => {
+                  if (isTodayDay) {
+                    todayDayColumnRef.current = el;
+                  }
+                }}
               >
                 {hours.map((hour, index) => (
                   <div key={`${day}-${hour}`} className={styles.CalendarRow}>

@@ -439,10 +439,18 @@
   left: 82.5px;
   right: 1.5px;
   height: 2px;
-  background-color: #d5ff05;
+  /* Standard: blass (für alle Tage) */
+  background-color: rgba(213, 255, 5, 0.22);
   z-index: 100;
   pointer-events: none;
-  box-shadow: 0 0 4px rgba(213, 255, 5, 0.6), 0 0 8px rgba(213, 255, 5, 0.3);
+  box-shadow: 0 0 3px rgba(213, 255, 5, 0.25);
+}
+
+.CurrentTimeIndicatorToday {
+  /* Nur für den heutigen Tag kräftig */
+  right: auto !important;
+  background-color: rgba(213, 255, 5, 0.95);
+  box-shadow: 0 0 6px rgba(213, 255, 5, 0.65), 0 0 10px rgba(213, 255, 5, 0.25);
 }
 
 /* Mobile Media Queries */
