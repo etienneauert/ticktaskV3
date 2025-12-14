@@ -66,11 +66,24 @@ export default function Weekly({
           todayTasks.map((task, index) => {
             const checked = completedTasks.has(task);
             return (
-              <div key={`${task}-${index}`} className={styles.taskItem}>
+              <div
+                key={`${task}-${index}`}
+                className={styles.taskItem}
+                onClick={() => toggleTask(task)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggleTask(task);
+                  }
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={checked}
                   onChange={() => toggleTask(task)}
+                  onClick={(e) => e.stopPropagation()}
                   className={styles.checkbox}
                 />
                 <span

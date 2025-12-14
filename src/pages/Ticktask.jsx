@@ -139,7 +139,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   const minLoadingTimeRef = useRef(null);
 
   // Gast-Datenmanagement
-  const { guestData, updateGuestData, clearGuestData } =
+  const { guestData, guestDataLoaded, updateGuestData, clearGuestData } =
     useGuestData(isGuestMode);
 
   // Manage weekly tasks in the main component
@@ -200,25 +200,59 @@ export function Ticktask({ user, isGuestMode = false }) {
     return 0;
   });
 
-  // Gast-Modus: Verwende Gast-Daten wenn im Gast-Modus
+  // Gast-Modus: Tasks kommen aus guestData, aber Completed-Sets sind lokale React-States
+  // (guestData Updates sind async -> sonst entsteht "double click" / Reset-Bug).
   const currentWeeklyTasks = isGuestMode ? guestData.weeklyTasks : weeklyTasks;
-  const currentMorningTasks = isGuestMode
-    ? guestData.morningTasks
-    : morningTasks;
+  const currentMorningTasks = isGuestMode ? guestData.morningTasks : morningTasks;
   const currentAbendTasks = isGuestMode ? guestData.abendTasks : abendTasks;
   const currentDailyTasks = isGuestMode ? guestData.dailyTasks : dailyTasks;
-  const currentMorningCompleted = isGuestMode
-    ? guestData.morningCompleted
-    : morningCompleted;
-  const currentAbendCompleted = isGuestMode
-    ? guestData.abendCompleted
-    : abendCompleted;
-  const currentWeeklyCompleted = isGuestMode
-    ? guestData.weeklyCompleted
-    : weeklyCompleted;
-  const currentDailyCompleted = isGuestMode
-    ? guestData.dailyCompleted
-    : dailyCompleted;
+  const currentMorningCompleted = morningCompleted;
+  const currentAbendCompleted = abendCompleted;
+  const currentWeeklyCompleted = weeklyCompleted;
+  const currentDailyCompleted = dailyCompleted;
+
+  // Guest Mode: hydrate completed sets ONCE after guest data is loaded.
+  // Avoid continuous re-hydration, which can overwrite user clicks (double-click bug).
+  const didHydrateGuestCompletedRef = useRef(false);
+  useEffect(() => {
+    if (!isGuestMode) {
+      didHydrateGuestCompletedRef.current = false;
+      return;
+    }
+    if (!guestDataLoaded) return;
+    if (didHydrateGuestCompletedRef.current) return;
+
+    // Always CLONE to avoid sharing the same Set reference between checklists
+    // (can cause Daily toggles to affect Weekly, etc.).
+    const toSet = (value) => {
+      if (value instanceof Set) return new Set(value);
+      if (Array.isArray(value)) return new Set(value);
+      return new Set();
+    };
+    const nextMorning = toSet(guestData.morningCompleted);
+    const nextAbend = toSet(guestData.abendCompleted);
+    const nextWeekly = toSet(guestData.weeklyCompleted);
+    const nextDaily = toSet(guestData.dailyCompleted);
+
+    setMorningCompleted(nextMorning);
+    setAbendCompleted(nextAbend);
+    setWeeklyCompleted(nextWeekly);
+    setDailyCompleted(nextDaily);
+
+    morningCompletedRef.current = nextMorning;
+    abendCompletedRef.current = nextAbend;
+    weeklyCompletedRef.current = nextWeekly;
+    dailyCompletedRef.current = nextDaily;
+
+    didHydrateGuestCompletedRef.current = true;
+  }, [
+    isGuestMode,
+    guestDataLoaded,
+    guestData.morningCompleted,
+    guestData.abendCompleted,
+    guestData.weeklyCompleted,
+    guestData.dailyCompleted,
+  ]);
 
   // Error message state
   const [errorMessage, setErrorMessage] = useState("");
@@ -1831,6 +1865,17 @@ export function Ticktask({ user, isGuestMode = false }) {
       const unsubscribeCompleted = onSnapshot(
         completedCol,
         (snapshot) => {
+          const dayNames = [
+            "sunday",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+          ];
+          const todayDayName = dayNames[new Date().getDay()];
+
           snapshot.docs.forEach((docSnap) => {
             const data = docSnap.data();
             const docId = docSnap.id;
@@ -1908,8 +1953,21 @@ export function Ticktask({ user, isGuestMode = false }) {
                 }
               } else if (docId.startsWith("weekly_")) {
                 const day = docId.replace("weekly_", "");
-                currentSet = weeklyCompletedRef.current;
                 const newSet = new Set(data.tasks);
+
+                // Immer pro Tag cachen
+                localStorage.setItem(
+                  `ticktask_weekly_completed_${user.uid}_${day}`,
+                  JSON.stringify(data.tasks)
+                );
+
+                // UI-State `weeklyCompleted` repräsentiert NUR den heutigen Tag.
+                // Sonst überschreiben weekly_docs von anderen Tagen den Zustand -> "Doppelklick" / Ghost-Toggles.
+                if (day !== todayDayName) {
+                  return;
+                }
+
+                currentSet = weeklyCompletedRef.current;
                 hasChanged =
                   currentSet.size !== newSet.size ||
                   Array.from(currentSet).some((item) => !newSet.has(item)) ||
@@ -1919,10 +1977,6 @@ export function Ticktask({ user, isGuestMode = false }) {
                   isUpdatingFromFirebase.current = true;
                   setWeeklyCompleted(newSet);
                   weeklyCompletedRef.current = newSet;
-                  localStorage.setItem(
-                    `ticktask_weekly_completed_${user.uid}_${day}`,
-                    JSON.stringify(data.tasks)
-                  );
                   setTimeout(() => {
                     isUpdatingFromFirebase.current = false;
                   }, 500);
@@ -2039,6 +2093,17 @@ export function Ticktask({ user, isGuestMode = false }) {
             );
             getDocs(completedCol)
               .then((snapshot) => {
+                const dayNames = [
+                  "sunday",
+                  "monday",
+                  "tuesday",
+                  "wednesday",
+                  "thursday",
+                  "friday",
+                  "saturday",
+                ];
+                const todayDayName = dayNames[new Date().getDay()];
+
                 snapshot.docs.forEach((docSnap) => {
                   const data = docSnap.data();
                   const docId = docSnap.id;
@@ -2070,13 +2135,17 @@ export function Ticktask({ user, isGuestMode = false }) {
                       );
                     } else if (docId.startsWith("weekly_")) {
                       const newSet = new Set(data.tasks);
-                      setWeeklyCompleted(newSet);
-                      weeklyCompletedRef.current = newSet;
                       const day = docId.replace("weekly_", "");
                       localStorage.setItem(
                         `ticktask_weekly_completed_${user.uid}_${day}`,
                         JSON.stringify(data.tasks)
                       );
+
+                      // Nur der heutige Tag ist relevant für den UI-State.
+                      if (day === todayDayName) {
+                        setWeeklyCompleted(newSet);
+                        weeklyCompletedRef.current = newSet;
+                      }
                     }
                   }
                 });
@@ -2468,12 +2537,12 @@ export function Ticktask({ user, isGuestMode = false }) {
   // Wrapper-Funktionen für Setter im Guest-Mode
   const setMorningCompletedWrapper = (value) => {
     if (isGuestMode) {
-      const currentValue = guestData.morningCompleted || new Set();
-      const newValue =
-        typeof value === "function" ? value(currentValue) : value;
-      updateGuestData({ morningCompleted: newValue });
-      setMorningCompleted(newValue);
-      morningCompletedRef.current = newValue;
+      setMorningCompleted((prev) => {
+        const newValue = typeof value === "function" ? value(prev) : value;
+        updateGuestData({ morningCompleted: newValue });
+        morningCompletedRef.current = newValue;
+        return newValue;
+      });
     } else {
       const newValue =
         typeof value === "function" ? value(morningCompleted) : value;
@@ -2502,12 +2571,12 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   const setAbendCompletedWrapper = (value) => {
     if (isGuestMode) {
-      const currentValue = guestData.abendCompleted || new Set();
-      const newValue =
-        typeof value === "function" ? value(currentValue) : value;
-      updateGuestData({ abendCompleted: newValue });
-      setAbendCompleted(newValue);
-      abendCompletedRef.current = newValue;
+      setAbendCompleted((prev) => {
+        const newValue = typeof value === "function" ? value(prev) : value;
+        updateGuestData({ abendCompleted: newValue });
+        abendCompletedRef.current = newValue;
+        return newValue;
+      });
     } else {
       const newValue =
         typeof value === "function" ? value(abendCompleted) : value;
@@ -2531,12 +2600,12 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   const setWeeklyCompletedWrapper = (value) => {
     if (isGuestMode) {
-      const currentValue = guestData.weeklyCompleted || new Set();
-      const newValue =
-        typeof value === "function" ? value(currentValue) : value;
-      updateGuestData({ weeklyCompleted: newValue });
-      setWeeklyCompleted(newValue);
-      weeklyCompletedRef.current = newValue;
+      setWeeklyCompleted((prev) => {
+        const newValue = typeof value === "function" ? value(prev) : value;
+        updateGuestData({ weeklyCompleted: newValue });
+        weeklyCompletedRef.current = newValue;
+        return newValue;
+      });
     } else {
       const newValue =
         typeof value === "function" ? value(weeklyCompleted) : value;
@@ -2574,12 +2643,12 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   const setDailyCompletedWrapper = (value) => {
     if (isGuestMode) {
-      const currentValue = guestData.dailyCompleted || new Set();
-      const newValue =
-        typeof value === "function" ? value(currentValue) : value;
-      updateGuestData({ dailyCompleted: newValue });
-      setDailyCompleted(newValue);
-      dailyCompletedRef.current = newValue;
+      setDailyCompleted((prev) => {
+        const newValue = typeof value === "function" ? value(prev) : value;
+        updateGuestData({ dailyCompleted: newValue });
+        dailyCompletedRef.current = newValue;
+        return newValue;
+      });
     } else {
       const newValue =
         typeof value === "function" ? value(dailyCompleted) : value;

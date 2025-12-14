@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 export const useGuestData = (isGuestMode) => {
+  const [guestDataLoaded, setGuestDataLoaded] = useState(false);
   const [guestData, setGuestData] = useState({
     tasks: [],
     frequentTemplates: [],
@@ -27,6 +28,7 @@ export const useGuestData = (isGuestMode) => {
 
   useEffect(() => {
     if (isGuestMode) {
+      setGuestDataLoaded(false);
       // Lade Gast-Daten aus localStorage
       const saved = localStorage.getItem("ticktask_guest_data");
       if (saved) {
@@ -46,10 +48,16 @@ export const useGuestData = (isGuestMode) => {
             parsed.dailyCompleted = new Set(parsed.dailyCompleted);
           }
           setGuestData(parsed);
+          setGuestDataLoaded(true);
         } catch (e) {
           console.error("Failed to load guest data:", e);
+          setGuestDataLoaded(true);
         }
+      } else {
+        setGuestDataLoaded(true);
       }
+    } else {
+      setGuestDataLoaded(false);
     }
   }, [isGuestMode]);
 
@@ -104,5 +112,5 @@ export const useGuestData = (isGuestMode) => {
     }
   };
 
-  return { guestData, updateGuestData, clearGuestData };
+  return { guestData, guestDataLoaded, updateGuestData, clearGuestData };
 };
