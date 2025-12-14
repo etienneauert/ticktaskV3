@@ -74,6 +74,15 @@
 .DayHeaderToday {
   border: 2px solid #d5ff05;
   box-shadow: 0 0 8px rgba(213, 255, 5, 0.3);
+  /* sicherstellen, dass der gelbe Rahmen nicht von Nachbar-Elementen „überdeckt“ wird */
+  z-index: 2;
+}
+
+/* Sonderfall: Sonntag (letzte DayHeader-Spalte). Normalerweise ist dort border-right:0,
+   aber beim Today-Highlight brauchen wir die rechte gelbe Linie + gerundete Ecke. */
+.CalendarHeader > .DayHeader.DayHeaderToday:nth-last-child(2) {
+  border-right: 2px solid #d5ff05;
+  border-top-right-radius: 18px;
 }
 
 .DayName {

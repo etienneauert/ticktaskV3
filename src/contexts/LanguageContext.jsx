@@ -271,6 +271,15 @@ export const LanguageProvider = ({ children }) => {
       ideaDescription:
         "TickTask ist dafür da, dich vom Planen ins Machen zu bringen.\n\nViele To‑dos scheitern nicht an der Schwierigkeit, sondern am Start: Du schiebst es auf, verlierst dich in einer langen Liste oder springst zwischen Aufgaben hin und her. TickTask reduziert genau diese Reibung.\n\nDu legst eine Aufgabe an, gibst eine realistische Dauer an und startest den Countdown. Dadurch entsteht ein klarer Fokus‑Moment: „Jetzt mache ich genau diese eine Sache.“ Die Zeit läuft sichtbar runter – das hilft dir, dranzubleiben, schneller in einen Flow zu kommen und nicht nach der Hälfte abzubrechen.\n\nWichtig dabei: Es läuft immer nur ein Task zur gleichen Zeit. Das ist Absicht. So vermeidest du Multitasking und bekommst schneller echte Ergebnisse.\n\nNeben einzelnen Tasks unterstützt dich TickTask auch bei Routinen (Morning/Daily/Weekly/Evening). Du hakst sie Schritt für Schritt ab und beendest den Tag bewusst. So wird aus „ich müsste mal“ ein klarer Abschluss – und du siehst deinen Fortschritt über Zeit.\n\nKurz: TickTask ist ein Fokus‑System mit Countdown, das dir den Einstieg erleichtert, Aufschieben reduziert und dir hilft, Dinge wirklich fertig zu machen.",
       howItWorks: "So funktioniert’s",
+      howItWorksTasksTitle: "Tasks",
+      howItWorksTasksBody:
+        "Du erstellst Tasks mit einer geschätzten Dauer und kannst sie als dringend markieren. Wenn du einen Task startest, läuft ein Countdown – das hilft dir, fokussiert zu bleiben und den Task wirklich abzuschließen.\n\nOptional kannst du einen Task terminieren (Tag + Uhrzeit). Dann erscheint er automatisch im Kalender zur passenden Zeit. Außerdem kannst du einem Task ein Goal zuweisen, damit deine erledigten Aufgaben sichtbar zu deinen Zielen beitragen.",
+      howItWorksCalendarTitle: "Kalender",
+      howItWorksCalendarBody:
+        "Im Kalender siehst du terminierte Tasks und Alltagstermine in einer Wochenansicht. So erkennst du sofort, wann etwas ansteht – und was realistisch in deinen Tag passt.\n\nUnter Einstellungen → Kalender kannst du den sichtbaren Zeitraum festlegen (Start- und Endzeit) und die Sichtbarkeit des Kalenders steuern. Das macht die Ansicht kompakter und passt sie an deinen Tagesrhythmus an.",
+      howItWorksGoalsTitle: "Goals",
+      howItWorksGoalsBody:
+        "Goals sind deine langfristigen Ziele. Du kannst ein Ziel anlegen (inkl. optionalem Datum und Priorität) und Tasks diesem Ziel zuordnen.\n\nWenn du Tasks erledigst, siehst du beim Goal den Fortschritt und die dazugehörigen erledigten Tasks. So hängen Tasks, Kalender und Goals zusammen: Tasks sind das tägliche „Tun“, der Kalender ordnet sie zeitlich ein, und Goals zeigen dir den roten Faden und deinen Fortschritt.",
       createTasks: "Erstelle Tasks:",
       createTasksDesc:
         "Füge deine Aufgaben hinzu oder nutze Vorlagen (Frequent Tasks), die du regelmäßig benötigst.",
@@ -544,6 +553,15 @@ export const LanguageProvider = ({ children }) => {
       ideaDescription:
         "TickTask is built to help you move from planning to doing.\n\nMost to‑dos don’t fail because they’re hard — they fail at the start: you procrastinate, get overwhelmed by a long list, or bounce between tasks. TickTask removes that friction.\n\nYou create a task, set a realistic duration, and start the countdown. That creates a clear focus moment: “Right now, I’m doing this one thing.” Seeing time go down helps you stay engaged, get into flow faster, and avoid quitting halfway.\n\nBy design, only one task can run at a time. That’s intentional: it reduces multitasking and helps you produce real progress.\n\nBeyond single tasks, TickTask supports routines (Morning/Daily/Weekly/Evening). You check them off step by step and end the day deliberately. That turns “I should…” into a clear finish — and lets you see your progress over time.\n\nIn short: TickTask is a countdown‑driven focus system that makes starting easier, reduces procrastination, and helps you actually finish things.",
       howItWorks: "How it works",
+      howItWorksTasksTitle: "Tasks",
+      howItWorksTasksBody:
+        "You create tasks with an estimated duration and can mark them as urgent. When you start a task, a countdown runs — helping you stay focused and actually finish it.\n\nOptionally, you can schedule a task (day + time). It will then appear automatically in the calendar at the right time. You can also assign a task to a goal so completed work contributes to your longer‑term progress.",
+      howItWorksCalendarTitle: "Calendar",
+      howItWorksCalendarBody:
+        "The calendar shows scheduled tasks and routine appointments in a weekly view. This helps you see what’s coming up and what realistically fits into your day.\n\nIn Settings → Calendar you can set the visible time range (start and end hour) and toggle calendar visibility. That keeps the view clean and tailored to your daily rhythm.",
+      howItWorksGoalsTitle: "Goals",
+      howItWorksGoalsBody:
+        "Goals are your longer‑term outcomes. You can create a goal (with optional target date and priority) and link tasks to it.\n\nAs you complete tasks, you’ll see goal progress and the completed tasks that contributed. That’s how everything connects: tasks are the daily action, the calendar places them in time, and goals provide direction and track your progress.",
       createTasks: "Create Tasks:",
       createTasksDesc:
         "Add your tasks or use templates (Frequent Tasks) that you need regularly.",

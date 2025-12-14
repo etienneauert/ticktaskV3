@@ -140,7 +140,7 @@
 }
 
 .content {
-  padding: 20px 0 10px 0;
+  padding: 20px 18px 10px 18px;
   background-color: transparent !important;
   color: #fff;
   line-height: 1.7;
@@ -198,15 +198,32 @@
 }
 
 .content h4 {
+  /* Überschriften: nicht gelb, nicht unterstrichen, leicht eingerückt */
   color: #d5ff05;
   font-size: 20px;
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0; /* Standard (Desktop) */
   background-color: transparent !important;
   font-weight: 600;
   line-height: 1.3;
-  padding-bottom: 8px;
-  border-bottom: 2px solid rgba(213, 255, 5, 0.3);
-  display: inline-block;
+  padding-bottom: 0;
+  border-bottom: none;
+  text-align: left;
+  display: block;
+}
+
+/* Nur Calendar + Goals (nicht das erste Heading) bekommen Extra-Abstand nach oben */
+.content h4:not(:first-of-type) {
+  margin-top: 34px;
+}
+
+@media (max-width: 768px) {
+  .content h4 {
+    margin-bottom: 0px;
+  }
+
+  .content p {
+    margin-bottom: 6px;
+  }
 }
 
 .content h4:hover {
@@ -214,16 +231,16 @@
 }
 
 .content p {
-  margin: 0 0 16px 0;
+  margin: 0 0 10px 0;
   background-color: transparent !important;
   color: #e0e0e0;
   font-size: 17px;
-  line-height: 2.05;
-  text-align: center;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  white-space: pre-line;
+  line-height: 1.75;
+  text-align: left;
+  max-width: 900px;
+  margin-left: 0;
+  margin-right: 0;
+  white-space: normal;
 }
 
 .content p:hover {
@@ -344,6 +361,17 @@
 
   .content {
     font-size: 16px;
+    /* weniger "Luft" oben/unten auf Mobile */
+    padding: 6px 10px 6px 10px;
+  }
+
+  .tabPanel {
+    padding: 8px 0;
+  }
+
+  /* Weniger Abstand zwischen den Abschnitten (Calendar/Goals) auf Mobile */
+  .content h4:not(:first-of-type) {
+    margin-top: 16px;
   }
 
   .section {
@@ -358,12 +386,13 @@
 
   .content h4 {
     font-size: 18px;
-    margin-bottom: 16px;
+    margin-bottom: 0px;
   }
 
   .content p {
     font-size: 15px;
     max-width: 100%;
+    margin-bottom: 4px;
   }
 
   .featureList {
@@ -398,6 +427,15 @@
 
   .content {
     font-size: 14px;
+    padding: 6px 8px 6px 8px;
+  }
+
+  .tabPanel {
+    padding: 6px 0;
+  }
+
+  .content h4:not(:first-of-type) {
+    margin-top: 14px;
   }
 
   .section {
@@ -412,12 +450,13 @@
 
   .content h4 {
     font-size: 16px;
-    margin-bottom: 14px;
+    margin-bottom: 0px;
   }
 
   .content p {
     font-size: 14px;
     max-width: 100%;
+    margin-bottom: 4px;
   }
 
   .featureList {
@@ -440,5 +479,40 @@
   .techItem {
     font-size: 13px;
     padding: 8px 10px;
+  }
+}
+
+/* Final "Mobile/Tablet" spacing overrides (ensure they win the cascade) */
+@media (max-width: 1024px) {
+  .tabPanel {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .content h4 {
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+  }
+
+  /* Abstand direkt unter der Überschrift minimieren */
+  .content h4 + p {
+    margin-top: 0px !important;
+  }
+
+  /* Abstand zwischen Abschnitten (Calendar/Goals) klein halten */
+  .content h4:not(:first-of-type) {
+    margin-top: 10px !important;
+  }
+
+  .content p {
+    margin: 0 0 4px 0 !important;
+    padding: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .content h4:not(:first-of-type) {
+    margin-top: 8px !important;
   }
 }

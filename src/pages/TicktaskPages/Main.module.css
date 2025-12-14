@@ -170,7 +170,7 @@
   .CalendarLabelContainer {
     justify-content: center;
     margin: 40px auto 0;
-    padding: 26px 10px;
+    padding: 16px 10px;
     height: auto;
   }
 
@@ -182,7 +182,7 @@
     width: 100%;
     text-align: center;
     font-size: 18px;
-    padding-block: 18px;
+    padding-block: 10px;
   }
 
   .MainTasks {
@@ -210,7 +210,7 @@
 
   .WeekCalendarContainer {
     padding: 0 5px;
-    margin-top: 52px;
+    margin-top: 20px;
     overflow-x: visible;
   }
 }
@@ -224,7 +224,7 @@
   .CalendarLabelContainer {
     justify-content: center;
     margin: 30px auto 0;
-    padding: 26px 10px;
+    padding: 16px 10px;
     height: auto;
   }
 
@@ -236,7 +236,7 @@
     width: 100%;
     text-align: center;
     font-size: 16px;
-    padding-block: 18px;
+    padding-block: 10px;
   }
 
   .MainTasks {

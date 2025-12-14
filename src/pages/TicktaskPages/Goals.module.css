@@ -213,7 +213,7 @@
     grid-template-columns: 1fr 50px;
     grid-template-rows: auto auto;
     column-gap: 10px;
-    row-gap: 52px;
+    row-gap: 20px;
     align-items: center;
     justify-items: stretch;
   }
@@ -227,7 +227,7 @@
     grid-column: 1 / -1;
     text-align: center;
     width: 100%;
-    padding-block: 18px;
+    padding-block: 10px;
   }
 
   .GoalsInputContainer input {
@@ -268,7 +268,7 @@
     grid-template-columns: 1fr 50px;
     grid-template-rows: auto auto;
     column-gap: 10px;
-    row-gap: 52px;
+    row-gap: 18px;
     align-items: center;
     justify-items: stretch;
   }
@@ -282,7 +282,7 @@
     grid-column: 1 / -1;
     text-align: center;
     width: 100%;
-    padding-block: 18px;
+    padding-block: 10px;
   }
 
   .GoalsInputContainer input {

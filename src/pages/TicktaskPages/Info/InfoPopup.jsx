@@ -9,6 +9,14 @@ export default function InfoPopup({ open, onClose }) {
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
   const { t } = useLanguage();
 
+  const renderParagraphs = (text) => {
+    const parts = String(text || "")
+      .split(/\n\s*\n/g)
+      .map((p) => p.trim())
+      .filter(Boolean);
+    return parts.map((p, idx) => <p key={idx}>{p}</p>);
+  };
+
   const tabs = [
     { id: 0, label: t("infoTabAbout") },
     { id: 1, label: t("infoTabHowItWorks") },
@@ -98,13 +106,22 @@ export default function InfoPopup({ open, onClose }) {
             {activeTab === 0 && (
               <div className={styles.tabPanel}>
                 <div className={styles.content}>
-                  <p>{t("ideaDescription")}</p>
+                  {renderParagraphs(t("ideaDescription"))}
                 </div>
               </div>
             )}
             {activeTab === 1 && (
               <div className={styles.tabPanel}>
-                {/* Inhalt für "Wie es funktioniert" */}
+                <div className={styles.content}>
+                  <h4>{t("howItWorksTasksTitle")}</h4>
+                  {renderParagraphs(t("howItWorksTasksBody"))}
+
+                  <h4>{t("howItWorksCalendarTitle")}</h4>
+                  {renderParagraphs(t("howItWorksCalendarBody"))}
+
+                  <h4>{t("howItWorksGoalsTitle")}</h4>
+                  {renderParagraphs(t("howItWorksGoalsBody"))}
+                </div>
               </div>
             )}
           </div>

@@ -1091,11 +1091,73 @@
 
 /* Mobile Media Queries */
 @media (max-width: 768px) {
+  /* Task-Popup (Popup.jsx): mehr Luft links/rechts */
+  .taskModal {
+    width: calc(100vw - 28px);
+    max-width: calc(100vw - 28px);
+    /* deutlich höher auf Mobile */
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  /* Close-Button in derselben Zeile wie die Uhrzeit (nur Task-Popup) */
+  .taskModal .modalcloseandinfo {
+    align-items: center;
+  }
+
+  .taskModal .close {
+    position: static;
+    top: auto;
+    right: auto;
+    margin-left: auto;
+  }
+
+  /* Mobile: Tag oben, Stunde/Minute nebeneinander darunter (nur Task-Popup) */
+  .taskModal .scheduleInputs {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    column-gap: 10px;
+    row-gap: 12px;
+    align-items: center;
+    justify-items: stretch;
+  }
+
+  .taskModal .scheduleInputs > :first-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-bottom: 10px;
+  }
+
+  .taskModal .scheduleInputs > :nth-child(2) {
+    grid-column: 1;
+  }
+
+  .taskModal .scheduleInputs > :nth-child(3) {
+    grid-column: 2;
+    justify-self: center;
+    margin: 0;
+  }
+
+  .taskModal .scheduleInputs > :nth-child(4) {
+    grid-column: 3;
+  }
+
+  .taskModal .scheduleInputs .timeSelect {
+    width: 100%;
+  }
+
   .modal {
     width: 95vw;
     height: 80vh;
     max-height: 500px;
     padding: 20px;
+  }
+
+  /* Task-Popup soll wirklich die volle Gerätehöhe nutzen (überschreibt .modal) */
+  .modal.taskModal {
+    /* Mobile: fast volle Höhe, aber nicht komplett */
+    height: calc(100dvh - 80px) !important;
+    max-height: calc(100dvh - 80px) !important;
   }
 
   .close {
@@ -1107,15 +1169,20 @@
     margin-bottom: 30px;
   }
 
+  /* Weniger Abstand unter der Demo-Task-Vorschau */
+  .taskModal .demoPreview {
+    margin-bottom: 0px !important;
+  }
+
   .demoTask {
     min-width: 300px;
     max-width: 100%;
-    padding: 5px 8px;
-    min-height: 55px;
+    padding: 4px 8px;
+    min-height: 46px;
   }
 
   .demoText {
-    font-size: 14px;
+    font-size: 24px;
     margin-right: 12px;
   }
 
@@ -1141,23 +1208,25 @@
 
   .durationButtons {
     gap: 15px;
-    margin-top: 15px;
+    margin-top: 0;
     flex-wrap: wrap;
     justify-content: center;
   }
 
+  .Duration h2 {
+    margin-bottom: 16px;
+  }
+
   .durationButtons button {
-    flex: 1 1 calc(33.333% - 10px);
-    min-width: 80px;
-    max-width: calc(33.333% - 10px);
+    flex: 0 0 auto;
+    width: 108px;
+    height: 46px;
+    min-width: 108px;
+    max-width: 108px;
   }
 
   .durationButtons .reload {
     flex: 0 0 auto;
-  }
-
-  .demoPreview {
-    margin-top: 90px !important;
   }
 
   .demoTask {
@@ -1170,13 +1239,14 @@
   }
 
   .Duration {
-    margin-top: 70px !important;
+    margin-top: 0px !important;
     margin-bottom: 30px !important;
   }
 
   .durationButtons button {
-    padding: 8px 12px;
-    font-size: 12px;
+    padding: 10px 10px;
+    font-size: 14px;
+    line-height: 1;
   }
 
   .durationButtons button:hover {
@@ -1185,12 +1255,10 @@
   }
 
   .durationButtons button img {
-    width: 11px;
+    width: 16px;
   }
 
-  .Duration {
-    margin-top: 30px;
-  }
+  /* Hinweis: margin-top wird oben per !important gesetzt */
 
   .currentTime {
     padding: 8px 12px;
@@ -1225,10 +1293,34 @@
 }
 
 @media (max-width: 480px) {
+  .taskModal .demoPreview {
+    margin-bottom: 6px !important;
+  }
+
+  /* Task-Popup (Popup.jsx): noch etwas mehr Rand auf sehr kleinen Screens */
+  .taskModal {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+
+  .taskModal .scheduleInputs {
+    column-gap: 8px;
+    row-gap: 10px;
+  }
+
   .modal {
     width: 98vw;
     height: 85vh;
     padding: 15px;
+  }
+
+  /* Task-Popup soll wirklich die volle Gerätehöhe nutzen (überschreibt .modal) */
+  .modal.taskModal {
+    /* ≤480px ebenfalls: fast volle Höhe, aber nicht komplett */
+    height: calc(100dvh - 80px) !important;
+    max-height: calc(100dvh - 80px) !important;
   }
 
   .close {
@@ -1248,7 +1340,7 @@
   .demoTask {
     min-width: 250px;
     padding: 4px 6px;
-    min-height: 60px;
+    min-height: 46px;
   }
 
   .demoText {
@@ -1278,15 +1370,21 @@
 
   .durationButtons {
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 0;
     flex-wrap: wrap;
     justify-content: center;
   }
 
+  .Duration h2 {
+    margin-bottom: 16px;
+  }
+
   .durationButtons button {
-    flex: 1 1 calc(33.333% - 7px);
-    min-width: 70px;
-    max-width: calc(33.333% - 7px);
+    flex: 0 0 auto;
+    width: 100px;
+    height: 44px;
+    min-width: 100px;
+    max-width: 100px;
   }
 
   .durationButtons .reload {
@@ -1307,13 +1405,14 @@
   }
 
   .Duration {
-    margin-top: 70px !important;
+    margin-top: 0px !important;
     margin-bottom: 30px !important;
   }
 
   .durationButtons button {
-    padding: 5px 8px;
-    font-size: 10px;
+    padding: 9px 8px;
+    font-size: 13px;
+    line-height: 1;
   }
 
   .durationButtons button:hover {
@@ -1322,12 +1421,10 @@
   }
 
   .durationButtons button img {
-    width: 9px;
+    width: 14px;
   }
 
-  .Duration {
-    margin-top: 20px;
-  }
+  /* Hinweis: margin-top wird oben per !important gesetzt */
 
   .currentTime {
     padding: 6px 10px;
