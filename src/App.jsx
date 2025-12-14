@@ -20,10 +20,53 @@ export default function App() {
   });
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
+  const [authInitError, setAuthInitError] = useState(null);
   const [isGuestMode, setIsGuestMode] = useState(() => {
     // Prüfe localStorage beim Initialisieren
     return localStorage.getItem("ticktask_guestMode") === "true";
   });
+
+  const handleGuestLogin = () => {
+    try {
+      // Guest Mode should ALWAYS open in English.
+      // Preserve the user's previous preference to restore after leaving Guest Mode.
+      const preGuestKey = "ticktask_pre_guest_language";
+      const current = localStorage.getItem("ticktask_language");
+      if (current && current !== "en" && !localStorage.getItem(preGuestKey)) {
+        localStorage.setItem(preGuestKey, current);
+      }
+
+      localStorage.setItem("ticktask_language", "en");
+      window.dispatchEvent(
+        new CustomEvent("ticktask_force_language", {
+          detail: { language: "en" },
+        })
+      );
+    } catch {
+      // ignore
+    }
+    setIsGuestMode(true);
+  };
+
+  // When leaving Guest Mode, restore the previously saved language (if any)
+  useEffect(() => {
+    if (isGuestMode) return;
+    try {
+      const preGuestKey = "ticktask_pre_guest_language";
+      const prev = localStorage.getItem(preGuestKey);
+      if (prev && prev !== localStorage.getItem("ticktask_language")) {
+        localStorage.setItem("ticktask_language", prev);
+        window.dispatchEvent(
+          new CustomEvent("ticktask_force_language", {
+            detail: { language: prev },
+          })
+        );
+      }
+      if (prev) localStorage.removeItem(preGuestKey);
+    } catch {
+      // ignore
+    }
+  }, [isGuestMode]);
 
   // Speichere Guest-Mode im localStorage
   useEffect(() => {
@@ -48,25 +91,23 @@ export default function App() {
 
   useEffect(() => {
     let unsubscribe = null;
-    let didFinish = false;
+    let gotFirstAuthEvent = false;
 
     // Fallback: nie im Loader hängen bleiben (z.B. wenn onAuthStateChanged wirft oder nie feuert)
     const fallbackTimer = window.setTimeout(() => {
-      if (didFinish) return;
+      if (gotFirstAuthEvent) return;
       console.warn("⚠️ Auth init timeout – proceeding without auth state");
       setAuthInitError((prev) => prev || new Error("Auth init timeout"));
       setAuthReady(true);
-      didFinish = true;
     }, 4000);
 
     try {
       unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (didFinish) return;
+        gotFirstAuthEvent = true;
         window.clearTimeout(fallbackTimer);
         setIsLoggedIn(!!user);
         setUser(user);
-        setAuthReady(true);
-        didFinish = true;
+        setAuthReady(true); // idempotent
 
         // Wenn ein Benutzer eingeloggt ist, verlasse den Guest-Mode
         if (user) {
@@ -78,7 +119,6 @@ export default function App() {
       window.clearTimeout(fallbackTimer);
       setAuthInitError(e);
       setAuthReady(true);
-      didFinish = true;
     }
 
     return () => {
@@ -101,12 +141,12 @@ export default function App() {
         ) : showLogin ? (
           <Login
             onSwitchToAuth={() => setShowLogin(false)}
-            onGuestLogin={() => setIsGuestMode(true)}
+            onGuestLogin={handleGuestLogin}
           />
         ) : (
           <Auth
             onSwitchToLogin={() => setShowLogin(true)}
-            onGuestLogin={() => setIsGuestMode(true)}
+            onGuestLogin={handleGuestLogin}
           />
         )}
       </div>

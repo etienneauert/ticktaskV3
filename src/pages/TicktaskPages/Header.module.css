@@ -42,6 +42,10 @@
 }
 .fireIcon {
   width: 30px;
+  height: 30px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
 }
 
 .streak {
@@ -243,7 +247,8 @@
   }
 
   .fireIcon {
-    width: 32px;
+    width: 26px !important;
+    height: 26px !important;
   }
 
   .currentTimeHeader {
@@ -301,7 +306,8 @@
   }
 
   .fireIcon {
-    width: 28px;
+    width: 22px !important;
+    height: 22px !important;
   }
 
   .currentTimeHeader {

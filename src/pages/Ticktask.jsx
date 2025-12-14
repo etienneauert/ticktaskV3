@@ -2916,6 +2916,7 @@ export function Ticktask({ user, isGuestMode = false }) {
                 isLastStep={currentTutorialStep === tutorialSteps.length - 1}
                 currentStep={currentTutorialStep + 1}
                 totalSteps={tutorialSteps.length}
+                isGuestMode={isGuestMode}
               />
             </>
           )}
@@ -3065,6 +3066,7 @@ export function Ticktask({ user, isGuestMode = false }) {
               isLastStep={currentTutorialStep === tutorialSteps.length - 1}
               currentStep={currentTutorialStep + 1}
               totalSteps={tutorialSteps.length}
+              isGuestMode={isGuestMode}
             />
           </>
         )}

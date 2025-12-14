@@ -15,6 +15,7 @@ export default function TutorialTooltip({
   isLastStep = false,
   currentStep = 1,
   totalSteps = 1,
+  isGuestMode = false,
 }) {
   const { t } = useLanguage();
   // Initiale Position außerhalb des Viewports, damit kein "Springen" sichtbar ist
@@ -258,7 +259,7 @@ export default function TutorialTooltip({
     <div
       className={`${styles.tooltip} ${
         targetId === "info-button" ? styles.infoButtonTooltip : ""
-      }`}
+      } ${isGuestMode ? styles.guestTooltip : ""}`}
       style={{ ...finalStyle, ...displayStyle }}
       data-position={position}
     >

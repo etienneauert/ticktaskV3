@@ -22,6 +22,19 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem("ticktask_language", language);
   }, [language]);
 
+  // Allow imperative language change (used e.g. for first-time Guest Mode default)
+  useEffect(() => {
+    const handleForceLanguage = (event) => {
+      const next = event?.detail?.language;
+      if (!next) return;
+      setLanguage(next);
+    };
+    window.addEventListener("ticktask_force_language", handleForceLanguage);
+    return () => {
+      window.removeEventListener("ticktask_force_language", handleForceLanguage);
+    };
+  }, []);
+
   const translations = {
     de: {
       // App allgemein

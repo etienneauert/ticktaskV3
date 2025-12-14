@@ -105,7 +105,7 @@ export default function InfoPopup({ open, onClose }) {
           <div className={styles.tabContent}>
             {activeTab === 0 && (
               <div className={styles.tabPanel}>
-                <div className={styles.content}>
+                <div className={`${styles.content} ${styles.aboutContent}`}>
                   {renderParagraphs(t("ideaDescription"))}
                 </div>
               </div>
