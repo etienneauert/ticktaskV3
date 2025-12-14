@@ -209,3 +209,17 @@
   height: 20px;
   background-color: transparent;
 }
+
+/* Mobile: keine grauen Borders */
+@media (max-width: 768px) {
+  .Auth {
+    border: none;
+    top: 45%;
+  }
+}
+
+@media (max-width: 480px) {
+  .Auth {
+    top: 44%;
+  }
+}

@@ -377,7 +377,7 @@ export default function Header({
             <img src={info} alt="" />
           </button>
           <button className={styles.headerLogoutButton} onClick={onLogout}>
-            {isGuestMode ? "Demomodus verlassen" : t("logout")}
+            {isGuestMode ? t("exitDemo") : t("logout")}
           </button>
         </div>
       </div>

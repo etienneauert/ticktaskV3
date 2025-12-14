@@ -210,7 +210,23 @@
 
   .headerContainer.guestMode {
     margin-top: 0;
+    top: 24px; /* Platz für Guest-Banner oberhalb des Headers */
+  }
+
+  .guestModeLabel {
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    z-index: 1001; /* über Header */
+    pointer-events: none;
+    background-color: #000;
   }
 
   .headerLogoutButton {
@@ -268,7 +284,13 @@
 
   .headerContainer.guestMode {
     margin-top: 0;
-    top: 0;
+    top: 22px;
+  }
+
+  .guestModeLabel {
+    height: 22px;
+    font-size: 13px;
+    background-color: #000;
   }
 
   .headerLogoutButton {
