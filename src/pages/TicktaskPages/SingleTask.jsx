@@ -371,9 +371,16 @@ export default function SingleTask({
   }, [isRunning, isPaused, calculateRemainingTime, onTaskStop, taskId]);
 
   const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    // seconds kann (je nach Quelle) float sein -> auf ganze Sekunden runden
+    const total = Math.max(0, Math.round(Number(seconds) || 0));
+    const mins = Math.floor(total / 60);
+    const secs = total % 60;
     return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const formatMinutes = (minutes) => {
+    const mins = Number(minutes) || 0;
+    return formatTime(mins * 60);
   };
 
   const handleStart = useCallback(() => {
@@ -434,8 +441,8 @@ export default function SingleTask({
 
   // Wenn Task abgeschlossen ist, zeige eine vereinfachte Version
   if (task.done || isDoneList) {
-    const actualTime = task.actualTimeUsed || 0;
-    const plannedTime = task.plannedTime || task.taskDuration || 0;
+    const actualTime = Number(task.actualTimeUsed) || 0; // Minuten (kann float sein)
+    const plannedTime = Number(task.plannedTime ?? task.taskDuration) || 0; // Minuten
 
     return (
       <div className={styles.LI}>
@@ -452,8 +459,8 @@ export default function SingleTask({
               }`}
             >
               {isFrequentList
-                ? `${plannedTime}:00`
-                : `${actualTime}:00 / ${plannedTime}:00`}
+                ? formatMinutes(plannedTime)
+                : `${formatMinutes(actualTime)} / ${formatMinutes(plannedTime)}`}
             </div>
           )}
           <div

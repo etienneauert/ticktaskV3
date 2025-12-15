@@ -14,8 +14,14 @@
   /* Größerer Radius + echte Außenkante, damit die Border in den Ecken mitrundet */
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid #333;
+  border: 1px solid #555;
   background-color: transparent;
+}
+
+/* Standard: grau, bei Hover/Klick (focus innerhalb) gelb */
+.WeekCalendarFrame:hover,
+.WeekCalendarFrame:focus-within {
+  border-color: #d5ff05;
 }
 
 /* Ab 23 Zoll (etwa 1920px Breite): Kalender soll so breit sein wie Task-Komponente */

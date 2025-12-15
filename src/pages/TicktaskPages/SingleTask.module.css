@@ -18,6 +18,17 @@ li {
   /* transition: 0.15s ease; */
 }
 
+/* Done- und Frequent-Listen sollen die volle Breite des Containers nutzen */
+.doneTask {
+  width: 100%;
+  max-width: 100%;
+}
+
+li.frequent {
+  width: 100%;
+  max-width: 100%;
+}
+
 /* Unter 1478px soll die Taskliste nicht mehr fix 650px sein,
    sondern wie die Checklist-Boxen dynamisch mit der Spalte skalieren */
 @media (max-width: 1478px) {

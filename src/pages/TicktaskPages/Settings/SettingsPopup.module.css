@@ -10,12 +10,11 @@
   z-index: 1000;
 }
 
-/* Safari Workaround: backdrop-filter kann Cursor/Hit-Testing nach Interaktionen "kaputt" machen */
-@supports (-webkit-touch-callout: none) {
-  .overlay {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
+/* Safari (macOS/iOS): backdrop-filter kann Cursor/Hit-Testing nach Interaktionen "kaputt" machen */
+:global(html.isSafari) .overlay {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 /* Verhindere Scrolling nur auf Desktop */
@@ -137,7 +136,10 @@
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
-  background-color: transparent;
+  /* Wichtig: deckender Hintergrund, damit beim Scrollen nichts "durchscheint" */
+  background-color: rgba(10, 10, 10, 0.95);
+  /* leichte Trennung vom Content beim Scrollen */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }
 
 .tabIndicator {
@@ -203,6 +205,11 @@
     padding: 20px;
     overflow: hidden;
   }
+  /* Checklist customization (RoutineCustomizationPopup) soll auf Mobile höher sein */
+  .routineModal {
+    height: 78vh;
+    max-height: 78vh;
+  }
 
   .modalWide {
     width: 95vw;
@@ -221,6 +228,14 @@
     max-width: 100%;
     flex-wrap: nowrap;
     gap: 4px;
+  }
+
+  /* Auf Mobile darf das Weekly-Modal nicht "overflow: visible" haben,
+     sonst sieht man gescrollten Content hinter/über der Tabs-Leiste. */
+  .routineModalWeekly {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    overflow: hidden !important;
   }
 
   .tabButton {
@@ -243,6 +258,12 @@
     max-height: 60vh;
     padding: 15px;
     overflow: hidden;
+  }
+
+  /* Checklist customization (RoutineCustomizationPopup) soll auch auf sehr kleinen Screens höher sein */
+  .routineModal {
+    height: 82vh;
+    max-height: 82vh;
   }
 
   .modalWide {

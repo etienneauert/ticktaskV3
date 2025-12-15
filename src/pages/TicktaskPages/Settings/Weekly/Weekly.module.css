@@ -254,6 +254,21 @@
 
 /* Tablet Media Query */
 @media (max-width: 768px) {
+  /* Auf Touch-Geräten kann :hover nach einem Tap "kleben" bleiben.
+     Dadurch wirkt ein angeklickter Tag größer. Auf Mobile wollen wir
+     KEIN Größen-Ändern beim Aktivieren. */
+  .weeklySection {
+    transition: none;
+  }
+
+  .weeklySection:hover {
+    flex: 1;
+    min-width: 180px;
+    max-width: 220px;
+    min-height: 70px;
+    z-index: 1;
+  }
+
   .dayInput {
     font-size: 16px !important;
     padding: 10px !important;
@@ -264,6 +279,15 @@
     width: 44px !important;
     height: 44px !important;
     font-size: 16px !important;
+  }
+
+  /* Mobile/Touch: Controls immer sichtbar (kein Hover auf Touch) */
+  .moveButtons {
+    display: flex;
+  }
+
+  .deleteButton {
+    display: flex;
   }
 }
 
@@ -277,6 +301,13 @@
   .weeklySection {
     width: 100%;
     max-width: 100%;
+  }
+
+  .weeklySection:hover {
+    width: 100%;
+    max-width: 100%;
+    min-height: 70px;
+    z-index: 1;
   }
 
   .dayInput {

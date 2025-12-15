@@ -14,6 +14,7 @@ import ScheduleConfirmPopup from "./TicktaskPages/ScheduleConfirmPopup.jsx";
 import WelcomePopup from "./TicktaskPages/WelcomePopup.jsx";
 import TutorialTooltip from "./TicktaskPages/TutorialTooltip.jsx";
 import tutorialOverlayStyles from "./TicktaskPages/TutorialOverlay.module.css";
+import ScrollToTopButton from "./TicktaskPages/ScrollToTopButton.jsx";
 import { useGuestData } from "../hooks/useGuestData.js";
 import { useLanguage } from "../contexts/LanguageContext.jsx";
 import { useEffect, useState, useRef } from "react";
@@ -1079,6 +1080,31 @@ export function Ticktask({ user, isGuestMode = false }) {
   };
 
   const handleCopyTask = async (taskToCopyParam) => {
+    // Guest Mode: direkt kopieren (kein ScheduleConfirmPopup im Guest-UI)
+    if (isGuestMode) {
+      const copiedTask = {
+        id: `guest-local-${Date.now()}`,
+        text: taskToCopyParam?.text || taskToCopyParam?.name || "",
+        urgent: taskToCopyParam?.urgent || false,
+        done: false,
+        taskDuration: parseInt(taskToCopyParam?.taskDuration, 10) || 0,
+        createdAt: { seconds: Math.floor(Date.now() / 1000) },
+        scheduledDayOption: "",
+        scheduledHour: "",
+        scheduledMinute: "",
+        scheduledDateTime: null,
+        goalId: null,
+      };
+
+      if (!copiedTask.text) return;
+
+      updateGuestData((prev) => ({
+        ...prev,
+        tasks: [...(prev.tasks || []), copiedTask],
+      }));
+      return;
+    }
+
     if (!user?.uid) return;
 
     // Zeige zuerst das Bestätigungs-Popup
@@ -3031,6 +3057,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           onClose={handleWelcomeClose}
           onStartTutorial={handleStartTutorial}
         />
+        <ScrollToTopButton />
       </div>
     );
   }
@@ -3184,6 +3211,8 @@ export function Ticktask({ user, isGuestMode = false }) {
         onClose={handleWelcomeClose}
         onStartTutorial={handleStartTutorial}
       />
+
+      <ScrollToTopButton />
     </div>
   );
 }

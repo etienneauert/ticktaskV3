@@ -80,8 +80,8 @@ export const LanguageProvider = ({ children }) => {
       sunday: "Sonntag",
 
       // Routines
-      morningRoutine: "Morgenroutine",
-      eveningRoutine: "Abendroutine",
+      morningRoutine: "Morgen",
+      eveningRoutine: "Abend",
       dailyTasks: "Tägliche Tasks",
       weeklyTasks: "Wöchentliche Tasks",
       dailyShort: "Tägliche",
@@ -367,8 +367,8 @@ export const LanguageProvider = ({ children }) => {
       sunday: "Sunday",
 
       // Routines
-      morningRoutine: "Morning Routine",
-      eveningRoutine: "Evening Routine",
+      morningRoutine: "Morning",
+      eveningRoutine: "Evening",
       dailyTasks: "Daily Tasks",
       weeklyTasks: "Weekly Tasks",
       dailyShort: "Daily",

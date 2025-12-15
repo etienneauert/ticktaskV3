@@ -5,12 +5,13 @@
   margin: 20px 2px 20px 2px;
   border: 1px solid #333;
   border-radius: 10px;
-  align-items: center;
+  /* Auf Mobile (und generell): Kinder sollen die volle Breite nutzen */
+  align-items: stretch;
   color: white;
   cursor: default;
-  width: 650px;
-  min-width: 650px;
-  max-width: 650px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   background-color: transparent;
   box-sizing: border-box;
   padding-bottom: 0;
@@ -35,12 +36,13 @@
   justify-content: space-between;
   margin: 20px 2px 90px 2px;
   border-radius: 10px;
-  align-items: center;
+  /* Auf Mobile (und generell): Kinder sollen die volle Breite nutzen */
+  align-items: stretch;
   color: white;
   cursor: default;
-  width: 650px;
-  min-width: 650px;
-  max-width: 650px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   background-color: inherit;
   box-sizing: border-box;
   border: 1px solid #333;
@@ -60,9 +62,9 @@
   color: rgba(255, 255, 255, 0.5);
   font-size: 14px;
   padding: 80px 20px 40px 20px;
-  width: 650px;
-  min-width: 650px;
-  max-width: 650px;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   margin-top: 80px;
 }
 
@@ -81,7 +83,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  min-width: 650px;
+  min-width: 0;
   background-color: transparent;
   cursor: pointer;
   padding: 6px 10px;
@@ -99,7 +101,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  min-width: 650px;
+  min-width: 0;
   background-color: inherit;
 
   /* background-color: rgb(41, 40, 53); */
@@ -160,6 +162,13 @@
 
 .DoneTasksHeader:hover {
   cursor: pointer;
+}
+
+/* Abstand für die Task-Liste innerhalb der Container (gilt für Desktop & Mobile).
+   Sonst kleben die einzelnen Tasks (li) optisch am Rand des Containers. */
+.DoneTasks ul,
+.FrequentTasks ul {
+  margin: 0 10px;
 }
 
 .arrow {
@@ -302,13 +311,11 @@
   }
 
   .DoneTasksHeader {
-    width: 300px !important;
     min-width: 100% !important;
     max-width: 100% !important;
   }
 
   .FrequentTasksHeader {
-    width: 300px !important;
     min-width: 100% !important;
     max-width: 100% !important;
   }
