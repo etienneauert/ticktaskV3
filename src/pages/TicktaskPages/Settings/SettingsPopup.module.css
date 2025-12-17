@@ -306,6 +306,10 @@
   align-items: center;
   padding: 20px;
   background-color: transparent;
+  /* Einmalige, einheitliche Content-Breite für ALLE Tabs */
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
 }
 
 .generalHeading {
@@ -315,7 +319,6 @@
   margin: 0 0 0px 30px;
   background-color: transparent;
   width: 100%;
-  max-width: 400px;
   text-align: left;
 }
 
@@ -329,7 +332,6 @@
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
-  max-width: 400px;
   margin-top: 15px;
 }
 
@@ -357,6 +359,9 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  /* Einheitliche Breite für "rechte" Controls in Settings (wie Select/Toggle) */
+  min-width: 110px;
+  text-align: center;
 }
 
 .resetButton:hover {
@@ -376,6 +381,9 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  /* Einheitliche Breite für "rechte" Controls in Settings (wie Select/Reset) */
+  min-width: 110px;
+  text-align: center;
 }
 
 .calendarToggleButton:hover {
@@ -397,7 +405,6 @@
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
-  max-width: 400px;
   margin-top: 15px;
 }
 
@@ -470,7 +477,8 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 80px;
+  /* Einheitliche Breite für "rechte" Controls in Settings */
+  min-width: 110px;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
@@ -517,11 +525,11 @@
 @media (max-width: 768px) {
   .generalSection {
     padding: 15px;
+    max-width: 350px;
   }
 
   .streakRow {
     padding: 10px 14px;
-    max-width: 350px;
   }
 
   .currentStreak {
@@ -535,11 +543,11 @@
   .resetButton {
     padding: 5px 10px;
     font-size: 11px;
+    min-width: 100px;
   }
 
   .languageRow {
     padding: 10px 14px;
-    max-width: 350px;
     margin-top: 12px;
   }
 
@@ -560,18 +568,22 @@
   .timeSelect {
     padding: 6px 10px;
     font-size: 12px;
-    min-width: 90px;
+    min-width: 100px;
+  }
+
+  .calendarToggleButton {
+    min-width: 100px;
   }
 }
 
 @media (max-width: 480px) {
   .generalSection {
     padding: 10px;
+    max-width: 300px;
   }
 
   .streakRow {
     padding: 8px 12px;
-    max-width: 300px;
   }
 
   .currentStreak {
@@ -585,11 +597,11 @@
   .resetButton {
     padding: 4px 8px;
     font-size: 10px;
+    min-width: 90px;
   }
 
   .languageRow {
     padding: 8px 12px;
-    max-width: 300px;
     margin-top: 10px;
   }
 
@@ -606,6 +618,10 @@
   .timeSelect {
     padding: 5px 8px;
     font-size: 11px;
-    min-width: 80px;
+    min-width: 90px;
+  }
+
+  .calendarToggleButton {
+    min-width: 90px;
   }
 }

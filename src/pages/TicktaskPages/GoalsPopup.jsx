@@ -323,6 +323,8 @@ export default function GoalsPopup({
     });
   };
 
+  const canSubmit = Boolean(targetDate) && Boolean(hoursNeeded);
+
   if (!open) return null;
 
   return (
@@ -395,9 +397,13 @@ export default function GoalsPopup({
         </div>
 
         <div className={styles.actions}>
-          <button onClick={handleSubmit} className={styles.addButton}>
-            {t("addGoal")}
-          </button>
+          {canSubmit ? (
+            <button onClick={handleSubmit} className={styles.addButton}>
+              {t("addGoal")}
+            </button>
+          ) : (
+            <div className={styles.addButtonPlaceholder} aria-hidden="true" />
+          )}
         </div>
       </div>
     </div>

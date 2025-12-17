@@ -37,11 +37,12 @@
 }
 
 .scheduleInputs .transparentSelect .selectDropdown {
-  max-height: 120px;
+  /* ca. 4 Optionen sichtbar, bevor gescrollt wird */
+  max-height: 160px;
 }
 
 .scheduleInputs .selectOption {
-  color: #d5ff05;
+  color: rgb(171, 171, 171);
 }
 
 .scheduleInput {
@@ -77,6 +78,10 @@
   gap: 12px;
 }
 
+.selectPlaceholder {
+  color: rgb(171, 171, 171);
+}
+
 .selectDisplay:hover {
   border-color: rgba(200, 200, 200, 0.6);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
@@ -99,11 +104,13 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: rgba(10, 10, 10, 0.92);
+  background: rgba(12, 12, 12, 1);
+  opacity: 1;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   padding: 8px 0;
-  max-height: 120px;
+  /* ca. 4 Optionen sichtbar, bevor gescrollt wird */
+  max-height: 160px;
   overflow-y: auto;
   box-shadow: 0 20px 30px rgba(0, 0, 0, 0.5);
   z-index: 30;
@@ -114,7 +121,7 @@
   padding: 10px 18px;
   border: none;
   background: transparent;
-  color: #d5ff05;
+  color: rgb(171, 171, 171);
   text-align: left;
   font-size: 14px;
   cursor: pointer;
@@ -175,8 +182,8 @@
   background-color: rgba(0, 0, 0, 0.95);
 }
 
-/* Verhindere Scrolling nur auf Desktop */
-@media (min-width: 768px) {
+/* Verhindere Scrolling nur auf Desktop (>= 769px, damit es keine Overlap mit max-width: 768px gibt) */
+@media (min-width: 769px) {
   .overlay {
     overflow: hidden;
   }
@@ -211,6 +218,13 @@
   width: 600px;
   height: auto;
   min-height: 420px;
+}
+
+.modal.taskModal,
+.modal.goalsModal,
+.modal.appointmentModal {
+  /* Button soll bündig unten IM Popup sitzen -> kein Bottom-Padding */
+  padding-bottom: 0;
 }
 
 .goalNameHeading {
@@ -249,7 +263,60 @@
 .appointmentModal {
   width: 500px;
   height: auto;
-  min-height: 400px;
+  min-height: 440px;
+  /* Dropdowns (Select) sollen über den Modal-Rand hinausragen dürfen */
+  overflow: visible;
+}
+
+/* Appointment-Popup: Dropdowns sollen mehr Elemente zeigen, bevor gescrollt wird */
+.appointmentModal .selectDropdown {
+  max-height: 280px;
+}
+
+/* Appointment-Popup: Section hat standardmäßig horizontales Padding (aus .scheduleSection),
+   dadurch bleibt beim edge-to-edge Button ein Restabstand. Hier: Padding horizontal entfernen
+   und stattdessen nur den Inputs wieder Innen-Padding geben. */
+.appointmentModal .appointmentSection {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.appointmentModal .appointmentInputs {
+  padding: 0 16px;
+  margin-top: 16px;
+  box-sizing: border-box;
+  overflow: visible;
+  /* Auf schmalen Screens sollen alle Felder automatisch die verfügbare Breite nutzen */
+  align-items: stretch;
+}
+
+/* Desktop/Normalansicht: Alle Appointment-Felder sollen gleich breit sein */
+.appointmentModal .appointmentInput,
+.appointmentModal .transparentSelect,
+.appointmentModal .timeInputs {
+  width: 400px;
+  max-width: 100%;
+}
+
+/* ScheduleInput im Appointment-Popup soll mit der Feldbreite mitgehen */
+.appointmentModal .scheduleInput {
+  width: 100%;
+  align-items: stretch;
+}
+
+/* Appointment-Popup: Select-Displays (z.B. "Select day") sollen ebenfalls grau sein */
+.appointmentModal .selectDisplay {
+  color: rgb(171, 171, 171);
+}
+
+/* Start/End Time: Hour/Minute sollen den verfügbaren Platz nutzen */
+.appointmentModal .timeInputs .timeSelect {
+  width: 100%;
+  flex: 1;
 }
 
 .modalcloseandinfo {
@@ -289,6 +356,7 @@
   gap: 8px;
   justify-content: center;
   background-color: transparent;
+  width: 100%;
 }
 
 .button {
@@ -552,7 +620,8 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: rgba(12, 12, 12, 0.92);
+  background: rgba(12, 12, 12, 1);
+  opacity: 1;
   border: 1px solid rgba(140, 140, 140, 0.25);
   border-radius: 16px;
   padding: 8px 0;
@@ -567,7 +636,7 @@
   padding: 10px 18px;
   border: none;
   background: transparent;
-  color: #d5ff05;
+  color: rgb(171, 171, 171);
   text-align: left;
   font-size: 14px;
   cursor: pointer;
@@ -617,10 +686,15 @@
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
   padding: 14px 18px;
-  color: white;
+  color: rgb(171, 171, 171);
   font-size: 16px;
   width: 400px;
   box-sizing: border-box;
+}
+
+.appointmentInput::placeholder {
+  color: rgba(171, 171, 171, 0.65);
+  opacity: 1;
 }
 
 .appointmentInput:focus {
@@ -766,21 +840,72 @@
 }
 
 .addButton {
-  color: rgb(213, 255, 5);
-  padding: 10px 35px;
-  border-radius: 20px;
-  border: 2px solid rgb(213, 255, 5);
-  font-size: 20px;
-  margin-top: 30px;
-  background-color: transparent;
   cursor: pointer;
   transition: 0.3s ease;
 }
 
-.addButton:hover {
-  scale: 1.03;
-  background-color: rgb(213, 255, 5) !important;
-  color: black !important;
+/* Kein Hover-Effekt gewünscht */
+
+/* Submit-Button & Platzhalter: gleicher Platz -> kein Layout-Sprung */
+.addButton,
+.addButtonPlaceholder {
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  /* nur unten abgerundet */
+  border-radius: 0 0 12px 12px;
+  border: 0;
+  font-size: 20px;
+  margin-top: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.addButton {
+  color: #000;
+  background-color: rgb(213, 255, 5);
+}
+
+.addButtonPlaceholder {
+  /* Platz reservieren, aber optisch wie Popup (grau/dunkel) */
+  background-color: rgba(10, 10, 10, 0.95);
+  color: transparent;
+  pointer-events: none;
+}
+
+/* Task-Popup: Submit-Button soll so breit wie das Popup sein (edge-to-edge),
+   daher übersteuern wir das Modal-Padding nur für die Actions-Zeile. */
+.taskModal .actions {
+  /* Nicht als Flex zentrieren (kann optisch "Spalt" erzeugen), sondern block + volle Breite */
+  display: block;
+  width: calc(100% + 64px);
+  box-sizing: border-box;
+  margin-left: -32px;
+  margin-right: -32px;
+  margin-top: 24px;
+}
+
+/* Goals-Popup: Add-Goal Button soll edge-to-edge bis zum Modal-Rand gehen */
+.goalsModal .actions {
+  display: block;
+  width: calc(100% + 64px);
+  box-sizing: border-box;
+  margin-left: -32px;
+  margin-right: -32px;
+  margin-top: 24px;
+}
+
+/* Appointment-Popup (WeekCalendar): Button edge-to-edge bis zum Modal-Rand */
+.appointmentModal .actions {
+  display: block;
+  width: calc(100% + 64px);
+  box-sizing: border-box;
+  margin-left: -32px;
+  margin-right: -32px;
+  margin-top: 24px;
 }
 
 .goalDescription {
@@ -790,7 +915,7 @@
   border: 1px solid #333;
   border-radius: 8px;
   background-color: transparent;
-  color: #fff;
+  color: rgb(171, 171, 171);
   font-size: 14px;
   font-family: monospace;
   outline: none;
@@ -808,7 +933,7 @@
   border: 1px solid #333;
   border-radius: 8px;
   background-color: transparent;
-  color: #fff;
+  color: rgb(171, 171, 171);
   font-size: 18px;
   font-family: monospace;
   outline: none;
@@ -1152,6 +1277,42 @@
     padding: 20px;
   }
 
+  /* Appointment-Popup: nicht in die generelle 80vh-Modal-Höhe zwingen,
+     sonst kann der Save-Button (bei overflow: visible) unter dem Popup "rausrutschen". */
+  .appointmentModal {
+    height: auto;
+    max-height: none;
+  }
+
+  /* Appointment-Popup: alle Inputs/Selects sollen dynamisch schrumpfen */
+  .appointmentModal .appointmentInput,
+  .appointmentModal .transparentSelect,
+  .appointmentModal .timeInputs {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Task-Popup: edge-to-edge Submit an Mobile-Padding anpassen */
+  .taskModal .actions {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  /* Goals-Popup: edge-to-edge Add-Goal an Mobile-Padding anpassen */
+  .goalsModal .actions {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
+  /* Appointment-Popup: edge-to-edge Button an Mobile-Padding anpassen */
+  .appointmentModal .actions {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+  }
+
   /* Task-Popup soll wirklich die volle Gerätehöhe nutzen (überschreibt .modal) */
   .modal.taskModal {
     /* Mobile: fast volle Höhe, aber nicht komplett */
@@ -1274,10 +1435,18 @@
     margin-top: 30px;
   }
 
-  .addButton {
-    padding: 8px 25px;
+  .addButton,
+  .addButtonPlaceholder {
+    height: 48px;
+    padding: 0 25px;
     font-size: 16px;
-    margin-top: 40px;
+    margin-top: 0;
+  }
+
+  /* Appointment-Popup: Save-Button Text größer auf Mobile */
+  .appointmentModal .addButton,
+  .appointmentModal .addButtonPlaceholder {
+    font-size: 18px;
   }
 
   .checkboxes {
@@ -1313,6 +1482,41 @@
     width: 98vw;
     height: 85vh;
     padding: 15px;
+  }
+
+  /* Appointment-Popup: auch auf sehr kleinen Screens nicht in fixe Modal-Höhe zwingen */
+  .appointmentModal {
+    height: auto;
+    max-height: none;
+  }
+
+  /* Appointment-Popup: alle Inputs/Selects sollen dynamisch schrumpfen */
+  .appointmentModal .appointmentInput,
+  .appointmentModal .transparentSelect,
+  .appointmentModal .timeInputs {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Task-Popup: edge-to-edge Submit an Mobile-Padding anpassen */
+  .taskModal .actions {
+    width: calc(100% + 30px);
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+
+  /* Goals-Popup: edge-to-edge Add-Goal an Mobile-Padding anpassen */
+  .goalsModal .actions {
+    width: calc(100% + 30px);
+    margin-left: -15px;
+    margin-right: -15px;
+  }
+
+  /* Appointment-Popup: edge-to-edge Button an Mobile-Padding anpassen */
+  .appointmentModal .actions {
+    width: calc(100% + 30px);
+    margin-left: -15px;
+    margin-right: -15px;
   }
 
   /* Task-Popup soll wirklich die volle Gerätehöhe nutzen (überschreibt .modal) */
@@ -1440,10 +1644,18 @@
     margin-top: 20px;
   }
 
-  .addButton {
-    padding: 5px 16px;
+  .addButton,
+  .addButtonPlaceholder {
+    height: 38px;
+    padding: 0 16px;
     font-size: 12px;
-    margin-top: 25px;
+    margin-top: 0;
+  }
+
+  /* Appointment-Popup: Save-Button Text größer auf sehr kleinen Screens */
+  .appointmentModal .addButton,
+  .appointmentModal .addButtonPlaceholder {
+    font-size: 16px;
   }
 
   .checkboxes {

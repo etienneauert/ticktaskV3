@@ -52,6 +52,11 @@ function TransparentSelect({
     return match ? match.label : placeholder;
   }, [options, placeholder, value]);
 
+  const isPlaceholder = useMemo(() => {
+    if (!value) return true;
+    return !options.some((option) => option.value === value);
+  }, [options, value]);
+
   return (
     <div
       ref={containerRef}
@@ -65,7 +70,9 @@ function TransparentSelect({
         }`}
         onClick={() => setOpen((prev) => !prev)}
       >
-        <span>{selectedLabel}</span>
+        <span className={isPlaceholder ? styles.selectPlaceholder : ""}>
+          {selectedLabel}
+        </span>
         <span className={styles.selectArrow}>
           <img src={arrowDown} alt="" className={styles.selectArrowIcon} />
         </span>
@@ -383,6 +390,8 @@ export default function Popup({
     });
   };
 
+  const canSubmit = taskDuration > 0;
+
   // Generiere Goal-Optionen für das Dropdown
   const GOAL_OPTIONS = useMemo(() => {
     // Filtere nur nicht abgeschlossene Goals
@@ -569,9 +578,13 @@ export default function Popup({
         </div>
 
         <div className={styles.actions}>
-          <button onClick={handleSubmit} className={styles.addButton}>
-            {t("submit")}
-          </button>
+          {canSubmit ? (
+            <button onClick={handleSubmit} className={styles.addButton}>
+              {t("submit")}
+            </button>
+          ) : (
+            <div className={styles.addButtonPlaceholder} aria-hidden="true" />
+          )}
         </div>
       </div>
     </div>

@@ -1187,7 +1187,11 @@ export default function WeekCalendar({
                   <div className={popupStyles.timeInputs}>
                     <TransparentSelect
                       value={selectedHour}
-                      onChange={setSelectedHour}
+                      onChange={(v) => {
+                        setSelectedHour(v);
+                        // Wenn Hour gesetzt wurde, aber Minute noch leer ist -> automatisch "00"
+                        setSelectedMinute((prev) => (prev ? prev : "00"));
+                      }}
                       options={hourOptions}
                       placeholder={t("hour")}
                       className={popupStyles.timeSelect}
@@ -1209,7 +1213,11 @@ export default function WeekCalendar({
                   <div className={popupStyles.timeInputs}>
                     <TransparentSelect
                       value={appointmentEndHour}
-                      onChange={setAppointmentEndHour}
+                      onChange={(v) => {
+                        setAppointmentEndHour(v);
+                        // Wenn Hour gesetzt wurde, aber Minute noch leer ist -> automatisch "00"
+                        setAppointmentEndMinute((prev) => (prev ? prev : "00"));
+                      }}
                       options={hourOptions}
                       placeholder={t("hour")}
                       className={popupStyles.timeSelect}
@@ -1226,18 +1234,24 @@ export default function WeekCalendar({
                 </div>
               </div>
               <div className={popupStyles.actions}>
-                <button
-                  onClick={handleSaveAppointment}
-                  className={popupStyles.addButton}
-                  disabled={
-                    !appointmentName.trim() ||
-                    !selectedDay ||
-                    !selectedHour ||
-                    !appointmentEndHour
-                  }
-                >
-                  {t("save")}
-                </button>
+                {appointmentName.trim() &&
+                selectedDay &&
+                selectedHour &&
+                selectedMinute &&
+                appointmentEndHour &&
+                appointmentEndMinute ? (
+                  <button
+                    onClick={handleSaveAppointment}
+                    className={popupStyles.addButton}
+                  >
+                    {t("save")}
+                  </button>
+                ) : (
+                  <div
+                    className={popupStyles.addButtonPlaceholder}
+                    aria-hidden="true"
+                  />
+                )}
               </div>
             </div>
           </div>
