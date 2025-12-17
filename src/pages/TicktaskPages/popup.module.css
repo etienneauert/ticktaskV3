@@ -48,7 +48,7 @@
 .scheduleInput {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   min-width: 220px;
   align-items: center;
   background-color: transparent;
@@ -57,7 +57,7 @@
 .transparentSelect {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   position: relative;
   width: 240px;
   background-color: transparent;
@@ -67,8 +67,8 @@
   background: transparent;
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
-  padding: 8px 16px;
-  color: white;
+  padding: 0 16px;
+  color: rgb(171, 171, 171);
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -76,6 +76,8 @@
   cursor: pointer;
   transition: border 0.2s ease, box-shadow 0.2s ease;
   gap: 12px;
+  box-sizing: border-box;
+  height: 45px;
 }
 
 .selectPlaceholder {
@@ -147,7 +149,6 @@
 }
 
 .timeInputs {
-  margin-top: 8px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -215,9 +216,10 @@
 }
 
 .goalsModal {
-  width: 600px;
+  width: 350px;
   height: auto;
   min-height: 420px;
+  overflow: visible;
 }
 
 .modal.taskModal,
@@ -245,7 +247,11 @@
 }
 
 .goalsModal .scheduleSection h2 {
-  margin-bottom: 5px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+  margin: 0;
 }
 
 .goalsModal .priorityButtons {
@@ -548,7 +554,7 @@
 .scheduleInput {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   min-width: 220px;
   align-items: center;
   background-color: transparent;
@@ -566,7 +572,7 @@
 .transparentSelect {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   position: relative;
   width: 220px;
 }
@@ -575,8 +581,8 @@
   background: transparent;
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
-  padding: 8px 16px;
-  color: white;
+  padding: 0 16px;
+  color: rgb(171, 171, 171);
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -584,6 +590,8 @@
   cursor: pointer;
   transition: border 0.2s ease, box-shadow 0.2s ease;
   gap: 12px;
+  box-sizing: border-box;
+  height: 45px;
 }
 
 .selectDisplay:hover {
@@ -685,14 +693,16 @@
   background: rgba(15, 15, 15, 0.35);
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
-  padding: 14px 18px;
+  padding: 0 16px;
   color: rgb(171, 171, 171);
-  font-size: 16px;
+  font-size: 14px;
   width: 400px;
   box-sizing: border-box;
+  height: 45px;
 }
 
-.appointmentInput::placeholder {
+.appointmentInput::placeholder,
+.dateInput::placeholder {
   color: rgba(171, 171, 171, 0.65);
   opacity: 1;
 }
@@ -929,17 +939,20 @@
 }
 
 .dateInput {
-  padding: 16px 20px;
-  border: 1px solid #333;
-  border-radius: 8px;
-  background-color: transparent;
+  background: rgba(15, 15, 15, 0.35);
+  border: 1px solid rgba(160, 160, 160, 0.35);
+  border-radius: 18px;
+  padding: 0 16px;
   color: rgb(171, 171, 171);
-  font-size: 18px;
-  font-family: monospace;
+  font-size: 14px;
   outline: none;
   transition: border-color 0.3s ease;
-  min-width: 250px;
-  cursor: pointer;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+  line-height: normal;
+  cursor: text;
+  height: 45px;
 }
 
 .dateInput[type="number"]::-webkit-inner-spin-button,
@@ -956,10 +969,12 @@
 
 .dateInput:hover {
   border-color: rgba(200, 200, 200, 0.6);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
 }
 
 .dateInput:focus {
   border-color: rgba(200, 200, 200, 0.6);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
   outline: none;
 }
 
@@ -1003,30 +1018,32 @@
 }
 
 .datePickerDisplay {
-  width: auto;
-  min-width: 100%;
-  background-color: transparent;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 16px 20px;
-  color: #fff;
-  font-size: 18px;
-  font-family: monospace;
+  width: 100%;
+  background: rgba(15, 15, 15, 0.35);
+  border: 1px solid rgba(160, 160, 160, 0.35);
+  border-radius: 18px;
+  padding: 0 16px;
+  color: rgb(171, 171, 171);
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   transition: border-color 0.3s ease;
-  min-height: 56px;
+  box-sizing: border-box;
+  height: 45px;
+  line-height: normal;
   white-space: nowrap;
 }
 
 .datePickerDisplay:hover {
   border-color: rgba(200, 200, 200, 0.6);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
 }
 
 .goalsModal .datePickerDisplay:hover {
   border-color: rgba(200, 200, 200, 0.6);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
 }
 
 .datePickerDisplayOpen {
@@ -1035,11 +1052,11 @@
 
 .datePickerDisplay span {
   background-color: transparent;
-  color: #fff;
+  color: rgb(171, 171, 171);
 }
 
 .datePickerDisplayPlaceholder span {
-  color: #ababab;
+  color: rgba(171, 171, 171, 0.65);
 }
 
 .datePickerDisplayInvalid {
@@ -1055,7 +1072,7 @@
 }
 
 .datePickerArrow {
-  margin-left: 12px;
+  margin-left: 10px;
   display: flex;
   align-items: center;
   background-color: transparent;
@@ -1072,11 +1089,11 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: #000;
-  border: 1px solid #333;
+  background: rgba(12, 12, 12, 1);
+  border: 1px solid rgba(140, 140, 140, 0.25);
   border-radius: 12px;
   padding: 8px 0;
-  max-height: 200px; /* Etwa 4 Einträge sichtbar (14px padding + 16px font + 14px padding = ~44px pro Eintrag) */
+  max-height: 320px; /* Ca. 7 Einträge gleichzeitig sichtbar */
   overflow-y: auto;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
   z-index: 100;
@@ -1087,10 +1104,9 @@
   padding: 14px 20px;
   border: none;
   background: transparent;
-  color: #fff;
+  color: rgb(171, 171, 171);
   text-align: left;
   font-size: 16px;
-  font-family: monospace;
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -1100,8 +1116,8 @@
 }
 
 .datePickerOptionActive {
-  background: rgba(213, 255, 5, 0.15) !important;
-  color: #d5ff05 !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
 }
 
 .priorityButtons {
@@ -1174,6 +1190,21 @@
 .goalSection .selectDropdown {
   background: rgba(12, 12, 12, 1);
   opacity: 1;
+}
+
+.settingsModalSolid {
+  background-color: rgba(12, 12, 12, 1) !important;
+  background: rgba(12, 12, 12, 1) !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+
+.settingsOverlaySolid {
+  background-color: rgba(12, 12, 12, 1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 2000 !important;
+  opacity: 1 !important;
 }
 
 .goalSection .selectOption {

@@ -1,7 +1,7 @@
 import styles from "./popup.module.css";
 import { useState, useEffect, useRef } from "react";
 import close3 from "../../assets/close-3.png";
-import arrowDown from "../../assets/arrow-down.png";
+import arrowDown from "../../assets/arrowdown-yellow.png";
 import { db } from "../../firebase/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useLanguage } from "../../contexts/LanguageContext";
