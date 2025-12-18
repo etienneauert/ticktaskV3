@@ -48,7 +48,7 @@
   background-color: transparent;
   padding: 10px;
   text-align: center;
-  color: white;
+  color: #aaa;
   position: relative;
   /* Außenkante kommt vom WeekCalendarFrame -> oben keine zusätzliche Linie */
   border-top: 0;
@@ -72,20 +72,28 @@
 }
 
 .DayHeaderToday {
-  border: 2px solid #d5ff05;
+  border: 1px solid #d5ff05;
   box-shadow: 0 0 8px rgba(213, 255, 5, 0.3);
   /* sicherstellen, dass der gelbe Rahmen nicht von Nachbar-Elementen „überdeckt“ wird */
   z-index: 2;
+  /* Left shift to cover left border works, but top shift clipped it. Reset top. */
+  margin-top: 0;
+  margin-left: -1px;
+  /* Width needs +1px for left shift. Height normal. */
+  width: calc(100% + 1px);
+  height: 60px;
+  /* Explicit top border since parent allows it but we need it yellow */
+  border-top: 1px solid #d5ff05;
 }
 
 /* Sonderfall: Sonntag (letzte DayHeader-Spalte). Normalerweise ist dort border-right:0,
    aber beim Today-Highlight brauchen wir die rechte gelbe Linie + gerundete Ecke. */
 .CalendarHeader > .DayHeader.DayHeaderToday:nth-last-child(2) {
-  border-right: 2px solid #d5ff05;
+  border-right: 1px solid #d5ff05;
   /* Remove inner radius so the rectangular extension fills the corner, clipped by the frame */
   border-top-right-radius: 0;
   /* Extend yellow solid to cover RightBar gap and under container corner */
-  box-shadow: 5px 0 0 #d5ff05, 0 0 8px rgba(213, 255, 5, 0.3);
+  box-shadow: 1px 0 0 #d5ff05, 0 0 8px rgba(213, 255, 5, 0.3);
 }
 
 .DayName {
@@ -181,7 +189,7 @@
   padding: 4px;
   text-align: center;
   font-size: 12px;
-  color: white;
+  color: #aaa;
   height: 50px;
   display: flex;
   align-items: center;
@@ -522,16 +530,20 @@
   /* On mobile, if today is active, we MUST show the right yellow border and rounded corner,
      effectively treating every active day like "Sunday" (last child) since it's the only one visible. */
   .DayHeader.DayHeaderToday {
-    border-right: 2px solid #d5ff05 !important;
+    border-right: 1px solid #d5ff05 !important;
+    border-top: 1px solid #d5ff05 !important; /* Force top border */
     border-top-right-radius: 18px !important;
     /* Increase shadow spread significantly to ensure it bleeds into the gap */
-    box-shadow: 2px 0 0 #d5ff05, 0 0 8px rgba(213, 255, 5, 0.3) !important;
+    box-shadow: 1px 0 0 #d5ff05, 0 0 8px rgba(213, 255, 5, 0.3) !important;
     z-index: 20 !important;
     /* Ensure it overlaps properly */
     position: relative;
-    /* Pull it slightly to the right to cover any gap */
+    /* Pull it slightly to the right AND left to cover gaps. Top margin 0 to avoid clip. */
     margin-right: -1px;
-    width: calc(100% + 1px);
+    margin-left: -1px;
+    margin-top: 0;
+    width: calc(100% + 2px);
+    height: 60px;
   }
 
   .DayColumn {
@@ -788,6 +800,6 @@
 }
 
 .LegendText {
-  color: white;
+  color: #aaa;
   font-size: 14px;
 }

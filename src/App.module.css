@@ -79,7 +79,7 @@ html {
   :global(h2),
   :global(h3),
   :global(h4) {
-    margin-block: 44px;
+    margin-block: 10px;
   }
 
   .switchButton {
@@ -97,7 +97,7 @@ html {
   :global(h2),
   :global(h3),
   :global(h4) {
-    margin-block: 40px;
+    margin-block: 10px;
   }
 
   .switchButton {

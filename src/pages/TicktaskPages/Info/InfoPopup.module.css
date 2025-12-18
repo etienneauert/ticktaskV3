@@ -243,6 +243,12 @@
   white-space: normal;
 }
 
+/* Letzter Absatz (z.B. der Fazit-Satz bei Goals) bekommt mehr Abstand nach oben */
+.content p:last-child {
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+
 /* "Über TickTask" (Tab 0): Text mittig */
 .aboutContent p {
   text-align: center;
