@@ -15,6 +15,13 @@
   background-color: transparent;
   box-sizing: border-box;
   padding-bottom: 0;
+  padding-bottom: 0;
+}
+
+.ActiveTasks {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .DoneTasks.DoneTasksExpanded {
@@ -241,10 +248,11 @@
     margin-top: 8px;
   }
 
+  .ActiveTasks,
   .DoneTasks,
   .FrequentTasks {
-    width: 100% !important;
-    min-width: 100% !important;
+    width: auto !important;
+    min-width: 0 !important;
     max-width: 100% !important;
   }
 
@@ -260,12 +268,13 @@
     max-width: 100% !important;
   }
 
+  .ActiveTasks,
   .DoneTasks {
-    margin: 5px 2px 20px 2px;
+    margin: 5px 8px 20px 8px;
   }
 
   .FrequentTasks {
-    margin: 5px 2px 20px 2px;
+    margin: 5px 8px 20px 8px;
   }
 
   /* Margin für Tasks innerhalb der Frequent Tasks */
@@ -304,9 +313,10 @@
     margin-top: 6px;
   }
 
+  .ActiveTasks,
   .DoneTasks,
   .FrequentTasks {
-    min-width: 100% !important;
+    min-width: 0 !important;
     max-width: 100% !important;
   }
 
@@ -320,12 +330,13 @@
     max-width: 100% !important;
   }
 
+  .ActiveTasks,
   .DoneTasks {
-    margin: 3px 2px 15px 2px;
+    margin: 3px 6px 15px 6px;
   }
 
   .FrequentTasks {
-    margin: 3px 2px 15px 2px;
+    margin: 3px 6px 15px 6px;
   }
 
   /* Margin für Tasks innerhalb der Frequent Tasks - kleinere Screens */

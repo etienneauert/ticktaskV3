@@ -149,7 +149,7 @@
 @media (max-width: 768px) {
   .InputContainer {
     margin-top: 120px;
-    padding: 0 15px;
+    padding: 0 16px;
 
     /* Label zentriert oberhalb, Input + Button darunter */
     display: grid;
@@ -212,7 +212,7 @@
 @media (max-width: 480px) {
   .InputContainer {
     margin-top: 100px;
-    padding: 0 10px;
+    padding: 0 12px;
     display: grid;
     grid-template-columns: 1fr 50px;
     grid-template-rows: auto auto;

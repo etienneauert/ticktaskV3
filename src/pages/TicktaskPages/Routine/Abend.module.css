@@ -31,8 +31,18 @@
 @media (max-width: 768px) {
   .abendContainer {
     max-width: 100%;
-    width: 100%;
-    margin: 0 auto;
+    width: auto;
+    margin: 0 8px;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 480px) {
+  .abendContainer {
+    max-width: 100%;
+    width: auto;
+    margin: 0 6px;
+    box-sizing: border-box;
   }
 }
 

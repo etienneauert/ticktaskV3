@@ -297,7 +297,7 @@ li.running .countdown {
 @media (max-width: 480px) {
   .doneTask,
   .frequentTask {
-    width: 300px !important;
+    width: 100% !important;
     min-width: 100% !important;
     max-width: 100% !important;
     padding: 8px 3px !important;
@@ -462,7 +462,7 @@ li.running .countdown {
 
 @media (max-width: 480px) {
   li {
-    max-width: 350px;
+    max-width: 100%;
     padding: 6px;
   }
 
@@ -521,7 +521,7 @@ li.running .countdown {
   }
 
   .doneTask {
-    max-width: 300px;
+    max-width: 100%;
   }
 
   /* Mobile: Done-Button Schriftfarbe schwarz */

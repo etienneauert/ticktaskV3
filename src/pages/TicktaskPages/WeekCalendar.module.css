@@ -14,7 +14,7 @@
   /* Größerer Radius + echte Außenkante, damit die Border in den Ecken mitrundet */
   border-radius: 18px;
   overflow: hidden;
-  border: 1px solid #555;
+  border: 1px solid #333;
   background-color: transparent;
 }
 
@@ -82,7 +82,10 @@
    aber beim Today-Highlight brauchen wir die rechte gelbe Linie + gerundete Ecke. */
 .CalendarHeader > .DayHeader.DayHeaderToday:nth-last-child(2) {
   border-right: 2px solid #d5ff05;
-  border-top-right-radius: 18px;
+  /* Remove inner radius so the rectangular extension fills the corner, clipped by the frame */
+  border-top-right-radius: 0;
+  /* Extend yellow solid to cover RightBar gap and under container corner */
+  box-shadow: 5px 0 0 #d5ff05, 0 0 8px rgba(213, 255, 5, 0.3);
 }
 
 .DayName {
@@ -514,6 +517,21 @@
      Deshalb keine zusätzliche Border am (sichtbaren) Tag selbst -> sonst wirkt sie doppelt. */
   .DayHeader {
     border-right: 0;
+  }
+
+  /* On mobile, if today is active, we MUST show the right yellow border and rounded corner,
+     effectively treating every active day like "Sunday" (last child) since it's the only one visible. */
+  .DayHeader.DayHeaderToday {
+    border-right: 2px solid #d5ff05 !important;
+    border-top-right-radius: 18px !important;
+    /* Increase shadow spread significantly to ensure it bleeds into the gap */
+    box-shadow: 2px 0 0 #d5ff05, 0 0 8px rgba(213, 255, 5, 0.3) !important;
+    z-index: 20 !important;
+    /* Ensure it overlaps properly */
+    position: relative;
+    /* Pull it slightly to the right to cover any gap */
+    margin-right: -1px;
+    width: calc(100% + 1px);
   }
 
   .DayColumn {

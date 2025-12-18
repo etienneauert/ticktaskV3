@@ -21,14 +21,18 @@
 @media (max-width: 768px) {
   .dailyContainer {
     max-width: 100%;
-    width: 100%;
+    width: auto;
+    margin: 0 8px;
+    box-sizing: border-box;
   }
 }
 
 @media (max-width: 480px) {
   .dailyContainer {
     max-width: 100%;
-    width: 100%;
+    width: auto;
+    margin: 0 6px;
+    box-sizing: border-box;
   }
 }
 

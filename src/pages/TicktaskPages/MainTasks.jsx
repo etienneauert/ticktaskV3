@@ -109,14 +109,16 @@ export default function MainTasks({
         <div className={styles.emptyMessage}>{t("taskListEmpty")}</div>
       ) : (
         <>
-          <Task
-            tasks={sortedActiveTasks}
-            onDelete={onDelete}
-            onTaskDone={onTaskDone}
-            runningTaskId={runningTaskId}
-            onTaskStart={onTaskStart}
-            onTaskStop={onTaskStop}
-          ></Task>
+          <div className={styles.ActiveTasks}>
+            <Task
+              tasks={sortedActiveTasks}
+              onDelete={onDelete}
+              onTaskDone={onTaskDone}
+              runningTaskId={runningTaskId}
+              onTaskStart={onTaskStart}
+              onTaskStop={onTaskStop}
+            ></Task>
+          </div>
           {doneTasks.length > 0 && (
             <div
               className={`${styles.DoneTasks} ${
