@@ -16,6 +16,7 @@
   margin-bottom: 8px;
   text-align: center;
   background-color: transparent;
+  line-height: 1.6;
 }
 
 .scheduleInputs {
@@ -216,9 +217,9 @@
 }
 
 .goalsModal {
-  width: 350px;
+  width: 600px;
   height: auto;
-  min-height: 420px;
+  min-height: auto;
   overflow: visible;
 }
 
@@ -240,6 +241,43 @@
 
 .goalsModal .scheduleSection {
   margin-top: 10px;
+}
+
+/* Enforce Stacked Layout for GoalsModal (Day on top, Time below) always */
+.goalsModal .scheduleInputs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  column-gap: 10px;
+  row-gap: 12px;
+  align-items: center;
+  justify-items: stretch;
+  width: 100%;
+  gap: 0; /* Reset flex gap */
+}
+
+.goalsModal .scheduleInputs > :first-child {
+  grid-column: 1 / -1;
+  justify-self: stretch;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.goalsModal .scheduleInputs > :nth-child(2) {
+  grid-column: 1;
+}
+
+.goalsModal .scheduleInputs > :nth-child(3) {
+  grid-column: 2;
+  justify-self: center;
+  margin: 0 8px;
+}
+
+.goalsModal .scheduleInputs > :nth-child(4) {
+  grid-column: 3;
+}
+
+.goalsModal .scheduleInputs .timeSelect {
+  width: 100%;
 }
 
 .goalsModal .scheduleSection:first-of-type {
@@ -541,6 +579,7 @@
   margin-bottom: 8px;
   text-align: center;
   background-color: transparent;
+  line-height: 1.6;
 }
 
 .scheduleInputs {
@@ -880,8 +919,9 @@
 }
 
 .addButtonPlaceholder {
-  /* Platz reservieren, aber optisch wie Popup (grau/dunkel) */
-  background-color: rgba(10, 10, 10, 0.95);
+  /* Transparent to match modal background */
+  background: transparent !important;
+  background-color: transparent !important;
   color: transparent;
   pointer-events: none;
 }
@@ -1268,7 +1308,8 @@
   }
 
   /* Mobile: Tag oben, Stunde/Minute nebeneinander darunter (nur Task-Popup) */
-  .taskModal .scheduleInputs {
+  .taskModal .scheduleInputs,
+  .goalsModal .scheduleInputs {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     column-gap: 10px;
@@ -1277,27 +1318,42 @@
     justify-items: stretch;
   }
 
-  .taskModal .scheduleInputs > :first-child {
+  .taskModal .scheduleInputs > :first-child,
+  .goalsModal .scheduleInputs > :first-child {
     grid-column: 1 / -1;
-    justify-self: center;
+    justify-self: stretch;
+    width: 100%;
     margin-bottom: 10px;
   }
 
-  .taskModal .scheduleInputs > :nth-child(2) {
+  .taskModal .scheduleInputs > :nth-child(2),
+  .goalsModal .scheduleInputs > :nth-child(2) {
     grid-column: 1;
   }
 
-  .taskModal .scheduleInputs > :nth-child(3) {
+  .taskModal .scheduleInputs > :nth-child(3),
+  .goalsModal .scheduleInputs > :nth-child(3) {
     grid-column: 2;
     justify-self: center;
     margin: 0;
   }
 
-  .taskModal .scheduleInputs > :nth-child(4) {
+  .taskModal .scheduleInputs > :nth-child(4),
+  .goalsModal .scheduleInputs > :nth-child(4) {
     grid-column: 3;
   }
 
-  .taskModal .scheduleInputs .timeSelect {
+  .taskModal .scheduleInputs .timeSelect,
+  .goalsModal .scheduleInputs .timeSelect {
+    width: 100%;
+  }
+
+  /* Padding hinzufügen, damit die Goal-Box optisch genau so breit ist 
+     wie die Day-Box (die in .scheduleSection mit 16px Padding sitzt) */
+  .taskModal .goalSection {
+    padding-left: 16px;
+    padding-right: 16px;
+    box-sizing: border-box;
     width: 100%;
   }
 
@@ -1324,17 +1380,29 @@
   }
 
   /* Task-Popup: edge-to-edge Submit an Mobile-Padding anpassen */
+  /* Task-Popup: Actions sind nun außerhalb des Paddings -> Full Width */
+  /* Task-Popup: Actions sind nun außerhalb des Paddings -> Full Width */
   .taskModal .actions {
-    width: calc(100% + 40px);
-    margin-left: -20px;
-    margin-right: -20px;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important; /* Force Bottom Placement */
+    bottom: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    z-index: 50;
+    margin-top: 0 !important;
+    background-color: transparent !important;
+    background: transparent !important;
   }
 
   /* Goals-Popup: edge-to-edge Add-Goal an Mobile-Padding anpassen */
   .goalsModal .actions {
-    width: calc(100% + 40px);
-    margin-left: -20px;
-    margin-right: -20px;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    margin-top: auto !important; /* Push to bottom of flex container */
+    background: transparent !important;
   }
 
   /* Appointment-Popup: edge-to-edge Button an Mobile-Padding anpassen */
@@ -1349,6 +1417,18 @@
     /* Mobile: fast volle Höhe, aber nicht komplett */
     height: calc(100dvh - 80px) !important;
     max-height: calc(100dvh - 80px) !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .modalContent {
+    padding: 20px !important;
+    /* Platz für den absoluten Footer lassen */
+    padding-bottom: 80px !important;
+    overflow-y: auto !important;
+    flex: 1;
+    width: 100%;
   }
 
   .close {

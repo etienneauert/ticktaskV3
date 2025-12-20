@@ -1117,10 +1117,14 @@ export function Ticktask({ user, isGuestMode = false }) {
 
     setScheduleConfirmOpen(false);
 
+    // urgency aus scheduleData (neu) oder taskToCopy (alt)
+    const newUrgency = scheduleData?.urgent ?? taskToCopy.urgent ?? false;
+    const updatedTask = { ...taskToCopy, urgent: newUrgency };
+
     if (shouldSchedule && scheduleData) {
       // Füge Task mit Schedule hinzu
       await addCopiedTask(
-        taskToCopy,
+        updatedTask,
         scheduleData.scheduledDayOption,
         scheduleData.scheduledHour,
         scheduleData.scheduledMinute,
@@ -1128,7 +1132,7 @@ export function Ticktask({ user, isGuestMode = false }) {
       );
     } else {
       // Füge Task ohne Schedule hinzu
-      await addCopiedTask(taskToCopy, null, null, null, null);
+      await addCopiedTask(updatedTask, null, null, null, null);
     }
     setTaskToCopy(null);
   };
@@ -3204,6 +3208,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         onConfirm={handleScheduleConfirm}
         onCancel={handleScheduleCancel}
         taskText={taskToCopy?.text || ""}
+        initialUrgent={taskToCopy?.urgent || false}
       />
 
       <WelcomePopup

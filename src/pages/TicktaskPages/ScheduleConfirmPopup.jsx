@@ -2,6 +2,7 @@ import styles from "./popup.module.css";
 import { useState, useEffect, useRef, useMemo } from "react";
 import close3 from "../../assets/close-3.png";
 import arrowDown from "../../assets/arrowdown-yellow.png";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 const DAY_OPTIONS = [
   { value: "monday", label: "Montag" },
@@ -100,10 +101,13 @@ export default function ScheduleConfirmPopup({
   onConfirm,
   onCancel,
   taskText,
+  initialUrgent = false,
 }) {
+  const { t } = useLanguage();
   const [selectedDay, setSelectedDay] = useState("");
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedMinute, setSelectedMinute] = useState("");
+  const [urgent, setUrgent] = useState(initialUrgent);
   const [shakeDay, setShakeDay] = useState(false);
   const [shakeHour, setShakeHour] = useState(false);
   const [shakeMinute, setShakeMinute] = useState(false);
@@ -116,8 +120,9 @@ export default function ScheduleConfirmPopup({
       setShakeDay(false);
       setShakeHour(false);
       setShakeMinute(false);
+      setUrgent(initialUrgent);
     }
-  }, [open]);
+  }, [open, initialUrgent]);
 
   // Verhindere Body-Scroll, wenn das Popup offen ist (nur auf Desktop)
   useEffect(() => {
@@ -171,17 +176,18 @@ export default function ScheduleConfirmPopup({
       scheduledDayOption: selectedDay || null,
       scheduledHour: selectedHour || null,
       scheduledMinute: selectedMinute || null,
+      urgent,
     });
   };
 
   const handleWithoutSchedule = () => {
-    onConfirm(false, null);
+    onConfirm(false, { urgent });
   };
 
   return (
     <div className={styles.overlay} onClick={onCancel}>
       <div
-        className={`${styles.modal} ${styles.taskModal}`}
+        className={`${styles.modal} ${styles.goalsModal}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className={styles.modalcloseandinfo}>
@@ -221,6 +227,20 @@ export default function ScheduleConfirmPopup({
             />
           </div>
         </div>
+
+        <div className={styles.checkboxes} style={{ marginTop: "5px" }}>
+          <div className={styles.Priority}>
+            <label className={styles.checkboxRow}>
+              <input
+                type="checkbox"
+                checked={urgent}
+                onChange={(e) => setUrgent(e.target.checked)}
+                className={styles.checkboxInput}
+              />
+              <span className={styles.grey}>{t("urgent")}</span>
+            </label>
+          </div>
+        </div>
         <div className={styles.actions}>
           {selectedDay || selectedHour || selectedMinute ? (
             <button
@@ -233,11 +253,6 @@ export default function ScheduleConfirmPopup({
             <button
               onClick={handleWithoutSchedule}
               className={styles.addButton}
-              style={{
-                backgroundColor: "transparent",
-                color: "#ababab",
-                borderColor: "#555",
-              }}
             >
               Ohne Zeitplan hinzufügen
             </button>

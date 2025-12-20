@@ -128,6 +128,8 @@ export default function Popup({
 
   const dayOptions = useMemo(
     () => [
+      { value: "today", label: t("today") },
+      { value: "tomorrow", label: t("tomorrow") },
       { value: "monday", label: t("monday") },
       { value: "tuesday", label: t("tuesday") },
       { value: "wednesday", label: t("wednesday") },
@@ -390,7 +392,10 @@ export default function Popup({
     });
   };
 
-  const canSubmit = taskDuration > 0;
+  const canSubmit =
+    taskDuration > 0 &&
+    // Wenn ein Tag ausgewählt ist, muss auch eine Uhrzeit ausgewählt sein
+    (!selectedDay || selectedHour);
 
   // Generiere Goal-Optionen für das Dropdown
   const GOAL_OPTIONS = useMemo(() => {
@@ -525,7 +530,12 @@ export default function Popup({
             />
             <TransparentSelect
               value={selectedHour}
-              onChange={setSelectedHour}
+              onChange={(val) => {
+                setSelectedHour(val);
+                if (val && !selectedMinute) {
+                  setSelectedMinute("00");
+                }
+              }}
               options={HOUR_OPTIONS}
               placeholder={t("hour")}
               className={styles.timeSelect}
