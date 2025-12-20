@@ -350,9 +350,13 @@ export default function Header({
               onClick={() => {
                 const element = document.getElementById("goals-section");
                 if (element) {
-                  element.scrollIntoView({
+                  const headerHeight = 80; // Etwas mehr Offset für Goals
+                  const elementPosition = element.getBoundingClientRect().top;
+                  const offsetPosition =
+                    elementPosition + window.pageYOffset - headerHeight;
+                  window.scrollTo({
+                    top: offsetPosition,
                     behavior: "smooth",
-                    block: "start",
                   });
                 }
               }}
