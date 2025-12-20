@@ -67,12 +67,15 @@ let connectionCheckInterval;
 export const startConnectionMonitoring = () => {
   if (connectionCheckInterval) return;
 
+  // Deaktiviert, da wiederholte calls zu enableNetwork interne Fehler (Assertion Failure) verursachen können
+  /*
   connectionCheckInterval = setInterval(async () => {
     const isConnected = await checkFirebaseConnection(1);
     if (!isConnected) {
       console.warn("🔄 Attempting to reconnect to Firebase...");
     }
   }, 30000); // Alle 30 Sekunden prüfen
+  */
 };
 
 export const stopConnectionMonitoring = () => {

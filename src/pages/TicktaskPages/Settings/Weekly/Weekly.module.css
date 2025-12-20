@@ -5,7 +5,7 @@
 .weeklyDays {
   display: flex;
   flex-direction: row;
-  gap: 15px;
+  gap: 8px;
   justify-content: center;
   align-items: flex-start;
   flex-wrap: nowrap;
@@ -24,7 +24,7 @@
   min-width: 180px;
   max-width: 220px;
   padding: 15px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   border: 1px solid #333;
   border-radius: 8px;
   background-color: transparent;

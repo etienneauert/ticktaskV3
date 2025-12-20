@@ -13,7 +13,7 @@
 .WeekCalendarFrame {
   /* Größerer Radius + echte Außenkante, damit die Border in den Ecken mitrundet */
   border-radius: 18px;
-  overflow: hidden;
+  /* overflow: hidden; -- Remove clipping so active day border can overlay frame border */
   border: 1px solid #333;
   background-color: transparent;
 }
@@ -499,17 +499,19 @@
   }
 
   .CalendarHeader {
-    grid-template-columns: 1px 50px 1fr 1px;
+    grid-template-columns: 1px 50px 1fr 0px;
     width: 100%;
+    overflow: visible; /* Allow borders to bleed out */
   }
 
   .CalendarBody {
-    grid-template-columns: 1px 50px 1fr 1px;
+    grid-template-columns: 1px 50px 1fr 0px;
     width: 100%;
+    overflow: visible;
   }
 
   .BottomBar {
-    grid-template-columns: 1px 50px 1fr 1px;
+    grid-template-columns: 1px 50px 1fr 0px;
     width: 100%;
   }
 
@@ -533,17 +535,18 @@
     border-right: 1px solid #d5ff05 !important;
     border-top: 1px solid #d5ff05 !important; /* Force top border */
     border-top-right-radius: 18px !important;
-    /* Increase shadow spread significantly to ensure it bleeds into the gap */
-    box-shadow: 1px 0 0 #d5ff05, 0 0 8px rgba(213, 255, 5, 0.3) !important;
+    border-top-right-radius: 18px !important;
+    /* Remove solid shadow extension, keep glow */
+    box-shadow: 0 0 8px rgba(213, 255, 5, 0.3) !important;
     z-index: 20 !important;
     /* Ensure it overlaps properly */
     position: relative;
-    /* Pull it slightly to the right AND left to cover gaps. Top margin 0 to avoid clip. */
-    margin-right: -1px;
-    margin-left: -1px;
-    margin-top: 0;
-    width: calc(100% + 2px);
-    height: 60px;
+    /* Width: 100% (fills 1fr) + 1px (covers Frame Border). Column 4 is now 0px. */
+    width: calc(100% + 1px);
+    margin-right: 0;
+    margin-left: 0;
+    margin-top: -1px;
+    height: 61px; /* +1px height to account for margin-top adjustment? Or just 60px? border-box includes border. */
   }
 
   .DayColumn {

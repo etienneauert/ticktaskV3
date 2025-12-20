@@ -6,6 +6,7 @@ import {
   getDoc,
   collection,
   addDoc,
+  setDoc,
   getDocs,
   query,
   orderBy,
@@ -733,7 +734,9 @@ export default function WeekCalendar({
 
     try {
       const appointmentsCol = collection(db, "users", user.uid, "appointments");
-      await addDoc(appointmentsCol, appointmentData);
+      // Use setDoc with a generated ref to avoid potential addDoc internal assertions
+      const newDocRef = doc(appointmentsCol);
+      await setDoc(newDocRef, appointmentData);
       await loadAppointments();
       handlePopupCancel();
     } catch (error) {
