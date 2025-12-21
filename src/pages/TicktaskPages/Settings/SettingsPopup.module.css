@@ -60,6 +60,7 @@
 .routineModal .tabsHeader {
   /* Mehr Abstand zwischen "Navbar" (Tabs) und Inhalt im Routine/Checklist-Customize Popup */
   margin-bottom: 44px;
+  box-shadow: none;
 }
 
 .routineModal .tabContent {
