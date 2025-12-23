@@ -1,6 +1,5 @@
 .GoalsContainer {
   width: 100%;
-  max-width: 1400px;
   margin: 40px auto 190px;
   padding: 0 20px;
   display: flex;
@@ -12,11 +11,8 @@
 }
 
 /* Ab 1920px: Goals sollen so breit sein wie der Kalender */
+/* Ab 1920px: Goals sollen so breit sein wie der Kalender */
 @media (min-width: 1920px) {
-  .GoalsContainer {
-    max-width: 1600px;
-  }
-
   /* Desktop (1920px): Meta-Infos (Days remaining + Progress) links neben Created/Target,
      Buttons dürfen weiterhin rechts bleiben */
   .GoalProgressInfo {
@@ -57,7 +53,6 @@
   align-items: center;
   gap: 30px;
   width: 100%;
-  max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
   position: relative;
@@ -71,11 +66,12 @@
   font-weight: 500;
   white-space: nowrap;
   position: absolute;
-  left: 20px;
+  left: calc(200px - (100vw - 100%) / 2 + 10px);
   top: 50%;
   transform: translateY(-50%);
   z-index: 1;
   pointer-events: none;
+  display: none;
 }
 
 .GoalsInputContainer input {

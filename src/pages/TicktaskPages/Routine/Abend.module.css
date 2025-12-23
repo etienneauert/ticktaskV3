@@ -3,29 +3,14 @@
   padding: 20px;
   border: 1px solid #333;
   border-radius: 8px;
-  max-width: 400px;
   margin: 0 auto;
-  width: 300px;
+  width: 100%;
   box-sizing: border-box;
 }
 
-/* Stelle sicher, dass Abend immer die gleiche Breite wie Daily/Weekly hat */
-@media (min-width: 1479px) {
-  .abendContainer {
-    max-width: 400px;
-    width: 300px;
-    margin: 0 auto;
-  }
-}
 
-/* Media Query für Bildschirme kleiner als 1478px */
-@media (max-width: 1478px) {
-  .abendContainer {
-    max-width: calc(100% - 136px);
-    width: calc(100% - 136px);
-    margin: 0 auto;
-  }
-}
+
+
 
 /* Media Query für Mobile - gleiche Breite wie Daily/Weekly */
 @media (max-width: 768px) {

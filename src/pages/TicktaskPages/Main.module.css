@@ -8,13 +8,14 @@
 
 .MainContent {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
+  padding: 0 40px;
+  box-sizing: border-box;
 }
 
 .CalendarLabelContainer {
   width: 100%;
-  max-width: 1400px;
   margin: 100px auto 0;
   padding: 10px 20px;
   position: sticky;
@@ -34,9 +35,10 @@
   font-weight: 500;
   white-space: nowrap;
   position: absolute;
-  left: 20px;
+  left: calc(200px - (100vw - 100%) / 2 + 10px);
   top: 50%;
   transform: translateY(-50%);
+  display: none;
 }
 
 .WeekCalendarContainer {
@@ -54,14 +56,12 @@
 
 .MainRoutine {
   width: 26%;
-  margin: 0 auto;
 
   /* background-color: blue; */
 }
 
 .MainWeekly {
   width: 26%;
-  margin: 0 auto;
 
   /* background-color: green; */
 }

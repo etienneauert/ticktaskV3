@@ -1,6 +1,5 @@
 .WeekCalendar {
   width: 100%;
-  max-width: 1400px;
   margin: 40px auto 40px;
   padding: 20px;
   background-color: transparent;
@@ -19,11 +18,6 @@
 }
 
 /* Ab 23 Zoll (etwa 1920px Breite): Kalender soll so breit sein wie Task-Komponente */
-@media (min-width: 1920px) {
-  .WeekCalendar {
-    max-width: 1600px;
-  }
-}
 .CalendarHeader {
   display: grid;
   grid-template-columns: 0.5px 80px repeat(7, 1fr) 0.5px;
