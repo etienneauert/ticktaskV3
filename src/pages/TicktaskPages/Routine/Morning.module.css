@@ -16,8 +16,8 @@
 @media (max-width: 768px) {
   .morningContainer {
     max-width: 100%;
-    width: auto;
-    margin: 0 8px;
+    width: 100%;
+    margin: 0;
     box-sizing: border-box;
   }
 }

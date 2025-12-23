@@ -164,7 +164,11 @@
 @media (max-width: 768px) {
   .Main {
     margin-top: 50px;
-    padding: 0 5px;
+    padding: 0;
+  }
+
+  .MainContent {
+    padding: 0 10px;
   }
 
   .CalendarLabelContainer {
@@ -187,20 +191,20 @@
 
   .MainTasks {
     width: 100%;
-    margin-bottom: 20px;
+    margin: 0 0 20px 0;
     order: 1;
   }
 
   .MainRoutine {
-    width: 95%;
+    width: 100%;
     order: 2;
-    margin-bottom: 20px;
+    margin: 0 0 20px 0;
   }
 
   .MainWeekly {
-    width: 95%;
+    width: 100%;
     order: 3;
-    margin-bottom: 20px;
+    margin: 0 0 20px 0;
   }
 
   .MainCenteredButton {
@@ -209,7 +213,7 @@
   }
 
   .WeekCalendarContainer {
-    padding: 0 5px;
+    padding: 0;
     margin-top: 20px;
     overflow-x: visible;
   }
@@ -240,19 +244,19 @@
   }
 
   .MainTasks {
-    width: 100%;
+    width: calc(100vw - 20px);
     margin-bottom: 20px;
     order: 1;
   }
 
   .MainRoutine {
-    width: 100%;
+    width: calc(100vw - 20px);
     order: 2;
     margin-bottom: 20px;
   }
 
   .MainWeekly {
-    width: 100%;
+    width: calc(100vw - 20px);
     order: 3;
     margin-bottom: 20px;
   }

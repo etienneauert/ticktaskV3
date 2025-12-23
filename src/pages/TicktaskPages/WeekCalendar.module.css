@@ -482,8 +482,8 @@
 
 @media (max-width: 768px) {
   .WeekCalendar {
-    padding: 10px;
-    max-width: calc(100vw - 20px);
+    padding: 2px;
+    max-width: 100%;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
@@ -587,8 +587,8 @@
 
 @media (max-width: 480px) {
   .WeekCalendar {
-    padding: 5px;
-    max-width: calc(100vw - 20px);
+    padding: 2px;
+    max-width: 100%;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
