@@ -10,6 +10,12 @@
   position: relative;
 }
 
+@media (min-width: 1479px) {
+  .GoalsContainer {
+    padding: 0 40px;
+  }
+}
+
 /* Ab 1920px: Goals sollen so breit sein wie der Kalender */
 /* Ab 1920px: Goals sollen so breit sein wie der Kalender */
 @media (min-width: 1920px) {
