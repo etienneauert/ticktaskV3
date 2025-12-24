@@ -1,6 +1,6 @@
 .tooltip {
   position: fixed;
-  background: rgba(22, 22, 22, 0.95);
+  background: black;
   border: 3px solid rgb(213, 255, 5);
   border-radius: 12px;
   padding: 16px 20px;
@@ -13,10 +13,43 @@
   box-sizing: border-box;
 }
 
+/* ... existing code ... */
+
+.message {
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  background-color: black;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  background-color: black;
+}
+
+.progress {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  display: block;
+  text-align: center;
+  margin-bottom: 0px;
+  background-color: black;
+}
+
 /* Guest-Mode Tutorial: Karten/Tooltip ohne Fill */
 .guestTooltip {
-  background: #000 !important;
-  background-color: #000 !important;
+  background-color: #000000 !important;
 }
 
 /* Spezifische Breite für Info-Button Tooltip */
@@ -57,6 +90,7 @@
   width: 3px;
   background: rgb(213, 255, 5);
   z-index: 1001;
+  background-color: rgba(213, 255, 5, 0.95);
 }
 
 .tooltip[data-position="left"]::before {
@@ -133,6 +167,7 @@
   gap: 12px;
   width: 100%;
   box-sizing: border-box;
+  background-color: black;
 }
 
 .message {
