@@ -56,6 +56,8 @@ export const LanguageProvider = ({ children }) => {
       language: "Sprache",
       german: "Deutsch",
       english: "Englisch",
+      resetApp: "App zurücksetzen",
+      confirmResetApp: "Möchtest du wirklich alle Daten löschen und die App zurücksetzen?",
 
       // Tasks
       addTask: "Task hinzufügen",
@@ -343,6 +345,8 @@ export const LanguageProvider = ({ children }) => {
       language: "Language",
       german: "German",
       english: "English",
+      resetApp: "Reset App",
+      confirmResetApp: "Do you really want to delete all data and reset the app?",
 
       // Tasks
       addTask: "Add Task",

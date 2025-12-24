@@ -1,12 +1,18 @@
 import styles from "./SettingsPopup.module.css";
 import { useLanguage } from "../../../contexts/LanguageContext";
 
-export default function GeneralTab({ streak, onResetStreak, user }) {
+export default function GeneralTab({ streak, onResetStreak, user, onResetApp }) {
   const { language, changeLanguage, t } = useLanguage();
 
   const handleResetStreak = () => {
     if (window.confirm(t("confirmResetStreak"))) {
       onResetStreak();
+    }
+  };
+
+  const handleResetApp = () => {
+    if (window.confirm(t("confirmResetApp"))) {
+      onResetApp();
     }
   };
 
@@ -30,6 +36,13 @@ export default function GeneralTab({ streak, onResetStreak, user }) {
             {t("streak")}: <span className={styles.streakNumber}>{streak}</span>
           </span>
           <button className={styles.resetButton} onClick={handleResetStreak}>
+            {t("reset")}
+          </button>
+        </div>
+
+        <div className={styles.streakRow}>
+          <span className={styles.currentStreak}>{t("resetApp")}:</span>
+          <button className={styles.resetButton} onClick={handleResetApp}>
             {t("reset")}
           </button>
         </div>

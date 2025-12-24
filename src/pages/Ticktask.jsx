@@ -582,6 +582,88 @@ export function Ticktask({ user, isGuestMode = false }) {
     }
   };
 
+  const resetApp = async () => {
+    // 1. Reset Streak
+    setStreak(0);
+
+    // 2. Clear Running Task
+    setRunningTaskId(null);
+
+    // 3. Clear all Local Checklist States
+    setMorningCompleted(new Set());
+    setAbendCompleted(new Set());
+    setWeeklyCompleted(new Set());
+    setDailyCompleted(new Set());
+
+    if (isGuestMode) {
+      // Guest Mode Reset
+      clearGuestData();
+
+      // Reset local states
+      setWeeklyTasks({
+        monday: [],
+        tuesday: [],
+        wednesday: [],
+        thursday: [],
+        friday: [],
+        saturday: [],
+        sunday: [],
+      });
+      setMorningTasks([]);
+      setAbendTasks([]);
+      setDailyTasks([]);
+
+      // Reload to ensure clean state
+      window.location.reload();
+    } else if (user?.uid) {
+      // User Mode Reset
+      try {
+        setIsLoading(true);
+
+        // A. Clear LocalStorage keys for this user
+        Object.keys(localStorage).forEach((key) => {
+          if (key.includes(user.uid)) {
+            localStorage.removeItem(key);
+          }
+        });
+
+        // B. Clear Firestore Data
+        const collectionsToDelete = [
+          "tasks",
+          "goals",
+          "frequentTemplates",
+          "weeklyTasks",
+          "routineTasks",
+          "dailyTasks",
+          "archivedTasks",
+          "settings"
+        ];
+
+        const clearCollection = async (path) => {
+          const ref = collection(db, "users", user.uid, path);
+          const snap = await getDocs(ref);
+          const promises = snap.docs.map((doc) => deleteDoc(doc.ref));
+          await Promise.all(promises);
+        };
+
+        for (const colName of collectionsToDelete) {
+          await clearCollection(colName);
+        }
+
+        // Reset Settings/Profile specific docs
+        const streakDoc = doc(db, "users", user.uid, "profile", "streak");
+        await setDoc(streakDoc, { value: 0 });
+
+        // Reload to refresh state
+        window.location.reload();
+      } catch (e) {
+        console.error("Failed to reset app", e);
+        showErrorMessage("Fehler beim Zurücksetzen der App.");
+        setIsLoading(false);
+      }
+    }
+  };
+
   const updateWeeklyTasks = async (day, tasks) => {
     // Bereinige completed Set: entferne Tasks, die für diesen Tag gelöscht wurden
     // und nicht mehr für andere Tage existieren
@@ -3135,6 +3217,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         showErrorMessage={showErrorMessage}
         updateGuestData={undefined}
         guestData={undefined}
+        onResetApp={resetApp}
       ></Header>
       <Input
         onAdd={handleAdd}
