@@ -147,27 +147,17 @@
   flex: 1;
   min-height: 0;
   font-size: 18px;
-  scrollbar-width: thin;
-  scrollbar-color: #d5ff05 rgba(255, 255, 255, 0.1);
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none; 
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
+/* Hide scrollbar for Chrome/Safari/Opera */
 .content::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
 
-.content::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background: #d5ff05;
-  border-radius: 4px;
-}
-
-.content::-webkit-scrollbar-thumb:hover {
-  background: #d5ff05;
-}
+/* Removed previous scrollbar styling */
 
 .section {
   margin-bottom: 40px;
