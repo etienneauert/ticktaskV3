@@ -1445,6 +1445,13 @@ export function Ticktask({ user, isGuestMode = false }) {
     if (minLoadingTimeRef.current) {
       clearTimeout(minLoadingTimeRef.current);
     }
+    
+    // Safety fallback: Force stop loading after 5 seconds
+    const safetyTimeout = setTimeout(() => {
+      console.warn("⚠️ Data loading safety timeout - forcing UI render");
+      setIsLoading(false);
+    }, 5000);
+
     dataLoadedRef.current = {
       tasks: false,
       weekly: false,
@@ -2171,6 +2178,7 @@ export function Ticktask({ user, isGuestMode = false }) {
         if (minLoadingTimeRef.current) {
           clearTimeout(minLoadingTimeRef.current);
         }
+        clearTimeout(safetyTimeout);
       };
     }
 
