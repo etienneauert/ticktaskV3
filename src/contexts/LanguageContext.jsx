@@ -137,6 +137,10 @@ export const LanguageProvider = ({ children }) => {
       dailyChecklist: "Täglich",
       weeklyChecklist: "Wöchentlich",
       noTasksForToday: "Keine Tasks für heute",
+      noMorningTasks: "Keine Tasks für deine Morgenroutine",
+      noEveningTasks: "Keine Tasks für deine Abendroutine",
+      noWeeklyTasks: "Keine wöchentlichen Tasks heute",
+      noDailyTasks: "Keine täglichen Tasks heute",
 
       // Finish Day
       finishDay: "Tag beenden",
@@ -426,6 +430,10 @@ export const LanguageProvider = ({ children }) => {
       dailyChecklist: "Daily",
       weeklyChecklist: "Weekly",
       noTasksForToday: "No tasks for today",
+      noMorningTasks: "No tasks for your Morning Routine",
+      noEveningTasks: "No tasks for your Evening Routine",
+      noWeeklyTasks: "No weekly tasks today",
+      noDailyTasks: "No daily tasks today",
 
       // Finish Day
       finishDay: "Finish Day",

@@ -46,7 +46,7 @@ export default function Abend({
       <div className={styles.tasksList}>
         {abendTasks.length === 0 ? (
           <div className={styles.emptyState}>
-            <span>{t("noTasksForToday")}</span>
+            <span>{t("noEveningTasks")}</span>
           </div>
         ) : (
           abendTasks.map((task, index) => {

@@ -45,7 +45,7 @@ export default function Daily({
       <div className={styles.tasksList}>
         {dailyTasks.length === 0 ? (
           <div className={styles.emptyState}>
-            <span>{t("noTasksForToday")}</span>
+            <span>{t("noDailyTasks")}</span>
           </div>
         ) : (
           dailyTasks.map((task, index) => {

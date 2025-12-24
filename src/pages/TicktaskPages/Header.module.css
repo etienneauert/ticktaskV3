@@ -226,7 +226,7 @@
     font-size: 14px;
     z-index: 1001; /* über Header */
     pointer-events: none;
-    background-color: #000;
+    background-color: transparent;
   }
 
   .headerLogoutButton {
@@ -290,7 +290,7 @@
   .guestModeLabel {
     height: 22px;
     font-size: 13px;
-    background-color: #000;
+    background-color: transparent;
   }
 
   .headerLogoutButton {

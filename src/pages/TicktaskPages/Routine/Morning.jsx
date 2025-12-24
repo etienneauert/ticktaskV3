@@ -46,7 +46,7 @@ export default function Morning({
       <div className={styles.tasksList}>
         {morningTasks.length === 0 ? (
           <div className={styles.emptyState}>
-            <span>{t("noTasksForToday")}</span>
+            <span>{t("noMorningTasks")}</span>
           </div>
         ) : (
           morningTasks.map((task, index) => {

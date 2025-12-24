@@ -60,7 +60,7 @@ export default function Weekly({
       <div className={styles.tasksList}>
         {todayTasks.length === 0 ? (
           <div className={styles.emptyState}>
-            <span>{t("noTasksForToday")}</span>
+            <span>{t("noWeeklyTasks")}</span>
           </div>
         ) : (
           todayTasks.map((task, index) => {
