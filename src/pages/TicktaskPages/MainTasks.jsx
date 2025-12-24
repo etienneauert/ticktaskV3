@@ -104,7 +104,7 @@ export default function MainTasks({
     frequentTasks.length === 0;
 
   return (
-    <div>
+    <div className={styles.widthWrapper}>
       {isEmpty ? (
         <div className={styles.emptyMessage}>{t("taskListEmpty")}</div>
       ) : (
