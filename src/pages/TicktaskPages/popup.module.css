@@ -208,6 +208,7 @@
     20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7),
     0 0 0 4px rgba(255, 255, 255, 0.1);
   background-color: rgba(10, 10, 10, 0.95);
+  position: relative;
 }
 
 .taskModal {
@@ -1298,6 +1299,9 @@
   /* Close-Button in derselben Zeile wie die Uhrzeit (nur Task-Popup) */
   .taskModal .modalcloseandinfo {
     align-items: center;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 
   .taskModal .close {
@@ -1443,6 +1447,8 @@
   /* Weniger Abstand unter der Demo-Task-Vorschau */
   .taskModal .demoPreview {
     margin-bottom: 0px !important;
+    margin-left: 20px !important;
+    margin-right: 20px !important;
   }
 
   .demoTask {
@@ -1510,7 +1516,7 @@
   }
 
   .Duration {
-    margin-top: 0px !important;
+    margin-top: 30px !important;
     margin-bottom: 30px !important;
   }
 
@@ -1611,9 +1617,8 @@
 
   /* Task-Popup: edge-to-edge Submit an Mobile-Padding anpassen */
   .taskModal .actions {
-    width: calc(100% + 30px);
-    margin-left: -15px;
-    margin-right: -15px;
+    width: 100%;
+    margin: 0 !important;
   }
 
   /* Goals-Popup: edge-to-edge Add-Goal an Mobile-Padding anpassen */
@@ -1719,7 +1724,7 @@
   }
 
   .Duration {
-    margin-top: 0px !important;
+    margin-top: 25px !important;
     margin-bottom: 30px !important;
   }
 
