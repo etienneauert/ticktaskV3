@@ -37,6 +37,7 @@ export default function Header({
   updateGuestData,
   guestData,
   onResetApp,
+  onOpenWelcome,
 }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [routineCustomizationOpen, setRoutineCustomizationOpen] =
@@ -406,6 +407,7 @@ export default function Header({
         updateGuestData={updateGuestData}
         guestData={guestData}
         onResetApp={onResetApp}
+        onOpenWelcome={onOpenWelcome}
       />
 
       <RoutineCustomizationPopup

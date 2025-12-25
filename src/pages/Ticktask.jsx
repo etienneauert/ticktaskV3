@@ -663,7 +663,12 @@ export function Ticktask({ user, isGuestMode = false }) {
       setAbendCompleted(new Set());
       setWeeklyCompleted(new Set());
       setDailyCompleted(new Set());
+      setDailyCompleted(new Set());
       clearGuestData();
+
+      // Clear persisted welcome state so it shows again on next fresh guest session if desired,
+      // though "Reset App" implies full wipe.
+      localStorage.removeItem("ticktask_guest_welcome_shown");
 
       setWeeklyTasks({
         monday: [],
@@ -986,6 +991,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   const handleLogout = () => {
     if (isGuestMode) {
       clearGuestData();
+      localStorage.removeItem("ticktask_guest_welcome_shown");
       window.location.reload();
     } else {
       signOut(auth);
@@ -2884,9 +2890,15 @@ export function Ticktask({ user, isGuestMode = false }) {
     }
   }, [isGuestMode, guestData.tasks]);
 
-  // Zeige Welcome-Popup im Guest-Mode immer an
+  // Zeige Welcome-Popup im Guest-Mode (nur einmal pro Session/Reset, persistiert im LocalStorage)
   useEffect(() => {
     if (isGuestMode) {
+      // Check if already shown in this "session" (persisted across reloads like language change)
+      const alreadyShown = localStorage.getItem("ticktask_guest_welcome_shown");
+      if (alreadyShown === "true") {
+        return;
+      }
+
       // Reset ref wenn Guest-Mode aktiviert wird
       guestWelcomeShownRef.current = false;
 
@@ -2952,7 +2964,15 @@ export function Ticktask({ user, isGuestMode = false }) {
   const handleWelcomeClose = async () => {
     setShowWelcomePopup(false);
 
-    if (!user?.uid || isGuestMode) return;
+    setShowWelcomePopup(false);
+
+    if (isGuestMode) {
+      // Persist that we've seen it, so language change (reload) doesn't show it again
+      localStorage.setItem("ticktask_guest_welcome_shown", "true");
+      return;
+    }
+
+    if (!user?.uid) return;
 
     try {
       const profileDoc = doc(db, "users", user.uid, "profile", "welcome");
@@ -2974,6 +2994,10 @@ export function Ticktask({ user, isGuestMode = false }) {
   // Handler für "Start Tutorial" Button
   const handleStartTutorial = () => {
     setShowWelcomePopup(false); // Schließe Welcome-Popup
+
+    if (isGuestMode) {
+      localStorage.setItem("ticktask_guest_welcome_shown", "true");
+    }
 
     // Warte kurz, damit das Welcome-Popup geschlossen ist und alle Elemente gerendert sind
     setTimeout(() => {
@@ -3112,10 +3136,8 @@ export function Ticktask({ user, isGuestMode = false }) {
       <div>
         <Header
           user={null}
-          onLogout={() => {
-            localStorage.removeItem("ticktask_guestMode");
-            window.location.reload();
-          }}
+          onLogout={handleLogout}
+          onOpenWelcome={() => setShowWelcomePopup(true)}
           weeklyTasks={currentWeeklyTasks}
           updateWeeklyTasks={updateWeeklyTasks}
           morningTasks={currentMorningTasks}
@@ -3271,6 +3293,7 @@ export function Ticktask({ user, isGuestMode = false }) {
       <Header
         user={user}
         onLogout={handleLogout}
+        onOpenWelcome={() => setShowWelcomePopup(true)}
         weeklyTasks={weeklyTasks}
         updateWeeklyTasks={updateWeeklyTasks}
         morningTasks={morningTasks}

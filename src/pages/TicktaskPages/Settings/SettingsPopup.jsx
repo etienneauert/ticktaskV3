@@ -25,6 +25,7 @@ export default function SettingsPopup({
   updateGuestData,
   guestData,
   onResetApp,
+  onOpenWelcome,
 }) {
   const [activeTab, setActiveTab] = useState(1); // General Tab
   const buttonRefs = useRef([]);
@@ -140,6 +141,8 @@ export default function SettingsPopup({
                   onResetStreak={onResetStreak}
                   user={user}
                   onResetApp={onResetApp}
+                  onOpenWelcome={onOpenWelcome}
+                  onClose={onClose}
                 />
               )}
               {activeTab === 2 && <GoalsTab user={user} />}

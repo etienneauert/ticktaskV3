@@ -1,7 +1,7 @@
 import styles from "./SettingsPopup.module.css";
 import { useLanguage } from "../../../contexts/LanguageContext";
 
-export default function GeneralTab({ streak, onResetStreak, user, onResetApp }) {
+export default function GeneralTab({ streak, onResetStreak, user, onResetApp, onOpenWelcome, onClose }) {
   const { language, changeLanguage, t } = useLanguage();
 
   const handleResetStreak = () => {
@@ -18,13 +18,21 @@ export default function GeneralTab({ streak, onResetStreak, user, onResetApp }) 
 
   const handleLanguageChange = (newLanguage) => {
     changeLanguage(newLanguage);
-    // Speichere dass SettingsPopup nach Reload geöffnet werden soll mit General Tab
-    localStorage.setItem("ticktask_reopenSettings", "true");
-    localStorage.setItem("ticktask_settingsTab", "1"); // General Tab ID
-    // Seite neu laden nach Sprachwechsel
+    
+    // We DON'T want to reopen settings after reload anymore
+    // localStorage.setItem("ticktask_reopenSettings", "true");
+    
+    // Just reload the page
     setTimeout(() => {
       window.location.reload();
     }, 100);
+  };
+
+  const handleStartTutorial = () => {
+    if (onOpenWelcome) {
+      onOpenWelcome();
+      onClose(); // Close settings popup
+    }
   };
 
 
@@ -44,6 +52,13 @@ export default function GeneralTab({ streak, onResetStreak, user, onResetApp }) 
           <span className={styles.currentStreak}>{t("resetApp")}:</span>
           <button className={styles.resetButton} onClick={handleResetApp}>
             {t("reset")}
+          </button>
+        </div>
+
+        <div className={`${styles.streakRow} ${styles.tutorialRow}`}>
+          <span className={styles.currentStreak}>{t("tutorial") || "Tutorial"}:</span>
+          <button className={styles.resetButton} onClick={handleStartTutorial}>
+            {t("start") || "Start"}
           </button>
         </div>
 

@@ -525,6 +525,10 @@
 
 /* Mobile Styles for General Tab */
 @media (max-width: 768px) {
+  .tutorialRow {
+    display: none !important;
+  }
+
   .generalSection {
     padding: 15px;
     max-width: 350px;
