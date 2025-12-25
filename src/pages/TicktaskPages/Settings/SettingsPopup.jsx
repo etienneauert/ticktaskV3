@@ -49,8 +49,8 @@ export default function SettingsPopup({
 
   const tabs = [
     { id: 1, label: t("general") },
-    { id: 2, label: "Ziele" },
-    { id: 4, label: "Kalender" },
+    { id: 2, label: t("goals") },
+    { id: 4, label: t("navCalendar") },
   ];
 
   useEffect(() => {

@@ -992,10 +992,11 @@ export function Ticktask({ user, isGuestMode = false }) {
     if (isGuestMode) {
       clearGuestData();
       localStorage.removeItem("ticktask_guest_welcome_shown");
+      localStorage.removeItem("ticktask_guestMode");
       window.location.reload();
-    } else {
-      signOut(auth);
+      return;
     }
+    signOut(auth);
   };
 
   const handleAdd = async (task) => {

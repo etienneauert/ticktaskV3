@@ -56,9 +56,9 @@ export default function GeneralTab({ streak, onResetStreak, user, onResetApp, on
         </div>
 
         <div className={`${styles.streakRow} ${styles.tutorialRow}`}>
-          <span className={styles.currentStreak}>{t("tutorial") || "Tutorial"}:</span>
+          <span className={styles.currentStreak}>{t("tutorial")}:</span>
           <button className={styles.tutorialButton} onClick={handleStartTutorial}>
-            {t("start") || "Start"}
+            {t("start")}
           </button>
         </div>
 
