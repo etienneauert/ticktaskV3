@@ -139,6 +139,8 @@ export function Ticktask({ user, isGuestMode = false }) {
   const loadingStartTimeRef = useRef(null);
   const minLoadingTimeRef = useRef(null);
 
+  console.log("Ticktask render:", { userUid: user?.uid, isGuestMode, isLoading });
+
   // Gast-Datenmanagement
   const { guestData, guestDataLoaded, updateGuestData, clearGuestData } =
     useGuestData(isGuestMode);
@@ -1459,6 +1461,7 @@ export function Ticktask({ user, isGuestMode = false }) {
 
       if (elapsed >= minLoadingTime) {
         // Mindestzeit erreicht, sofort ausblenden
+        console.log("Data loaded: turning off loading");
         setIsLoading(false);
       } else {
         // Mindestzeit noch nicht erreicht, Timer setzen

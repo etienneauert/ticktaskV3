@@ -6,6 +6,7 @@ import { Ticktask } from "./pages/Ticktask.jsx";
 import { Login } from "./pages/Login";
 import styles from "./App.module.css";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -130,25 +131,27 @@ export default function App() {
   return (
     <LanguageProvider>
       <div className={styles.app}>
-        {!authReady ? (
-          <div style={{ backgroundColor: "#000", minHeight: "100vh" }}>
-            Loading...
-          </div>
-        ) : isLoggedIn ? (
-          <Ticktask user={user} isGuestMode={false} />
-        ) : isGuestMode ? (
-          <Ticktask user={null} isGuestMode={true} />
-        ) : showLogin ? (
-          <Login
-            onSwitchToAuth={() => setShowLogin(false)}
-            onGuestLogin={handleGuestLogin}
-          />
-        ) : (
-          <Auth
-            onSwitchToLogin={() => setShowLogin(true)}
-            onGuestLogin={handleGuestLogin}
-          />
-        )}
+        <ErrorBoundary>
+          {!authReady ? (
+            <div style={{ backgroundColor: "#000", minHeight: "100vh" }}>
+              Loading...
+            </div>
+          ) : isLoggedIn ? (
+            <Ticktask user={user} isGuestMode={false} />
+          ) : isGuestMode ? (
+            <Ticktask user={null} isGuestMode={true} />
+          ) : showLogin ? (
+            <Login
+              onSwitchToAuth={() => setShowLogin(false)}
+              onGuestLogin={handleGuestLogin}
+            />
+          ) : (
+            <Auth
+              onSwitchToLogin={() => setShowLogin(true)}
+              onGuestLogin={handleGuestLogin}
+            />
+          )}
+        </ErrorBoundary>
       </div>
     </LanguageProvider>
   );
