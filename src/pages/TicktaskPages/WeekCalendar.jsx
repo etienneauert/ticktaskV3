@@ -616,13 +616,24 @@ export default function WeekCalendar({
   }, [appointments]);
 
   const getAppointmentPosition = (appointment) => {
-    if (!appointment?.scheduledDateTime) return null;
-    const startDate = new Date(appointment.scheduledDateTime);
-    const endDate = appointment.endDateTime
-      ? new Date(appointment.endDateTime)
-      : null;
+    // Prefer the pre-calculated Date objects if available (from appointmentsByDay)
+    // This is crucial because scheduledDateTime (string) might preserve the creation time,
+    // whereas scheduledDate has been adjusted to the correct recurrring hour/minute.
+    const startDate =
+      appointment.scheduledDate instanceof Date
+        ? appointment.scheduledDate
+        : appointment.scheduledDateTime
+        ? new Date(appointment.scheduledDateTime)
+        : null;
 
-    if (!endDate) return null;
+    const endDate =
+      appointment.endDate instanceof Date
+        ? appointment.endDate
+        : appointment.endDateTime
+        ? new Date(appointment.endDateTime)
+        : null;
+
+    if (!startDate || !endDate) return null;
 
     const appointmentStartHour = startDate.getHours();
     const appointmentStartMinute = startDate.getMinutes();
