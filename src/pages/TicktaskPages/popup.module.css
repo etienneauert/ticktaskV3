@@ -107,7 +107,7 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: rgba(12, 12, 12, 1);
+  background: #0a0a0a;
   opacity: 1;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
@@ -668,7 +668,7 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: rgba(12, 12, 12, 1);
+  background: #0a0a0a;
   opacity: 1;
   border: 1px solid rgba(140, 140, 140, 0.25);
   border-radius: 16px;
@@ -1506,6 +1506,21 @@
     flex: 0 0 auto;
   }
 
+  .goalSection {
+    position: relative;
+    z-index: 100;
+  }
+
+  .selectDropdown,
+  .scheduleInputs .transparentSelect .selectDropdown,
+  .appointmentModal .selectDropdown,
+  .timeSelect .selectDropdown,
+  .timeInputs .transparentSelect .selectDropdown {
+    max-height: 85px; /* Limit to 2 items */
+    background: #0a0a0a !important;
+    background-color: #0a0a0a !important;
+  }
+
   .demoTask {
     align-items: center !important;
     padding: 5px 8px !important;
@@ -1574,6 +1589,14 @@
   .settingsContent {
     margin-top: 30px;
     font-size: 14px;
+  }
+  /* Force opaque background with ID specificity for Task Popup */
+  #task-popup .selectDropdown,
+  #task-popup .transparentSelect .selectDropdown,
+  #task-popup .timeSelect .selectDropdown {
+    background: #0a0a0a !important;
+    background-color: #0a0a0a !important;
+    opacity: 1 !important;
   }
 }
 
@@ -1842,6 +1865,16 @@
   80% {
     transform: translateX(4px);
   }
+}
+
+.opaqueDropdown,
+.scheduleInputs .timeSelect .opaqueDropdown,
+.transparentSelect .opaqueDropdown {
+  background-color: #0a0a0a !important;
+  background: #0a0a0a !important;
+  opacity: 1 !important;
+  /* Ensure text is visible too if that was an issue */
+  color: rgb(171, 171, 171) !important;
 }
 
 .selectDisplay span {

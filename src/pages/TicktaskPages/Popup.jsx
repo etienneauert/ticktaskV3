@@ -30,6 +30,7 @@ function TransparentSelect({
   options,
   placeholder,
   className = "",
+  dropdownClassName = "",
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef(null);
@@ -78,7 +79,10 @@ function TransparentSelect({
         </span>
       </button>
       {open && (
-        <div className={styles.selectDropdown}>
+        <div
+          className={`${styles.selectDropdown} ${dropdownClassName}`}
+          style={{ backgroundColor: "#0a0a0a", opacity: 1 }}
+        >
           {options.map((option) => (
             <button
               type="button"
@@ -527,6 +531,7 @@ export default function Popup({
               onChange={setSelectedDay}
               options={dayOptions}
               placeholder={t("selectDay")}
+              dropdownClassName={styles.opaqueDropdown}
             />
             <TransparentSelect
               value={selectedHour}
@@ -539,6 +544,7 @@ export default function Popup({
               options={HOUR_OPTIONS}
               placeholder={t("hour")}
               className={styles.timeSelect}
+              dropdownClassName={styles.opaqueDropdown}
             />
             <span className={styles.timeSeparator}>:</span>
             <TransparentSelect
@@ -547,6 +553,7 @@ export default function Popup({
               options={MINUTE_OPTIONS}
               placeholder={t("minute")}
               className={styles.timeSelect}
+              dropdownClassName={styles.opaqueDropdown}
             />
           </div>
         </div>
@@ -558,6 +565,7 @@ export default function Popup({
             onChange={setSelectedGoal}
             options={GOAL_OPTIONS}
             placeholder={t("selectGoal")}
+            dropdownClassName={styles.opaqueDropdown}
           />
         </div>
 

@@ -163,7 +163,7 @@
 
 @media (max-width: 768px) {
   .Main {
-    margin-top: 50px;
+    margin-top: 20px;
     padding: 0;
   }
 
@@ -221,7 +221,7 @@
 
 @media (max-width: 480px) {
   .Main {
-    margin-top: 40px;
+    margin-top: 10px;
     padding: 0 5px;
   }
 
