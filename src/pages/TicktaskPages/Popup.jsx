@@ -565,7 +565,7 @@ export default function Popup({
             onChange={setSelectedGoal}
             options={GOAL_OPTIONS}
             placeholder={t("selectGoal")}
-            dropdownClassName={styles.opaqueDropdown}
+            dropdownClassName={`${styles.opaqueDropdown} ${styles.goalDropdownLimit}`}
           />
         </div>
 

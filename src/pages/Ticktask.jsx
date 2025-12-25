@@ -1552,7 +1552,16 @@ export function Ticktask({ user, isGuestMode = false }) {
     if (isGuestMode) {
       setTasks([]);
       setFrequentTemplates([]);
-      setIsLoading(false);
+      
+      // Ensure specific minimum loading time for Guest Mode too
+      const elapsed = Date.now() - loadingStartTimeRef.current;
+      const minLoadingTime = 1500; 
+      const remaining = Math.max(0, minLoadingTime - elapsed);
+      
+      setTimeout(() => {
+        setIsLoading(false);
+      }, remaining);
+      
       return;
     }
 
@@ -3131,6 +3140,47 @@ export function Ticktask({ user, isGuestMode = false }) {
     neededTime: 0,
   });
 
+  if (isLoading && (user?.uid || isGuestMode)) {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+          backgroundColor: "#010101",
+          gap: "20px",
+          zIndex: 9999,
+        }}
+      >
+        <Ring2
+          size="40"
+          stroke="5"
+          strokeLength="0.25"
+          bgOpacity="0.1"
+          speed="0.8"
+          color="#d5ff05"
+        />
+        <p
+          style={{
+            color: "#d5ff05",
+            fontSize: "18px",
+            margin: 0,
+          }}
+        >
+          TickTask wird geladen
+        </p>
+      </div>
+    );
+  }
+
   // Gast-Modus Warnung
   if (isGuestMode) {
     return (
@@ -3248,46 +3298,7 @@ export function Ticktask({ user, isGuestMode = false }) {
     );
   }
 
-  if (isLoading && user?.uid && !isGuestMode) {
-    return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          width: "100vw",
-          backgroundColor: "#000000",
-          gap: "20px",
-          zIndex: 9999,
-        }}
-      >
-        <Ring2
-          size="40"
-          stroke="5"
-          strokeLength="0.25"
-          bgOpacity="0.1"
-          speed="0.8"
-          color="#d5ff05"
-        />
-        <p
-          style={{
-            color: "#d5ff05",
-            fontSize: "18px",
-            margin: 0,
-          }}
-        >
-          TickTask wird geladen
-        </p>
-      </div>
-    );
-  }
+
 
   return (
     <div>

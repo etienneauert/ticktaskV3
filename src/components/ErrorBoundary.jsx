@@ -42,21 +42,53 @@ class ErrorBoundary extends React.Component {
           <details style={{ whiteSpace: "pre-wrap", textAlign: "left" }}>
             {this.state.errorInfo && this.state.errorInfo.componentStack}
           </details>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              marginTop: "20px",
-              padding: "10px 20px",
-              backgroundColor: "#d5ff05",
-              color: "black",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer",
-              fontWeight: "bold",
-            }}
-          >
-            Reload App
-          </button>
+          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#d5ff05",
+                color: "black",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              Reload App
+            </button>
+
+            <button
+              onClick={async () => {
+                try {
+                  console.log("Perfoming hard reset...");
+                  localStorage.clear();
+                  if (window.indexedDB && window.indexedDB.databases) {
+                    const dbs = await window.indexedDB.databases();
+                    dbs.forEach((db) => {
+                      window.indexedDB.deleteDatabase(db.name);
+                    });
+                  }
+                  // Force reload ignoring cache
+                  window.location.reload(true);
+                } catch (e) {
+                  console.error("Hard reset failed", e);
+                  window.location.reload();
+                }
+              }}
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#ff3333",
+                color: "white",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              Fix Crash (Reset Data)
+            </button>
+          </div>
         </div>
       );
     }

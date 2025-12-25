@@ -1877,6 +1877,11 @@
   color: rgb(171, 171, 171) !important;
 }
 
+.goalDropdownLimit {
+  max-height: 140px !important;
+  overflow-y: auto !important;
+}
+
 .selectDisplay span {
   background-color: transparent;
 }
