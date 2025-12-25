@@ -373,6 +373,28 @@
   border-radius: 8px;
 }
 
+.tutorialButton {
+  background-color: transparent;
+  color: #ababab;
+  border: 1px solid #555;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  /* Einheitliche Breite für "rechte" Controls in Settings (wie Select/Toggle) */
+  min-width: 110px;
+  text-align: center;
+}
+
+.tutorialButton:hover {
+  background-color: rgba(213, 255, 5, 0.1);
+  color: #d5ff05;
+  border-color: #d5ff05;
+  border-radius: 8px;
+}
+
 .calendarToggleButton {
   background-color: transparent;
   color: #ababab;
@@ -546,7 +568,8 @@
     font-size: 15px;
   }
 
-  .resetButton {
+  .resetButton,
+  .tutorialButton {
     padding: 5px 10px;
     font-size: 11px;
     min-width: 100px;
@@ -600,7 +623,8 @@
     font-size: 14px;
   }
 
-  .resetButton {
+  .resetButton,
+  .tutorialButton {
     padding: 4px 8px;
     font-size: 10px;
     min-width: 90px;
