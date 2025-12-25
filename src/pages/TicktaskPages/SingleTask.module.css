@@ -463,14 +463,13 @@ li.running .countdown {
 @media (max-width: 480px) {
   li {
     max-width: 100%;
-    padding: 6px;
+    /* Inherit padding 8px from 768px query */
   }
 
   .text {
     font-size: 14px;
-    margin-right: 4px;
+    /* margin-right: 4px; -> Removed to use default 16px or inherit */
     max-width: 200px;
-    /* Mobile: Umbrüche erlauben (hier ist Höhe ohnehin dynamischer) */
     white-space: normal;
   }
 
@@ -482,8 +481,9 @@ li.running .countdown {
     font-size: 15px;
   }
 
+  /* Inherit gap 8px from default/768px */
   .timerControls {
-    gap: 4px !important;
+    /* gap: 4px !important; */
     margin-right: 0px !important;
   }
 
@@ -506,7 +506,8 @@ li.running .countdown {
 
   .timeInfo {
     font-size: 11px;
-    margin-right: 4px;
+    /* margin-right: 4px; -> Removed to match wider spacing */
+    margin-right: 10px; /* Compromise or remove entirely */
   }
 
   .FinishButton {
