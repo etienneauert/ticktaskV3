@@ -638,7 +638,9 @@ export function Ticktask({ user, isGuestMode = false }) {
           "routineTasks",
           "dailyTasks",
           "archivedTasks",
-          "settings"
+          "settings",
+          "appointments",
+          "completedTasks"
         ];
 
         const clearCollection = async (path) => {
