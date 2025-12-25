@@ -139,7 +139,77 @@ export function Ticktask({ user, isGuestMode = false }) {
   const loadingStartTimeRef = useRef(null);
   const minLoadingTimeRef = useRef(null);
 
-  console.log("Ticktask render:", { userUid: user?.uid, isGuestMode, isLoading });
+  // Check if we are in "Resetting" mode
+  const [isResetting, setIsResetting] = useState(() => {
+    if (user?.uid) {
+      return localStorage.getItem(`ticktask_is_resetting_${user.uid}`) === "true";
+    }
+    return false;
+  });
+
+  // Handle actual reset logic on fresh load
+  useEffect(() => {
+    if (isResetting && user?.uid && !isGuestMode) {
+      const performReset = async () => {
+        try {
+          setIsLoading(true);
+          console.log("Performing full account reset...");
+
+          // A. Clear LocalStorage keys for this user
+          Object.keys(localStorage).forEach((key) => {
+            if (key.includes(user.uid) && !key.includes("ticktask_is_resetting")) {
+              localStorage.removeItem(key);
+            }
+          });
+
+          // B. Clear Firestore Data
+          const collectionsToDelete = [
+            "tasks",
+            "goals",
+            "frequentTemplates",
+            "weeklyTasks",
+            "routineTasks",
+            "dailyTasks",
+            "archivedTasks",
+            "settings",
+            "appointments",
+            "completedTasks"
+          ];
+
+          const clearCollection = async (path) => {
+            const ref = collection(db, "users", user.uid, path);
+            const snap = await getDocs(ref);
+            const promises = snap.docs.map((doc) => deleteDoc(doc.ref));
+            await Promise.all(promises);
+          };
+
+          for (const colName of collectionsToDelete) {
+            await clearCollection(colName);
+          }
+
+          // Reset Settings/Profile specific docs
+          const streakDoc = doc(db, "users", user.uid, "profile", "streak");
+          await setDoc(streakDoc, { value: 0 });
+
+          // Clear reset flag
+          localStorage.removeItem(`ticktask_is_resetting_${user.uid}`);
+          
+          console.log("Reset finished, reloading...");
+          window.location.reload();
+        } catch (e) {
+          console.error("Failed to reset app during reload", e);
+          showErrorMessage("Fehler beim Zurücksetzen der App.");
+          setIsLoading(false);
+          // Safety: clear flag so we don't loop forever
+           localStorage.removeItem(`ticktask_is_resetting_${user.uid}`);
+        }
+      };
+      
+      performReset();
+    }
+  }, [isResetting, user?.uid, isGuestMode]);
+
+  console.log("Ticktask render:", { userUid: user?.uid, isGuestMode, isLoading, isResetting });
 
   // Gast-Datenmanagement
   const { guestData, guestDataLoaded, updateGuestData, clearGuestData } =
@@ -585,23 +655,16 @@ export function Ticktask({ user, isGuestMode = false }) {
   };
 
   const resetApp = async () => {
-    // 1. Reset Streak
-    setStreak(0);
-
-    // 2. Clear Running Task
-    setRunningTaskId(null);
-
-    // 3. Clear all Local Checklist States
-    setMorningCompleted(new Set());
-    setAbendCompleted(new Set());
-    setWeeklyCompleted(new Set());
-    setDailyCompleted(new Set());
-
     if (isGuestMode) {
-      // Guest Mode Reset
+      // Guest Mode Reset - can happen immediately as there are no Firestore listeners
+      setStreak(0);
+      setRunningTaskId(null);
+      setMorningCompleted(new Set());
+      setAbendCompleted(new Set());
+      setWeeklyCompleted(new Set());
+      setDailyCompleted(new Set());
       clearGuestData();
 
-      // Reset local states
       setWeeklyTasks({
         monday: [],
         tuesday: [],
@@ -615,56 +678,15 @@ export function Ticktask({ user, isGuestMode = false }) {
       setAbendTasks([]);
       setDailyTasks([]);
 
-      // Reload to ensure clean state
       window.location.reload();
-    } else if (user?.uid) {
-      // User Mode Reset
-      try {
-        setIsLoading(true);
+      return;
+    }
 
-        // A. Clear LocalStorage keys for this user
-        Object.keys(localStorage).forEach((key) => {
-          if (key.includes(user.uid)) {
-            localStorage.removeItem(key);
-          }
-        });
-
-        // B. Clear Firestore Data
-        const collectionsToDelete = [
-          "tasks",
-          "goals",
-          "frequentTemplates",
-          "weeklyTasks",
-          "routineTasks",
-          "dailyTasks",
-          "archivedTasks",
-          "settings",
-          "appointments",
-          "completedTasks"
-        ];
-
-        const clearCollection = async (path) => {
-          const ref = collection(db, "users", user.uid, path);
-          const snap = await getDocs(ref);
-          const promises = snap.docs.map((doc) => deleteDoc(doc.ref));
-          await Promise.all(promises);
-        };
-
-        for (const colName of collectionsToDelete) {
-          await clearCollection(colName);
-        }
-
-        // Reset Settings/Profile specific docs
-        const streakDoc = doc(db, "users", user.uid, "profile", "streak");
-        await setDoc(streakDoc, { value: 0 });
-
-        // Reload to refresh state
-        window.location.reload();
-      } catch (e) {
-        console.error("Failed to reset app", e);
-        showErrorMessage("Fehler beim Zurücksetzen der App.");
-        setIsLoading(false);
-      }
+    // User Mode Reset
+    // Set flag and reload to perform clean reset without active listeners (Reset on Reload pattern)
+    if (user?.uid) {
+      localStorage.setItem(`ticktask_is_resetting_${user.uid}`, "true");
+      window.location.reload();
     }
   };
 
@@ -1482,6 +1504,12 @@ export function Ticktask({ user, isGuestMode = false }) {
   useEffect(() => {
     // Reset loading state
     setIsLoading(true);
+
+    // If we are resetting, DO NOT start listeners or load data
+    if (isResetting) {
+      return;
+    }
+
     loadingStartTimeRef.current = Date.now();
     if (minLoadingTimeRef.current) {
       clearTimeout(minLoadingTimeRef.current);
