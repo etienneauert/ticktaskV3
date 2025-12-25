@@ -11,10 +11,10 @@ const getDayOfCurrentWeek = (dayIndex) => {
   return newDate.toISOString();
 };
 
-const DEMO_DATA_VERSION = 12;
+const DEMO_DATA_VERSION = 14;
 
 // Initial Demo Data
-const INITIAL_DEMO_DATA = {
+const getInitialDemoData = () => ({
   dataVersion: DEMO_DATA_VERSION,
   tasks: [
     {
@@ -324,13 +324,13 @@ const INITIAL_DEMO_DATA = {
     },
   ],
   weeklyTasks: {
-    monday: [],
-    tuesday: [],
-    wednesday: [],
-    thursday: [],
-    friday: [],
-    saturday: ["Water plants"],
-    sunday: [],
+    monday: ["Grocery shopping", "Team Sync"],
+    tuesday: ["Laundry"],
+    wednesday: ["Plant care check"],
+    thursday: ["Empty inbox"],
+    friday: ["Backup computer"],
+    saturday: ["Water plants", "Vacuum cleaning"],
+    sunday: ["Meal prep for week"],
   },
   morningTasks: [
     "Drink a glass of water",
@@ -349,71 +349,16 @@ const INITIAL_DEMO_DATA = {
   weeklyCompleted: new Set(),
   dailyCompleted: new Set(),
   streak: 3, // Start with a small streak to look encouraging
-};
+});
 
 export const useGuestData = (isGuestMode) => {
-  const [guestDataLoaded, setGuestDataLoaded] = useState(false);
-  const [guestData, setGuestData] = useState(INITIAL_DEMO_DATA);
+  // Always initialize with fresh data
+  const [guestData, setGuestData] = useState(() => getInitialDemoData());
+  
+  // Data is always "loaded" immediately since we don't fetch from LS
+  const guestDataLoaded = true;
 
-  useEffect(() => {
-    if (isGuestMode) {
-      setGuestDataLoaded(false);
-      // Lade Gast-Daten aus localStorage
-      const saved = localStorage.getItem("ticktask_guest_data");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-
-          // DATA MIGRATION / VERSION CHECK
-          if (!parsed.dataVersion || parsed.dataVersion < DEMO_DATA_VERSION) {
-            console.log("Updating Demo Data to Version", DEMO_DATA_VERSION);
-            setGuestData(INITIAL_DEMO_DATA);
-            // Optional: Save immediately to persist upgrade logic, 
-            // but updateGuestData handles save on next change.
-            // Let's force save to ensure upgrade persists.
-             const dataToSave = {
-              ...INITIAL_DEMO_DATA,
-              morningCompleted: Array.from(INITIAL_DEMO_DATA.morningCompleted),
-              abendCompleted: Array.from(INITIAL_DEMO_DATA.abendCompleted),
-              weeklyCompleted: Array.from(INITIAL_DEMO_DATA.weeklyCompleted),
-              dailyCompleted: Array.from(INITIAL_DEMO_DATA.dailyCompleted),
-            };
-            localStorage.setItem("ticktask_guest_data", JSON.stringify(dataToSave));
-            
-            setGuestDataLoaded(true);
-            return;
-          }
-
-          // Konvertiere Sets zurück
-          if (parsed.morningCompleted) {
-            parsed.morningCompleted = new Set(parsed.morningCompleted);
-          }
-          if (parsed.abendCompleted) {
-            parsed.abendCompleted = new Set(parsed.abendCompleted);
-          }
-          if (parsed.weeklyCompleted) {
-            parsed.weeklyCompleted = new Set(parsed.weeklyCompleted);
-          }
-          if (parsed.dailyCompleted) {
-            parsed.dailyCompleted = new Set(parsed.dailyCompleted);
-          }
-          setGuestData(parsed);
-          setGuestDataLoaded(true);
-        } catch (e) {
-          console.error("Failed to load guest data:", e);
-          // Fallback to demo data on error
-          setGuestData(INITIAL_DEMO_DATA);
-          setGuestDataLoaded(true);
-        }
-      } else {
-        // No saved data? Initialize with Demo Data!
-        setGuestData(INITIAL_DEMO_DATA);
-        setGuestDataLoaded(true);
-      }
-    } else {
-      setGuestDataLoaded(false);
-    }
-  }, [isGuestMode]);
+  // No effect needed for loading data!
 
   const updateGuestData = (newData) => {
     if (isGuestMode) {
@@ -422,16 +367,7 @@ export const useGuestData = (isGuestMode) => {
           ? newData(prevData)
           : { ...prevData, ...newData };
         
-        // Speichere in localStorage
-        const dataToSave = {
-          ...updated,
-          morningCompleted: Array.from(updated.morningCompleted || new Set()),
-          abendCompleted: Array.from(updated.abendCompleted || new Set()),
-          weeklyCompleted: Array.from(updated.weeklyCompleted || new Set()),
-          dailyCompleted: Array.from(updated.dailyCompleted || new Set()),
-        };
-        localStorage.setItem("ticktask_guest_data", JSON.stringify(dataToSave));
-        
+        // No saving to localStorage anymore
         return updated;
       });
     }
@@ -439,9 +375,9 @@ export const useGuestData = (isGuestMode) => {
 
   const clearGuestData = () => {
     if (isGuestMode) {
+      // Just reset state (and LS if any old data remains, though not strictly needed if we never read it)
       localStorage.removeItem("ticktask_guest_data");
-      // Reset to Demo Data instead of empty
-      setGuestData(INITIAL_DEMO_DATA);
+      setGuestData(getInitialDemoData());
     }
   };
 

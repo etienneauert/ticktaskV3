@@ -187,7 +187,7 @@ export function Ticktask({ user, isGuestMode = false }) {
   // Streak state - Initialize from localStorage or guest data
   const [streak, setStreak] = useState(() => {
     if (isGuestMode) {
-      return guestData.streak || 0;
+      return (guestData && guestData.streak) || 0;
     }
     if (user?.uid) {
       try {
@@ -203,10 +203,10 @@ export function Ticktask({ user, isGuestMode = false }) {
 
   // Gast-Modus: Tasks kommen aus guestData, aber Completed-Sets sind lokale React-States
   // (guestData Updates sind async -> sonst entsteht "double click" / Reset-Bug).
-  const currentWeeklyTasks = isGuestMode ? guestData.weeklyTasks : weeklyTasks;
-  const currentMorningTasks = isGuestMode ? guestData.morningTasks : morningTasks;
-  const currentAbendTasks = isGuestMode ? guestData.abendTasks : abendTasks;
-  const currentDailyTasks = isGuestMode ? guestData.dailyTasks : dailyTasks;
+  const currentWeeklyTasks = isGuestMode && guestData ? guestData.weeklyTasks : weeklyTasks;
+  const currentMorningTasks = isGuestMode && guestData ? guestData.morningTasks : morningTasks;
+  const currentAbendTasks = isGuestMode && guestData ? guestData.abendTasks : abendTasks;
+  const currentDailyTasks = isGuestMode && guestData ? guestData.dailyTasks : dailyTasks;
   const currentMorningCompleted = morningCompleted;
   const currentAbendCompleted = abendCompleted;
   const currentWeeklyCompleted = weeklyCompleted;
@@ -230,10 +230,10 @@ export function Ticktask({ user, isGuestMode = false }) {
       if (Array.isArray(value)) return new Set(value);
       return new Set();
     };
-    const nextMorning = toSet(guestData.morningCompleted);
-    const nextAbend = toSet(guestData.abendCompleted);
-    const nextWeekly = toSet(guestData.weeklyCompleted);
-    const nextDaily = toSet(guestData.dailyCompleted);
+    const nextMorning = toSet(guestData?.morningCompleted);
+    const nextAbend = toSet(guestData?.abendCompleted);
+    const nextWeekly = toSet(guestData?.weeklyCompleted);
+    const nextDaily = toSet(guestData?.dailyCompleted);
 
     setMorningCompleted(nextMorning);
     setAbendCompleted(nextAbend);
@@ -249,10 +249,10 @@ export function Ticktask({ user, isGuestMode = false }) {
   }, [
     isGuestMode,
     guestDataLoaded,
-    guestData.morningCompleted,
-    guestData.abendCompleted,
-    guestData.weeklyCompleted,
-    guestData.dailyCompleted,
+    guestData?.morningCompleted,
+    guestData?.abendCompleted,
+    guestData?.weeklyCompleted,
+    guestData?.dailyCompleted,
   ]);
 
   // Error message state
@@ -665,6 +665,37 @@ export function Ticktask({ user, isGuestMode = false }) {
   };
 
   const updateWeeklyTasks = async (day, tasks) => {
+    if (isGuestMode) {
+      const currentTasksObj = (guestData && guestData.weeklyTasks) || {};
+      const newTasks = {
+        ...currentTasksObj,
+        [day]: tasks,
+      };
+
+      updateGuestData({
+        weeklyTasks: newTasks,
+      });
+
+      // Cleanup completed tasks
+      setWeeklyCompleted((prevCompleted) => {
+        const cleaned = new Set();
+        // Get all tasks from the new state
+        const allValidTasks = new Set();
+        Object.keys(newTasks).forEach((d) => {
+          if (Array.isArray(newTasks[d])) {
+            newTasks[d].forEach((task) => allValidTasks.add(task));
+          }
+        });
+
+        prevCompleted.forEach((task) => {
+          if (allValidTasks.has(task)) {
+            cleaned.add(task);
+          }
+        });
+        return cleaned;
+      });
+      return;
+    }
     // Bereinige completed Set: entferne Tasks, die für diesen Tag gelöscht wurden
     // und nicht mehr für andere Tage existieren
     let allOtherDaysTasks = new Set();
@@ -927,7 +958,12 @@ export function Ticktask({ user, isGuestMode = false }) {
   };
 
   const handleLogout = () => {
-    signOut(auth);
+    if (isGuestMode) {
+      clearGuestData();
+      window.location.reload();
+    } else {
+      signOut(auth);
+    }
   };
 
   const handleAdd = async (task) => {
