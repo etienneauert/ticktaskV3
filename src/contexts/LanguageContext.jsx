@@ -44,7 +44,7 @@ export const LanguageProvider = ({ children }) => {
       settings: "Einstellungen",
       logout: "Abmelden",
       demoMode: "Demo-Modus",
-      exitDemo: "Demomodus verlassen",
+      exitDemo: "Demo verlassen",
       navTasks: "Tasks",
       navCalendar: "Kalender",
       navGoals: "Ziele",

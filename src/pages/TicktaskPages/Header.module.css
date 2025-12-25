@@ -183,7 +183,7 @@
   color: rgb(255, 0, 0);
   font-size: 18px;
   font-weight: 600;
-  background-color: transparent;
+  background-color: #010101;
 }
 
 /* Media Query für Bildschirme kleiner als 1030px */
@@ -226,7 +226,7 @@
     font-size: 14px;
     z-index: 1001; /* über Header */
     pointer-events: none;
-    background-color: transparent;
+    background-color: #010101;
   }
 
   .headerLogoutButton {
@@ -290,7 +290,7 @@
   .guestModeLabel {
     height: 22px;
     font-size: 13px;
-    background-color: transparent;
+    background-color: #010101;
   }
 
   .headerLogoutButton {
