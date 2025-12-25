@@ -46,9 +46,14 @@
   color: rgb(213, 255, 5);
   font-size: 14px;
   font-weight: bold;
-  margin-bottom: 4px;
+  margin-bottom: 0;
+  padding-bottom: 4px;
   text-shadow: 0 0 5px rgba(213, 255, 5, 0.3);
-  background-color: inherit;
+  background-color: black;
+  display: block;
+  width: 100%;
+  padding-left: 5px;
+  box-sizing: border-box;
 }
 
 .Login input {
