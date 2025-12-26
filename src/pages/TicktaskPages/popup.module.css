@@ -205,9 +205,9 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 -20px 40px rgba(0, 0, 0, 0.7),
-    20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7),
-    0 0 0 4px rgba(255, 255, 255, 0.1);
-  background-color: rgba(10, 10, 10, 0.95);
+    20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7);
+  border: 1px solid #333;
+  background-color: #000000;
   position: relative;
 }
 
