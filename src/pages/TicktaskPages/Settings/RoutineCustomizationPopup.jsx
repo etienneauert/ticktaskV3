@@ -86,11 +86,12 @@ export default function RoutineCustomizationPopup({
   if (!open) return null;
 
   return (
-    <div className={styles.overlay}>
+    <div className={styles.overlay} onClick={onClose}>
       <div
         className={`${styles.modal} ${styles.routineModal} ${
           activeTab === 2 ? styles.routineModalWeekly : ""
         }`}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className={styles.modalcloseandinfo}>
           <p></p>
