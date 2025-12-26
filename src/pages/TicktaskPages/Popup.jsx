@@ -418,8 +418,12 @@ export default function Popup({
   if (!open) return null;
 
   return (
-    <div className={styles.overlay}>
-      <div id="task-popup" className={`${styles.modal} ${styles.taskModal}`}>
+    <div className={styles.overlay} onClick={onCancel}>
+      <div
+        id="task-popup"
+        className={`${styles.modal} ${styles.taskModal}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className={styles.modalcloseandinfo}>
           <p className={styles.currentTimeDisplay}>
             {String(currentTime.getHours()).padStart(2, "0")}:

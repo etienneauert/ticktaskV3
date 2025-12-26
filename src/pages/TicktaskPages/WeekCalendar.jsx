@@ -1157,9 +1157,10 @@ export default function WeekCalendar({
       </div>
 
       {popupOpen && (
-        <div className={popupStyles.overlay}>
+        <div className={popupStyles.overlay} onClick={handlePopupCancel}>
           <div
             className={`${popupStyles.modal} ${popupStyles.appointmentModal}`}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className={popupStyles.modalcloseandinfo}>
               <p></p>
