@@ -33,11 +33,10 @@
   max-width: 90vw;
   max-height: 90vh;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 -20px 40px rgba(0, 0, 0, 0.7),
-    20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7),
-    0 0 0 4px rgba(255, 255, 255, 0.1);
+    20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7);
   transition: width 0.3s ease;
-  /* Einheitlicher Popup-Hintergrund wie in `Popup.jsx` (`popup.module.css`) */
-  background-color: #0c0c0c;
+  background-color: #000000;
+  border: 1px solid #333;
   overflow: hidden;
   display: flex;
   flex-direction: column;
