@@ -198,7 +198,7 @@ export default function Auth({ onSwitchToLogin, onGuestLogin }) {
           Go to Login
         </button>
         <button className={styles.guestButton} onClick={onGuestLogin}>
-          Guest
+          Demo Mode
         </button>
       </div>
     </div>
