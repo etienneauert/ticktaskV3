@@ -3155,7 +3155,7 @@ export function Ticktask({ user, isGuestMode = false }) {
           alignItems: "center",
           height: "100vh",
           width: "100vw",
-          backgroundColor: "#010101",
+          backgroundColor: "#000000",
           gap: "20px",
           zIndex: 9999,
         }}
