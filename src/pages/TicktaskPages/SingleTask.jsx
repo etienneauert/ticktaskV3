@@ -12,7 +12,7 @@ import playBlack from "../../assets/play-black.png";
 import resetBlack from "../../assets/reset-black.png";
 import TaskCompletionPopup from "./TaskCompletionPopup";
 import { useLanguage } from "../../contexts/LanguageContext";
-import { playTimerEndSound, unlockAudio } from "../../utils/audio";
+import { playTimerEndSound, unlockAudio, startKeepAlive, stopKeepAlive } from "../../utils/audio";
 
 export default function SingleTask({
   task,
@@ -77,7 +77,11 @@ export default function SingleTask({
     setIsCompleted(true);
     setIsRunning(false);
     setIsPaused(false);
+    setIsCompleted(true);
+    setIsRunning(false);
+    setIsPaused(false);
     setShowCompletionPopup(false);
+    stopKeepAlive();
 
     // Clear popup timeout
     if (popupTimeoutRef.current) {
@@ -120,6 +124,7 @@ export default function SingleTask({
     setTimeLeft(5 * 60);
     setShowCompletionPopup(false);
     setIsRunning(true);
+    startKeepAlive();
     // Task-Start melden
     if (onTaskStart) {
       onTaskStart(taskId);
@@ -303,6 +308,7 @@ export default function SingleTask({
           
           if (remaining <= 0) {
             playTimerEndSound();
+            stopKeepAlive();
             setIsRunning(false);
             setIsPaused(false);
             setTimeLeft(0);
@@ -356,6 +362,7 @@ export default function SingleTask({
         // Prüfe ob Timer abgelaufen ist
         if (remaining <= 0) {
           playTimerEndSound();
+          stopKeepAlive();
           setIsRunning(false);
           setIsPaused(false);
           setShowCompletionPopup(true);
@@ -398,6 +405,8 @@ export default function SingleTask({
 
       // Unlock Audio context specifically for Safari/Mobile
       unlockAudio();
+      // Start faint background sound to keep audio session alive
+      startKeepAlive();
 
       // Start-Zeit sofort speichern für korrekte Recovery
       saveTimerState({
@@ -412,12 +421,14 @@ export default function SingleTask({
   const handlePause = useCallback(() => {
     if (isMountedRef.current) {
       setIsPaused(true);
+      stopKeepAlive();
     }
   }, []);
 
   const handleResume = useCallback(() => {
     if (isMountedRef.current) {
       setIsPaused(false);
+      startKeepAlive();
     }
   }, []);
 
@@ -427,6 +438,7 @@ export default function SingleTask({
       setIsCompleted(false);
       setIsPaused(false);
       setTimeLeft(taskDuration * 60);
+      stopKeepAlive();
       // Timer explizit stoppen
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -563,6 +575,7 @@ export default function SingleTask({
                     setIsRunning(false);
                     setIsCompleted(true);
                     setIsPaused(false);
+                    stopKeepAlive();
 
                     // Timer explizit stoppen
                     if (intervalRef.current) {

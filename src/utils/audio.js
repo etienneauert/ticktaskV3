@@ -33,6 +33,52 @@ const loadBuffer = async () => {
 // Start loading immediately
 loadBuffer();
 
+// Keep-alive oscillator node
+let keepAliveOscillator = null;
+
+export const startKeepAlive = () => {
+  if (!audioContext) initAudioContext();
+  
+  if (audioContext && !keepAliveOscillator) {
+    try {
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+      
+      // Play a very faint sound to keep the audio session active
+      // Absolute silence (gain 0) might be optimized away by the OS
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.value = 100; // Low frequency
+      gain.gain.value = 0.001; // Extremely low volume (inaudible but active)
+      
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+      
+      osc.start();
+      keepAliveOscillator = osc;
+      console.log("[TickTask] Background audio keep-alive started");
+    } catch (e) {
+      console.error("[TickTask] Failed to start keep-alive:", e);
+    }
+  }
+};
+
+export const stopKeepAlive = () => {
+  if (keepAliveOscillator) {
+    try {
+      keepAliveOscillator.stop();
+      keepAliveOscillator.disconnect();
+      keepAliveOscillator = null;
+      console.log("[TickTask] Background audio keep-alive stopped");
+    } catch (e) {
+      console.error("[TickTask] Failed to stop keep-alive:", e);
+    }
+  }
+};
+
 export const playTimerEndSound = async () => {
   console.log("[TickTask] playTimerEndSound called");
   if (!audioContext) initAudioContext();
@@ -43,6 +89,13 @@ export const playTimerEndSound = async () => {
     if (audioContext.state === 'suspended') {
       await audioContext.resume();
     }
+    
+    // Stop keep-alive just before playing the real sound to avoid interference
+    // (Though it's quiet enough to potentially keep running, cleaner to switch)
+    // Actually, keeping it running might be safer until the sound finishes, 
+    // but let's restart it if needed. For now, stopping it is fine as the 
+    // "real" sound takes over the session.
+    stopKeepAlive();
 
     const source = audioContext.createBufferSource();
     source.buffer = audioBuffer;
