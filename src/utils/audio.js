@@ -5,6 +5,24 @@ import timerSoundPath from "../assets/audios/correct-356013.mp3";
 let audioContext = null;
 let audioBuffer = null;
 
+// Global audio state
+// Default to false (muted) until enabled by user, or read from storage
+let isAudioOn = localStorage.getItem("ticktask_audio_enabled") === "true";
+
+export const setAudioEnabled = (enabled) => {
+  isAudioOn = enabled;
+  localStorage.setItem("ticktask_audio_enabled", String(enabled));
+  
+  // consistency check: stop keepalive if disabled
+  if (!enabled) {
+    stopKeepAlive();
+  }
+};
+
+export const getAudioEnabled = () => {
+  return isAudioOn;
+};
+
 const initAudioContext = () => {
   if (!audioContext) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -37,6 +55,7 @@ loadBuffer();
 let keepAliveOscillator = null;
 
 export const startKeepAlive = () => {
+  if (!isAudioOn) return; // Do not start if audio is disabled
   if (!audioContext) initAudioContext();
   
   if (audioContext && !keepAliveOscillator) {
@@ -80,6 +99,10 @@ export const stopKeepAlive = () => {
 };
 
 export const playTimerEndSound = async () => {
+  if (!isAudioOn) {
+    console.log("[TickTask] Audio disabled, skipping sound.");
+    return;
+  }
   console.log("[TickTask] playTimerEndSound called");
   if (!audioContext) initAudioContext();
   if (!audioBuffer) await loadBuffer(); // Ensure loaded

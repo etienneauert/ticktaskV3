@@ -10,7 +10,7 @@ import InfoPopup from "./Info/InfoPopup";
 import ErrorMessage from "./ErrorMessage";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
-import { unlockAudio, playTimerEndSound } from "../../utils/audio";
+import { unlockAudio, playTimerEndSound, getAudioEnabled, setAudioEnabled } from "../../utils/audio";
 
 export default function Header({
   onLogout,
@@ -50,7 +50,7 @@ export default function Header({
   const [currentTime, setCurrentTime] = useState(new Date());
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
-  const [audioActive, setAudioActive] = useState(false);
+  const [audioActive, setAudioActive] = useState(getAudioEnabled());
   const finishDayButtonRef = useRef(null);
   const { t, language } = useLanguage();
 
@@ -373,11 +373,14 @@ export default function Header({
           <button
             className={styles.headerAudioButton}
             onClick={() => {
-              if (!audioActive) {
+              const newState = !audioActive;
+              setAudioActive(newState);
+              setAudioEnabled(newState);
+              
+              if (newState) {
                 unlockAudio();
                 playTimerEndSound();
               }
-              setAudioActive(!audioActive);
             }}
             title="Test Audio / Unlock Sound"
           >
