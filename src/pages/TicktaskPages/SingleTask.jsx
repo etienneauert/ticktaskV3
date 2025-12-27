@@ -12,6 +12,7 @@ import playBlack from "../../assets/play-black.png";
 import resetBlack from "../../assets/reset-black.png";
 import TaskCompletionPopup from "./TaskCompletionPopup";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { playTimerEndSound, unlockAudio } from "../../utils/audio";
 
 export default function SingleTask({
   task,
@@ -301,6 +302,7 @@ export default function SingleTask({
           const remaining = calculateRemainingTime();
           
           if (remaining <= 0) {
+            playTimerEndSound();
             setIsRunning(false);
             setIsPaused(false);
             setTimeLeft(0);
@@ -353,6 +355,7 @@ export default function SingleTask({
         
         // Prüfe ob Timer abgelaufen ist
         if (remaining <= 0) {
+          playTimerEndSound();
           setIsRunning(false);
           setIsPaused(false);
           setShowCompletionPopup(true);
@@ -392,6 +395,9 @@ export default function SingleTask({
       setIsRunning(true);
       setIsCompleted(false);
       setIsPaused(false);
+
+      // Unlock Audio context specifically for Safari/Mobile
+      unlockAudio();
 
       // Start-Zeit sofort speichern für korrekte Recovery
       saveTimerState({
