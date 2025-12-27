@@ -1,55 +1,88 @@
 
 import timerSoundPath from "../assets/audios/correct-356013.mp3";
 
-// Create a singleton instance to ensure the file is loaded/cached
-const audio = new Audio(timerSoundPath);
-audio.preload = 'auto';
-// Attempt to set volume to max, though effective volume depends on system/browser
-audio.volume = 1.0;
+// Web Audio API Context
+let audioContext = null;
+let audioBuffer = null;
 
-export const playTimerEndSound = () => {
-  console.log("[TickTask] Triggering timer end sound...");
-  
-  // Reset audio to start (allows replay)
-  audio.currentTime = 0;
-  
-  const playPromise = audio.play();
-  
-  if (playPromise !== undefined) {
-    playPromise
-      .then(() => {
-        console.log("[TickTask] Audio playback started successfully.");
-      })
-      .catch((error) => {
-        console.error("[TickTask] Audio playback failed. Cause:", error);
-        // Possible reasons: Autoplay blocked, file not found, format unsupported
-      });
+const initAudioContext = () => {
+  if (!audioContext) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) {
+      audioContext = new AudioContext();
+    }
+  }
+};
+
+const loadBuffer = async () => {
+  if (audioBuffer) return; // Already loaded
+
+  try {
+    const response = await fetch(timerSoundPath);
+    const arrayBuffer = await response.arrayBuffer();
+    
+    if (!audioContext) initAudioContext();
+    if (audioContext) {
+      audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    }
+  } catch (error) {
+    console.error("[TickTask] Failed to load/decode audio:", error);
+  }
+};
+
+// Start loading immediately
+loadBuffer();
+
+export const playTimerEndSound = async () => {
+  console.log("[TickTask] playTimerEndSound called");
+  if (!audioContext) initAudioContext();
+  if (!audioBuffer) await loadBuffer(); // Ensure loaded
+
+  if (audioContext && audioBuffer) {
+    // Ensure context is running (sometimes it suspends)
+    if (audioContext.state === 'suspended') {
+      await audioContext.resume();
+    }
+
+    const source = audioContext.createBufferSource();
+    source.buffer = audioBuffer;
+    
+    // Create gain node for volume control
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 1.0;
+    
+    source.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    source.start(0);
+    console.log("[TickTask] Sound played via Web Audio API");
   }
 };
 
 /**
- * Unlocks audio playback on mobile/Safari by playing a silent burst
- * immediately upon user interaction (e.g., Start button click).
+ * Unlocks audio playback on mobile/Safari by playing a silent sound
+ * inside a user interaction event.
  */
 export const unlockAudio = () => {
-  if (audio) {
-    const originalVolume = audio.volume;
-    audio.volume = 0; // Mute for warmup
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          // Immediately pause and reset
-          audio.pause();
-          audio.currentTime = 0;
-          audio.volume = originalVolume; // Restore volume
-          console.log("[TickTask] Audio context unlocked.");
-        })
-        .catch((e) => {
-          // Verify if we can just swallow this or log it
-          console.log("[TickTask] Audio unlock attempt skipped/failed:", e);
-        });
+  if (!audioContext) initAudioContext();
+  
+  if (audioContext) {
+    // 1. Resume context (critical for Chrome/Safari autoplay policies)
+    if (audioContext.state === 'suspended') {
+      audioContext.resume().then(() => {
+        console.log("[TickTask] AudioContext resumed");
+      });
     }
+
+    // 2. Play a silent buffer to "warm up" the output
+    const buffer = audioContext.createBuffer(1, 1, 22050);
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioContext.destination);
+    source.start(0);
+    console.log("[TickTask] Audio warm-up signal sent");
+    
+    // Also ensure our real buffer is loading
+    if (!audioBuffer) loadBuffer();
   }
 };
