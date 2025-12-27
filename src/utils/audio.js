@@ -1,28 +1,24 @@
+// ---------------------------------------------------------------------------
+// HYBRID AUDIO UTILITY
+// Uses Web Audio API for background support/precision, falls back to HTML5 Audio
+// ---------------------------------------------------------------------------
 
 import timerSoundPath from "../assets/audios/correct-356013.mp3";
 
-// Web Audio API Context
+// Global State
+let isAudioOn = localStorage.getItem("ticktask_audio_enabled") !== "false";
+console.log("[TickTask] Audio initialized. isAudioOn:", isAudioOn);
+
+// --- 1. HTML5 Audio (Fallback/Simple) ---
+const html5Audio = new Audio(timerSoundPath);
+html5Audio.preload = 'auto';
+
+// --- 2. Web Audio API (Primary) ---
 let audioContext = null;
 let audioBuffer = null;
+let keepAliveOscillator = null;
 
-// Global audio state
-// Default to false (muted) until enabled by user, or read from storage
-let isAudioOn = localStorage.getItem("ticktask_audio_enabled") === "true";
-
-export const setAudioEnabled = (enabled) => {
-  isAudioOn = enabled;
-  localStorage.setItem("ticktask_audio_enabled", String(enabled));
-  
-  // consistency check: stop keepalive if disabled
-  if (!enabled) {
-    stopKeepAlive();
-  }
-};
-
-export const getAudioEnabled = () => {
-  return isAudioOn;
-};
-
+// Initialize Context
 const initAudioContext = () => {
   if (!audioContext) {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -32,55 +28,99 @@ const initAudioContext = () => {
   }
 };
 
+// Load Buffer
 const loadBuffer = async () => {
-  if (audioBuffer) return; // Already loaded
-
+  if (audioBuffer) return;
   try {
     const response = await fetch(timerSoundPath);
     const arrayBuffer = await response.arrayBuffer();
-    
     if (!audioContext) initAudioContext();
     if (audioContext) {
       audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     }
   } catch (error) {
-    console.error("[TickTask] Failed to load/decode audio:", error);
+    console.error("[TickTask] Web Audio load failed, will use HTML5 fallback:", error);
   }
 };
 
-// Start loading immediately
+// Start Loading immediately
 loadBuffer();
 
-// Keep-alive oscillator node
-let keepAliveOscillator = null;
+// --- Public API ---
 
+export const setAudioEnabled = (enabled) => {
+  console.log("[TickTask] Set audio:", enabled);
+  isAudioOn = enabled;
+  localStorage.setItem("ticktask_audio_enabled", String(enabled));
+  
+  if (!enabled) {
+    stopKeepAlive();
+  } else {
+    // If enabling, ensure we're ready
+    loadBuffer();
+  }
+};
+
+export const getAudioEnabled = () => {
+  return isAudioOn;
+};
+
+/**
+ * Resumes/Unlocks audio engines. Must be called on User Interaction.
+ */
+export const unlockAudio = () => {
+  if (!audioContext) initAudioContext();
+
+  // 1. Unlock HTML5 Audio
+  if (html5Audio) {
+    html5Audio.volume = 0;
+    html5Audio.play().then(() => {
+      html5Audio.pause();
+      html5Audio.currentTime = 0;
+      html5Audio.volume = 1;
+      console.log("[TickTask] HTML5 Audio unlocked");
+    }).catch(e => console.log("HTML5 unlock fail (harmless)", e));
+  }
+
+  // 2. Unlock Web Audio
+  if (audioContext) {
+    if (audioContext.state === 'suspended') {
+      audioContext.resume().then(() => console.log("[TickTask] WA Context resumed"));
+    }
+    // Play silent buffer
+    const buffer = audioContext.createBuffer(1, 1, 22050);
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioContext.destination);
+    source.start(0);
+  }
+};
+
+/**
+ * Starts background "hum" to keep iOS Audio Session active.
+ * Only works with Web Audio API.
+ */
 export const startKeepAlive = () => {
-  if (!isAudioOn) return; // Do not start if audio is disabled
+  if (!isAudioOn) return;
   if (!audioContext) initAudioContext();
   
   if (audioContext && !keepAliveOscillator) {
     try {
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
+      if (audioContext.state === 'suspended') audioContext.resume();
       
-      // Play a very faint sound to keep the audio session active
-      // Absolute silence (gain 0) might be optimized away by the OS
       const osc = audioContext.createOscillator();
       const gain = audioContext.createGain();
-      
       osc.type = 'sine';
-      osc.frequency.value = 100; // Low frequency
-      gain.gain.value = 0.001; // Extremely low volume (inaudible but active)
+      osc.frequency.value = 60; // Inaudible low freq
+      gain.gain.value = 0.001; // Virtually silent
       
       osc.connect(gain);
       gain.connect(audioContext.destination);
-      
       osc.start();
       keepAliveOscillator = osc;
-      console.log("[TickTask] Background audio keep-alive started");
+      console.log("[TickTask] Keep-alive started");
     } catch (e) {
-      console.error("[TickTask] Failed to start keep-alive:", e);
+      console.error("[TickTask] Keep-alive failed:", e);
     }
   }
 };
@@ -91,74 +131,52 @@ export const stopKeepAlive = () => {
       keepAliveOscillator.stop();
       keepAliveOscillator.disconnect();
       keepAliveOscillator = null;
-      console.log("[TickTask] Background audio keep-alive stopped");
-    } catch (e) {
-      console.error("[TickTask] Failed to stop keep-alive:", e);
-    }
-  }
-};
-
-export const playTimerEndSound = async () => {
-  if (!isAudioOn) {
-    console.log("[TickTask] Audio disabled, skipping sound.");
-    return;
-  }
-  console.log("[TickTask] playTimerEndSound called");
-  if (!audioContext) initAudioContext();
-  if (!audioBuffer) await loadBuffer(); // Ensure loaded
-
-  if (audioContext && audioBuffer) {
-    // Ensure context is running (sometimes it suspends)
-    if (audioContext.state === 'suspended') {
-      await audioContext.resume();
-    }
-    
-    // Stop keep-alive just before playing the real sound to avoid interference
-    // (Though it's quiet enough to potentially keep running, cleaner to switch)
-    // Actually, keeping it running might be safer until the sound finishes, 
-    // but let's restart it if needed. For now, stopping it is fine as the 
-    // "real" sound takes over the session.
-    stopKeepAlive();
-
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
-    
-    // Create gain node for volume control
-    const gainNode = audioContext.createGain();
-    gainNode.gain.value = 1.0;
-    
-    source.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    source.start(0);
-    console.log("[TickTask] Sound played via Web Audio API");
+    } catch (e) {}
   }
 };
 
 /**
- * Unlocks audio playback on mobile/Safari by playing a silent sound
- * inside a user interaction event.
+ * Plays the success sound.
+ * Tries Web Audio first, falls back to HTML5.
  */
-export const unlockAudio = () => {
-  if (!audioContext) initAudioContext();
+export const playTimerEndSound = async () => {
+  if (!isAudioOn) return;
+  console.log("[TickTask] Playing Timer Sound...");
   
-  if (audioContext) {
-    // 1. Resume context (critical for Chrome/Safari autoplay policies)
-    if (audioContext.state === 'suspended') {
-      audioContext.resume().then(() => {
-        console.log("[TickTask] AudioContext resumed");
-      });
+  // Try Web Audio first
+  let playedViaWebAudio = false;
+  
+  if (audioContext && audioBuffer) {
+    try {
+      if (audioContext.state === 'suspended') await audioContext.resume();
+      stopKeepAlive(); // Clean switch
+      
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      const gain = audioContext.createGain();
+      gain.gain.value = 1.0;
+      source.connect(gain);
+      gain.connect(audioContext.destination);
+      source.start(0);
+      playedViaWebAudio = true;
+      console.log("[TickTask] Played via Web Audio");
+    } catch (e) {
+      console.error("[TickTask] Web Audio play failed:", e);
     }
+  }
 
-    // 2. Play a silent buffer to "warm up" the output
-    const buffer = audioContext.createBuffer(1, 1, 22050);
-    const source = audioContext.createBufferSource();
-    source.buffer = buffer;
-    source.connect(audioContext.destination);
-    source.start(0);
-    console.log("[TickTask] Audio warm-up signal sent");
-    
-    // Also ensure our real buffer is loading
-    if (!audioBuffer) loadBuffer();
+  // Fallback to HTML5 if Web Audio didn't play (e.g. not loaded or error)
+  if (!playedViaWebAudio) {
+    console.log("[TickTask] Falling back to HTML5 Audio");
+    try {
+      html5Audio.currentTime = 0;
+      html5Audio.volume = 1.0;
+      const promise = html5Audio.play();
+      if (promise) {
+        promise.catch(e => console.error("[TickTask] HTML5 Play failed:", e));
+      }
+    } catch (e) {
+      console.error("[TickTask] HTML5 Play error:", e);
+    }
   }
 };
