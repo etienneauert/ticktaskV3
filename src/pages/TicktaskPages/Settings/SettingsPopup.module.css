@@ -138,7 +138,7 @@
   margin-left: auto;
   margin-right: auto;
   /* Wichtig: deckender Hintergrund, damit beim Scrollen nichts "durchscheint" */
-  background-color: #0c0c0c;
+  background-color: #000000;
   /* leichte Trennung vom Content beim Scrollen */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 }

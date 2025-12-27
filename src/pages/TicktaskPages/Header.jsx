@@ -2,12 +2,15 @@ import styles from "./Header.module.css";
 import fire from "../../assets/flame.png";
 import setting from "../../assets/setting.png";
 import info from "../../assets/info.png";
+import audioIcon from "../../assets/speaker-filled-audio-tool.png";
+import audioIconYellow from "../../assets/speaker-filled-audio-tool gelb.png";
 import SettingsPopup from "./Settings/SettingsPopup";
 import RoutineCustomizationPopup from "./Settings/RoutineCustomizationPopup";
 import InfoPopup from "./Info/InfoPopup";
 import ErrorMessage from "./ErrorMessage";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { unlockAudio, playTimerEndSound } from "../../utils/audio";
 
 export default function Header({
   onLogout,
@@ -47,6 +50,7 @@ export default function Header({
   const [currentTime, setCurrentTime] = useState(new Date());
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
+  const [audioActive, setAudioActive] = useState(false);
   const finishDayButtonRef = useRef(null);
   const { t, language } = useLanguage();
 
@@ -366,6 +370,19 @@ export default function Header({
               {t("navGoals")}
             </button>
           </nav>
+          <button
+            className={styles.headerAudioButton}
+            onClick={() => {
+              if (!audioActive) {
+                unlockAudio();
+                playTimerEndSound();
+              }
+              setAudioActive(!audioActive);
+            }}
+            title="Test Audio / Unlock Sound"
+          >
+            <img src={audioActive ? audioIconYellow : audioIcon} alt="Audio" />
+          </button>
           <button
             className={styles.headerSettingsButton}
             onClick={() => {

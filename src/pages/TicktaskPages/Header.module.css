@@ -40,6 +40,19 @@
   width: 25px;
   cursor: pointer;
 }
+
+.headerAudioButton {
+  border: none;
+  background: transparent;
+  display: flex; /* alignment fix */
+  align-items: center;
+}
+
+.headerAudioButton img {
+  cursor: pointer;
+  width: 20px; /* Slightly smaller maybe? or same 25px. Standardize to 25px. */
+  width: 25px;
+}
 .fireIcon {
   width: 30px;
   height: 30px;
@@ -258,7 +271,8 @@
   }
 
   .headerAboutButton img,
-  .headerSettingsButton img {
+  .headerSettingsButton img,
+  .headerAudioButton img {
     width: 28px;
   }
 
@@ -323,7 +337,8 @@
   }
 
   .headerAboutButton img,
-  .headerSettingsButton img {
+  .headerSettingsButton img,
+  .headerAudioButton img {
     width: 24px;
   }
 
