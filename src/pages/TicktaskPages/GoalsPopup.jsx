@@ -397,13 +397,15 @@ export default function GoalsPopup({
         </div>
 
         <div className={styles.actions}>
-          {canSubmit ? (
-            <button onClick={handleSubmit} className={styles.addButton}>
-              {t("addGoal")}
-            </button>
-          ) : (
-            <div className={styles.addButtonPlaceholder} aria-hidden="true" />
-          )}
+          <button
+            onClick={handleSubmit}
+            className={`${styles.addButton} ${
+              !canSubmit ? styles.disabledButton : ""
+            }`}
+            disabled={!canSubmit}
+          >
+            {t("addGoal")}
+          </button>
         </div>
       </div>
     </div>

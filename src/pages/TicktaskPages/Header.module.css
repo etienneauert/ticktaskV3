@@ -53,6 +53,25 @@
   width: 20px; /* Slightly smaller maybe? or same 25px. Standardize to 25px. */
   width: 25px;
 }
+
+.soundwaveContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  width: 80px;
+  overflow: hidden;
+  margin-right: 5px;
+}
+
+.soundwaveVideo {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  mix-blend-mode: screen;
+  transform: scale(1.5);
+}
+
 .fireIcon {
   width: 30px;
   height: 30px;
@@ -190,13 +209,15 @@
 }
 
 .guestModeLabel {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  /* Desktop: Position relatively in flex row */
   color: rgb(255, 0, 0);
   font-size: 18px;
   font-weight: 600;
-  background-color: #010101;
+  background-color: transparent; /* Was #010101, but in header it should blend or be distinct? Keep transparent to fit header */
+  /* Remove absolute centering */
+  position: static;
+  transform: none;
+  margin-left: 20px;
 }
 
 /* Media Query für Bildschirme kleiner als 1030px */
@@ -239,7 +260,7 @@
     font-size: 14px;
     z-index: 1001; /* über Header */
     pointer-events: none;
-    background-color: #010101;
+    background-color: #000000;
   }
 
   .headerLogoutButton {
@@ -282,6 +303,11 @@
   }
 
   .currentTimeHeader {
+    display: none;
+  }
+
+  .headerAudioButton,
+  .soundwaveContainer {
     display: none;
   }
 }

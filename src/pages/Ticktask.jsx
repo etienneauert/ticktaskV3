@@ -604,6 +604,72 @@ export function Ticktask({ user, isGuestMode = false }) {
         console.error("❌ Failed to save running task to Firebase", e);
       }
     }
+
+    // AUTO-SCHEDULE: If task has no schedule, set it to NOW
+    const taskToStart = (isGuestMode ? guestData.tasks : tasks).find(
+      (t) => t.id === taskId
+    );
+
+    if (taskToStart) {
+      const now = new Date();
+      const days = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+      ];
+      const currentDayOption = days[now.getDay()];
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+
+      const scheduleMeta = buildScheduledMetadata(
+        currentDayOption,
+        currentHour,
+        currentMinute
+      );
+
+      // Perform update
+      if (isGuestMode) {
+        const updatedTasks = guestData.tasks.map((t) =>
+          t.id === taskId ? { ...t, ...scheduleMeta } : t
+        );
+        updateGuestData({ tasks: updatedTasks });
+        // Manually update taskToStart reference for immediate local use if needed, 
+        // though we just set runningTaskId next.
+      } else if (user?.uid) {
+        // Local Update
+        setTasks((prev) =>
+          prev.map((t) =>
+            t.id === taskId ? { ...t, ...scheduleMeta } : t
+          )
+        );
+
+        // Local Storage
+        try {
+          const cacheKey = `ticktask_tasks_${user.uid}`;
+          const currentCached = JSON.parse(localStorage.getItem(cacheKey) || "[]");
+          const updatedCached = currentCached.map((t) =>
+            t.id === taskId ? { ...t, ...scheduleMeta } : t
+          );
+          localStorage.setItem(cacheKey, JSON.stringify(updatedCached));
+        } catch (e) {
+          console.error("Failed to update local storage for auto-schedule", e);
+        }
+
+        // Firebase Update
+        if (taskId && !taskId.startsWith("local-")) {
+          const taskDoc = doc(db, "users", user.uid, "tasks", taskId);
+          // Fire and forget update
+          updateDoc(taskDoc, scheduleMeta).catch((e) =>
+            console.error("Failed to auto-schedule task in Firestore", e)
+          );
+        }
+      }
+    }
+
     return true;
   };
 
@@ -999,6 +1065,29 @@ export function Ticktask({ user, isGuestMode = false }) {
     signOut(auth);
   };
 
+  // Global Error Handler for Firestore Assertion Failures
+  useEffect(() => {
+    const handleError = (event) => {
+      // Check for the specific Firestore internal assertion error
+      if (
+        event.reason &&
+        event.reason.toString().includes("FIRESTORE") &&
+        event.reason.toString().includes("INTERNAL ASSERTION FAILED")
+      ) {
+        console.warn("Detected Firestore internal error, force reloading...", event.reason);
+        // Prevent infinite reload loops - check if we just reloaded
+        const lastReload = sessionStorage.getItem("ticktask_auto_reload");
+        if (!lastReload || Date.now() - parseInt(lastReload) > 10000) {
+           sessionStorage.setItem("ticktask_auto_reload", Date.now().toString());
+           window.location.reload();
+        }
+      }
+    };
+
+    window.addEventListener("unhandledrejection", handleError);
+    return () => window.removeEventListener("unhandledrejection", handleError);
+  }, []);
+
   const handleAdd = async (task) => {
     if (!user?.uid && !isGuestMode) return;
     const scheduleMeta = buildScheduledMetadata(
@@ -1040,9 +1129,28 @@ export function Ticktask({ user, isGuestMode = false }) {
     }
 
     // Für angemeldete Benutzer: Direkt zu Firebase schreiben für Echtzeit-Sync
+    // OPTIMISTIC UPDATE: Sofort lokal anzeigen
+    const tasksCol = collection(db, "users", user.uid, "tasks");
+    const newDocRef = doc(tasksCol); // Generiere ID im Client
+    const newTaskId = newDocRef.id;
+
+    const newTask = {
+      id: newTaskId,
+      text: task.text,
+      urgent: !!task.urgent,
+      done: false,
+      taskDuration: parseInt(task.taskDuration) || 0,
+      createdAt: { seconds: Math.floor(Date.now() / 1000) },
+      frequent: !!task.frequent,
+      goalId: task.goalId || null,
+      ...scheduleMeta,
+    };
+
+    // Sofort zum State hinzufügen
+    setTasks((prev) => [...prev, newTask]);
+
     try {
-      const tasksCol = collection(db, "users", user.uid, "tasks");
-      const docRef = await addDoc(tasksCol, {
+      await setDoc(newDocRef, {
         text: task.text,
         urgent: !!task.urgent,
         done: false,
@@ -1054,19 +1162,14 @@ export function Ticktask({ user, isGuestMode = false }) {
       });
     } catch (e) {
       console.error("❌ Failed to add task to Firestore", e);
-      // Fallback: Lokal speichern wenn Firebase fehlschlägt
-      const newTask = {
-        id: `local-${Date.now()}`,
-        text: task.text,
-        urgent: !!task.urgent,
-        done: false,
-        taskDuration: parseInt(task.taskDuration) || 0,
-        createdAt: { seconds: Math.floor(Date.now() / 1000) },
-        frequent: !!task.frequent,
-        goalId: task.goalId || null,
-        ...scheduleMeta,
-      };
-      setTasks((prev) => [...prev, newTask]);
+      // Fallback/Rollback: Entferne Task wenn Firebase wirklich fehlschlägt
+      // Aber behalte ihn, wenn es nur offline ist (Firestore offline persistence handled das meistens)
+      // Hier entfernen wir ihn nur bei echten Fehlern, um Inkonsistenz zu vermeiden
+      // setTasks((prev) => prev.filter(t => t.id !== newTaskId)); 
+      
+      // Hinweis: Wenn wir Offline-Support behalten wollen, sollten wir ihn drin lassen.
+      // Da wir aber oben try-catch um addDoc hatten, bleiben wir bei der Logik.
+      // Wenn der Fehler "nicht verbunden" ist, queue-t Firestore das.
     }
   };
 
@@ -1231,40 +1334,14 @@ export function Ticktask({ user, isGuestMode = false }) {
   };
 
   const handleCopyTask = async (taskToCopyParam) => {
-    // Guest Mode: direkt kopieren (kein ScheduleConfirmPopup im Guest-UI)
-    if (isGuestMode) {
-      const copiedTask = {
-        id: `guest-local-${Date.now()}`,
-        text: taskToCopyParam?.text || taskToCopyParam?.name || "",
-        urgent: taskToCopyParam?.urgent || false,
-        done: false,
-        taskDuration: parseInt(taskToCopyParam?.taskDuration, 10) || 0,
-        createdAt: { seconds: Math.floor(Date.now() / 1000) },
-        scheduledDayOption: "",
-        scheduledHour: "",
-        scheduledMinute: "",
-        scheduledDateTime: null,
-        goalId: null,
-      };
-
-      if (!copiedTask.text) return;
-
-      updateGuestData((prev) => ({
-        ...prev,
-        tasks: [...(prev.tasks || []), copiedTask],
-      }));
-      return;
-    }
-
-    if (!user?.uid) return;
-
+    // Auch im Guest Mode das Popup zeigen!
     // Zeige zuerst das Bestätigungs-Popup
     setTaskToCopy(taskToCopyParam);
     setScheduleConfirmOpen(true);
   };
 
   const handleScheduleConfirm = async (shouldSchedule, scheduleData) => {
-    if (!user?.uid || !taskToCopy) return;
+    if ((!user?.uid && !isGuestMode) || !taskToCopy) return;
 
     setScheduleConfirmOpen(false);
 
@@ -1300,7 +1377,7 @@ export function Ticktask({ user, isGuestMode = false }) {
     scheduledMinute,
     scheduledDateTime
   ) => {
-    if (!user?.uid) return;
+    if (!user?.uid && !isGuestMode) return;
 
     // Berechne scheduledDateTime falls Tag und Uhrzeit angegeben sind
     let finalScheduledDateTime = scheduledDateTime;
@@ -1336,6 +1413,31 @@ export function Ticktask({ user, isGuestMode = false }) {
         );
         finalScheduledDateTime = targetDate.toISOString();
       }
+    }
+
+    if (isGuestMode) {
+      const copiedTask = {
+        id: `guest-local-${Date.now()}`,
+        text: taskToCopyParam.text,
+        urgent: taskToCopyParam.urgent || false,
+        done: false,
+        taskDuration: parseInt(taskToCopyParam.taskDuration) || 0,
+        createdAt: { seconds: Math.floor(Date.now() / 1000) },
+        actualTimeUsed: undefined,
+        plannedTime: undefined,
+        completedAt: undefined,
+        scheduledDayOption: scheduledDayOption,
+        scheduledHour: scheduledHour,
+        scheduledMinute: scheduledMinute,
+        scheduledDateTime: finalScheduledDateTime,
+        goalId: null, // Reset Goal ID logic if needed, or implement inheritance
+      };
+
+      updateGuestData((prev) => ({
+        ...prev,
+        tasks: [...(prev.tasks || []), copiedTask],
+      }));
+      return;
     }
 
     // Erstelle eine Kopie des Tasks mit neuer ID
@@ -2370,16 +2472,10 @@ export function Ticktask({ user, isGuestMode = false }) {
       }
     };
 
-    const handleFocus = () => {
-      checkFirebaseConnection();
-    };
-
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("focus", handleFocus);
-
+    
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("focus", handleFocus);
     };
   }, [user?.uid, isGuestMode]);
 
@@ -3293,7 +3389,13 @@ export function Ticktask({ user, isGuestMode = false }) {
           onClose={handleWelcomeClose}
           onStartTutorial={handleStartTutorial}
         />
-        <ScrollToTopButton />
+        <ScheduleConfirmPopup
+          open={scheduleConfirmOpen}
+          onConfirm={handleScheduleConfirm}
+          onCancel={handleScheduleCancel}
+          taskText={taskToCopy?.text || ""}
+          initialUrgent={taskToCopy?.urgent || false}
+        />
       </div>
     );
   }

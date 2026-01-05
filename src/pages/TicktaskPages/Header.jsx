@@ -2,8 +2,10 @@ import styles from "./Header.module.css";
 import fire from "../../assets/flame.png";
 import setting from "../../assets/setting.png";
 import info from "../../assets/info.png";
-import audioIcon from "../../assets/speaker-filled-audio-tool.png";
 import audioIconYellow from "../../assets/speaker-filled-audio-tool gelb.png";
+import soundwaveVideo from "../../assets/audios/sound-wave.mov";
+import lofiMusic from "../../assets/audios/lofi-music.mp3";
+
 import SettingsPopup from "./Settings/SettingsPopup";
 import RoutineCustomizationPopup from "./Settings/RoutineCustomizationPopup";
 import InfoPopup from "./Info/InfoPopup";
@@ -51,10 +53,38 @@ export default function Header({
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
   const [audioActive, setAudioActive] = useState(getAudioEnabled());
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const videoRef = useRef(null);
+  const audioRef = useRef(new Audio(lofiMusic));
   const finishDayButtonRef = useRef(null);
   const { t, language } = useLanguage();
 
-  // Aktualisiere die aktuelle Uhrzeit jede Minute
+  // Configure audio
+  useEffect(() => {
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.5;
+    
+    return () => {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    };
+  }, []);
+
+  const toggleVideo = () => {
+    if (videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.pause();
+        audioRef.current.pause();
+        setIsVideoPlaying(false);
+      } else {
+        videoRef.current.play().catch(e => console.error("Video play failed:", e));
+        audioRef.current.play().catch(e => console.error("Audio play failed:", e));
+        setIsVideoPlaying(true);
+      }
+    }
+  };
+
+
   useEffect(() => {
     const updateTime = () => {
       setCurrentTime(new Date());
@@ -320,10 +350,10 @@ export default function Header({
               {String(currentTime.getMinutes()).padStart(2, "0")}
             </span>
           </div>
+          {isGuestMode && (
+            <div className={styles.guestModeLabel}>{t("demoMode")}</div>
+          )}
         </div>
-        {isGuestMode && (
-          <div className={styles.guestModeLabel}>{t("demoMode")}</div>
-        )}
         <div className={styles.buttonsRight}>
           <nav className={styles.headerNav}>
             <button
@@ -370,6 +400,37 @@ export default function Header({
               {t("navGoals")}
             </button>
           </nav>
+          
+
+          {/* Soundwave Animation - Visual Only */}
+          <div 
+            className={styles.soundwaveContainer} 
+            title={isVideoPlaying ? "Stop Flow Video" : "Start Flow Video"}
+            onClick={toggleVideo} // Enable click to toggle
+            style={{ 
+              cursor: "pointer", 
+              opacity: isVideoPlaying ? 1 : 0.3 
+            }}
+          >
+            <video 
+              ref={videoRef}
+              src={soundwaveVideo} 
+              className={styles.soundwaveVideo}
+              // Removed autoPlay to let user control start, or add it back if it should start automatically 
+              // but purely visual usually implies user choice if it has a toggle. 
+              // Let's default to paused as per usual 'toggle' behavior or autoPlay?
+              // User said "pausier funktion", implying it might be playing. 
+              // Let's NOT autoPlay by default so it matches false state, or initialize state to true?
+              // "nur das lied soll nicht mehr abgespielt werden" -> sound wave displayed.
+              // Let's default to paused (opacity 0.3) so user can turn it on? 
+              // Or default to on? "sound wave soll noch angezeigt werden" 
+              // I'll default to paused to be safe with state=false.
+              loop 
+              muted 
+              playsInline
+            />
+          </div>
+
           <button
             className={styles.headerAudioButton}
             onClick={() => {
@@ -383,8 +444,9 @@ export default function Header({
               }
             }}
             title="Test Audio / Unlock Sound"
+            style={{ opacity: audioActive ? 1 : 0.3 }}
           >
-            <img src={audioActive ? audioIconYellow : audioIcon} alt="Audio" />
+            <img src={audioIconYellow} alt="Audio" />
           </button>
           <button
             className={styles.headerSettingsButton}

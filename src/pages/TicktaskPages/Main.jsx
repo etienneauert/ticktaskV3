@@ -205,6 +205,7 @@ export default function Main({
       )}
       {!isGoalsHidden && (
         <div id="goals-section" className={styles.GoalsContainer}>
+          <h2 className={styles.MobileSectionHeader}>{t("navGoals")}</h2>
           <Goals
             user={user}
             tasks={tasks}

@@ -3,7 +3,7 @@
 // Uses Web Audio API for background support/precision, falls back to HTML5 Audio
 // ---------------------------------------------------------------------------
 
-import timerSoundPath from "../assets/audios/correct-356013.mp3";
+import timerSoundPath from "../assets/audios/happy-message-ping-351298.mp3";
 
 // Global State
 let isAudioOn = localStorage.getItem("ticktask_audio_enabled") !== "false";

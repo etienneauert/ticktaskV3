@@ -207,6 +207,7 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 -20px 40px rgba(0, 0, 0, 0.7),
     20px 0 40px rgba(0, 0, 0, 0.7), -20px 0 40px rgba(0, 0, 0, 0.7);
   border: 1px solid #333;
+  box-sizing: border-box;
   background-color: #000000;
   position: relative;
 }
@@ -382,8 +383,8 @@
 .modalHeader {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
-  margin-bottom: 15px;
+  margin-top: 10px;
+  margin-bottom: 5px;
   background-color: transparent;
 }
 
@@ -408,6 +409,12 @@
   padding: 8px 12px;
 }
 
+.disabledButton {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .checkboxRow {
   display: flex;
   align-items: center;
@@ -430,7 +437,7 @@
   margin: 20px 0;
   padding: 0;
   background-color: transparent;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .demoTask {
@@ -546,15 +553,20 @@
   background-color: transparent;
 }
 
-.durationButtons button:hover {
-  scale: 1.02;
-  border-color: rgb(213, 255, 5) !important;
-  background-color: rgb(213, 255, 5) !important;
-  color: black !important;
+@media (hover: hover) {
+  .durationButtons button:hover {
+    scale: 1.02;
+    border-color: rgb(213, 255, 5) !important;
+    background-color: rgb(213, 255, 5) !important;
+    color: black !important;
+  }
 }
 
 .durationButtons button:active {
   scale: 0.96;
+  border-color: rgb(213, 255, 5) !important;
+  background-color: rgb(213, 255, 5) !important;
+  color: black !important;
 }
 
 .durationButtons button img {
@@ -563,7 +575,7 @@
 }
 
 .scheduleSection {
-  margin-top: 20px;
+  margin-top: 15px;
   padding: 16px;
   border-radius: 16px;
   background-color: transparent;
@@ -730,7 +742,7 @@
 }
 
 .appointmentInput {
-  background: rgba(15, 15, 15, 0.35);
+  background: #000000;
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
   padding: 0 16px;
@@ -754,18 +766,20 @@
 }
 
 /* Icon und Text beim Hover beide sichtbar halten */
-.durationButtons .durationBtn:hover {
-  background-image: none !important;
-  color: black !important;
-}
-.durationButtons .durationBtn:hover img {
-  opacity: 1 !important;
-  display: inline-block !important;
-  filter: invert(1) brightness(0) !important;
+@media (hover: hover) {
+  .durationButtons .durationBtn:hover {
+    background-image: none !important;
+    color: black !important;
+  }
+  .durationButtons .durationBtn:hover img {
+    opacity: 1 !important;
+    display: inline-block !important;
+    filter: invert(1) brightness(0) !important;
+  }
 }
 
 .Duration {
-  margin-top: 50px;
+  margin-top: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -793,8 +807,8 @@
 }
 
 .reload {
-  width: 32px;
-  height: 32px;
+  width: 22px;
+  height: 22px;
   object-fit: contain;
   cursor: pointer;
   transition: transform 0.3s ease;
@@ -980,7 +994,7 @@
 }
 
 .dateInput {
-  background: rgba(15, 15, 15, 0.35);
+  background: #000000 !important;
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
   padding: 0 16px;
@@ -1060,7 +1074,7 @@
 
 .datePickerDisplay {
   width: 100%;
-  background: rgba(15, 15, 15, 0.35);
+  background: #000000 !important;
   border: 1px solid rgba(160, 160, 160, 0.35);
   border-radius: 18px;
   padding: 0 16px;
@@ -1130,7 +1144,7 @@
   top: calc(100% + 8px);
   left: 0;
   right: 0;
-  background: rgba(12, 12, 12, 1);
+  background: #000000;
   border: 1px solid rgba(140, 140, 140, 0.25);
   border-radius: 12px;
   padding: 8px 0;
@@ -1200,7 +1214,7 @@
 }
 
 .goalSection {
-  margin-top: 30px;
+  margin-top: 10px;
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
@@ -1229,19 +1243,19 @@
 }
 
 .goalSection .selectDropdown {
-  background: rgba(12, 12, 12, 1);
+  background: #000000;
   opacity: 1;
 }
 
 .settingsModalSolid {
-  background-color: rgba(12, 12, 12, 1) !important;
-  background: rgba(12, 12, 12, 1) !important;
+  background-color: #000000 !important;
+  background: #000000 !important;
   opacity: 1 !important;
   box-shadow: none !important;
 }
 
 .settingsOverlaySolid {
-  background-color: rgba(12, 12, 12, 1) !important;
+  background-color: #000000 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   z-index: 2000 !important;
@@ -1271,12 +1285,14 @@
 .durationBtn {
   position: relative;
 }
-.durationBtn:hover {
-  background-color: rgb(213, 255, 5) !important;
-  color: black !important;
-}
-.durationBtn:hover img {
-  display: none;
+@media (hover: hover) {
+  .durationBtn:hover {
+    background-color: rgb(213, 255, 5) !important;
+    color: black !important;
+  }
+  .durationBtn:hover img {
+    display: none;
+  }
 }
 
 /* Nur in Urgent/Recurring: alle Kinder transparent halten */
@@ -1433,6 +1449,7 @@
     overflow-y: auto !important;
     flex: 1;
     width: 100%;
+    box-sizing: border-box;
   }
 
   .close {
@@ -1440,8 +1457,8 @@
   }
 
   .modalHeader {
-    margin-top: 15px;
-    margin-bottom: 30px;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
 
   /* Weniger Abstand unter der Demo-Task-Vorschau */
@@ -1509,6 +1526,12 @@
   .goalSection {
     position: relative;
     z-index: 100;
+    margin-top: 5px !important;
+  }
+
+  .scheduleSection {
+    margin-top: 0px !important;
+    padding-top: 0px !important;
   }
 
   .selectDropdown,
@@ -1516,9 +1539,10 @@
   .appointmentModal .selectDropdown,
   .timeSelect .selectDropdown,
   .timeInputs .transparentSelect .selectDropdown {
-    max-height: 85px; /* Limit to 2 items */
-    background: #0a0a0a !important;
-    background-color: #0a0a0a !important;
+    max-height: 160px; /* Limit to 4 items */
+    background: #000000 !important;
+    background-color: #000000 !important;
+    opacity: 1 !important;
   }
 
   .demoTask {
@@ -1532,7 +1556,7 @@
 
   .Duration {
     margin-top: 30px !important;
-    margin-bottom: 30px !important;
+    margin-bottom: 10px !important;
   }
 
   .durationButtons button {
@@ -1541,9 +1565,11 @@
     line-height: 1;
   }
 
-  .durationButtons button:hover {
-    background-color: rgb(213, 255, 5) !important;
-    color: black !important;
+  @media (hover: hover) {
+    .durationButtons button:hover {
+      background-color: rgb(213, 255, 5) !important;
+      color: black !important;
+    }
   }
 
   .durationButtons button img {
@@ -1564,7 +1590,7 @@
 
   .Priority,
   .Recurring {
-    margin-top: 30px;
+    margin-top: 5px;
   }
 
   .addButton,
@@ -1594,15 +1620,16 @@
   #task-popup .selectDropdown,
   #task-popup .transparentSelect .selectDropdown,
   #task-popup .timeSelect .selectDropdown {
-    background: #0a0a0a !important;
-    background-color: #0a0a0a !important;
+    background: #000000 !important;
+    background-color: #000000 !important;
     opacity: 1 !important;
+    z-index: 200 !important;
   }
 }
 
 @media (max-width: 480px) {
   .taskModal .demoPreview {
-    margin-bottom: 6px !important;
+    margin-bottom: 0px !important;
   }
 
   /* Task-Popup (Popup.jsx): noch etwas mehr Rand auf sehr kleinen Screens */
@@ -1616,30 +1643,77 @@
   .taskModal .scheduleInputs {
     column-gap: 8px;
     row-gap: 10px;
+    width: 100%; /* Ensure container takes full width */
+  }
+
+  /* Prevent inputs from forcing width on mobile */
+  .taskModal .scheduleInput {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  .taskModal .transparentSelect,
+  .taskModal .timeSelect {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    flex: 1 1 auto;
   }
 
   .modal {
     width: 98vw;
+    max-width: 100vw;
     height: 85vh;
     padding: 15px;
+    box-sizing: border-box;
   }
 
   /* Appointment-Popup: auch auf sehr kleinen Screens nicht in fixe Modal-Höhe zwingen */
+  /* Appointment-Popup: auch auf sehr kleinen Screens nicht in fixe Modal-Höhe zwingen */
   .appointmentModal {
-    height: auto;
-    max-height: none;
+    height: auto !important;
+    max-height: 85vh !important;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    left: auto !important;
+    right: auto !important;
   }
 
   /* Appointment-Popup: alle Inputs/Selects sollen dynamisch schrumpfen */
   .appointmentModal .appointmentInput,
   .appointmentModal .transparentSelect,
   .appointmentModal .timeInputs {
-    width: 100%;
-    max-width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1 1 auto;
+  }
+  
+  .appointmentModal .timeInputs .timeSelect {
+      width: 100% !important;
+  }
+  
+  .appointmentModal .scheduleInput {
+      min-width: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+  }
+  
+  .taskModal .appointmentInputs,
+  .appointmentModal .appointmentInputs {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      flex-direction: column !important;
   }
 
   /* Task-Popup: edge-to-edge Submit an Mobile-Padding anpassen */
-  .taskModal .actions {
+  .taskModal .actions,
+  .appointmentModal .actions {
     width: 100%;
     margin: 0 !important;
   }
@@ -1655,12 +1729,7 @@
     background: transparent !important;
   }
 
-  /* Appointment-Popup: edge-to-edge Button an Mobile-Padding anpassen */
-  .appointmentModal .actions {
-    width: calc(100% + 30px);
-    margin-left: -15px;
-    margin-right: -15px;
-  }
+
 
   /* Task-Popup soll wirklich die volle Gerätehöhe nutzen (überschreibt .modal) */
   /* Task-Popup soll wirklich die volle Gerätehöhe nutzen (überschreibt .modal) */
@@ -1684,14 +1753,22 @@
     position: relative !important;
   }
 
+  .goalsModal .close {
+    margin-top: 15px !important;
+    margin-right: 15px !important;
+  }
+
   .close {
-    top: 15px !important;
-    right: 15px !important;
-    width: 20px !important;
-    height: 20px !important;
+    width: 18px !important;
+    height: 18px !important;
     background-color: transparent !important;
-    position: absolute !important;
+    position: relative !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+    display: block !important;
     z-index: 60 !important; 
+    top: 0 !important;
+    right: 0 !important;
   }
 
   .modalHeader {
@@ -1759,7 +1836,7 @@
   }
 
   .demoPreview {
-    margin-top: 30px !important;
+    margin-top: 20px !important;
   }
 
   .demoTask {
@@ -1772,8 +1849,8 @@
   }
 
   .Duration {
-    margin-top: 25px !important;
-    margin-bottom: 30px !important;
+    margin-top: 5px !important;
+    margin-bottom: 15px !important;
   }
 
   .durationButtons button {
@@ -1782,9 +1859,11 @@
     line-height: 1;
   }
 
-  .durationButtons button:hover {
-    background-color: rgb(213, 255, 5) !important;
-    color: black !important;
+  @media (hover: hover) {
+    .durationButtons button:hover {
+      background-color: rgb(213, 255, 5) !important;
+      color: black !important;
+    }
   }
 
   .durationButtons button img {
@@ -1805,14 +1884,14 @@
 
   .Priority,
   .Recurring {
-    margin-top: 20px;
+    margin-top: 5px;
   }
 
   .addButton,
   .addButtonPlaceholder {
-    height: 38px;
+    height: 50px;
     padding: 0 16px;
-    font-size: 12px;
+    font-size: 16px;
     margin-top: 0;
   }
 
@@ -1870,8 +1949,8 @@
 .opaqueDropdown,
 .scheduleInputs .timeSelect .opaqueDropdown,
 .transparentSelect .opaqueDropdown {
-  background-color: #0a0a0a !important;
-  background: #0a0a0a !important;
+  background-color: #000000 !important;
+  background: #000000 !important;
   opacity: 1 !important;
   /* Ensure text is visible too if that was an issue */
   color: rgb(171, 171, 171) !important;
@@ -1884,4 +1963,30 @@
 
 .selectDisplay span {
   background-color: transparent;
+}
+
+.selectDropdown,
+.scheduleInputs .transparentSelect .selectDropdown,
+.timeSelect .selectDropdown,
+.opaqueDropdown {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-color: #000000 !important;
+  opacity: 1 !important;
+  z-index: 200 !important;
+}
+
+/* FINAL OVERRIDE: Absolutely ensuring black background */
+@media (max-width: 768px) {
+  .selectDropdown,
+  .transparentSelect .selectDropdown,
+  .timeSelect .selectDropdown,
+  #task-popup .selectDropdown {
+     background: #000000 !important;
+     background-color: #000000 !important;
+     opacity: 1 !important;
+     backdrop-filter: none !important;
+     -webkit-backdrop-filter: none !important;
+     z-index: 200 !important;
+  }
 }

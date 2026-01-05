@@ -148,8 +148,11 @@
 /* Mobile Media Queries */
 @media (max-width: 768px) {
   .InputContainer {
-    margin-top: 150px;
-    padding: 0 16px;
+    margin-top: 90px;
+    width: calc(100vw - 32px); /* Adjusted to match task visual width */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
 
     /* Label zentriert oberhalb, Input + Button darunter */
     display: grid;
@@ -162,6 +165,7 @@
   }
 
   .InputContainer .inputLabel {
+    display: block; /* Ensure visibility */
     font-size: 18px;
     position: static;
     left: auto;
@@ -171,6 +175,8 @@
     text-align: center;
     width: 100%;
     padding-block: 10px;
+    color: rgb(171, 171, 171); /* Ensure color matches other headers */
+    font-weight: 500;
   }
 
   .InputContainer input {
@@ -211,8 +217,11 @@
 
 @media (max-width: 480px) {
   .InputContainer {
-    margin-top: 130px;
-    padding: 0 12px;
+    margin-top: 85px;
+    width: calc(100vw - 32px); /* Adjusted to match task visual width */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0;
     display: grid;
     grid-template-columns: 1fr 50px;
     grid-template-rows: auto auto;
@@ -223,6 +232,7 @@
   }
 
   .InputContainer .inputLabel {
+    display: block; /* Ensure visibility */
     font-size: 16px;
     position: static;
     left: auto;
@@ -232,6 +242,8 @@
     text-align: center;
     width: 100%;
     padding-block: 10px;
+    color: rgb(171, 171, 171); /* Ensure color matches other headers */
+    font-weight: 500;
   }
 
   .InputContainer input {

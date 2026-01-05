@@ -208,8 +208,15 @@
   }
   /* Checklist customization (RoutineCustomizationPopup) soll auf Mobile höher sein */
   .routineModal {
-    height: 78vh;
-    max-height: 78vh;
+    height: 78vh !important;
+    max-height: 78vh !important;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    left: auto !important;
+    right: auto !important;
   }
 
   .modalWide {
@@ -234,9 +241,10 @@
   /* Auf Mobile darf das Weekly-Modal nicht "overflow: visible" haben,
      sonst sieht man gescrollten Content hinter/über der Tabs-Leiste. */
   .routineModalWeekly {
-    width: 95vw !important;
-    max-width: 95vw !important;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
     overflow: hidden !important;
+    box-sizing: border-box !important;
   }
 
   .tabButton {
@@ -263,8 +271,13 @@
 
   /* Checklist customization (RoutineCustomizationPopup) soll auch auf sehr kleinen Screens höher sein */
   .routineModal {
-    height: 82vh;
-    max-height: 82vh;
+    height: 82vh !important;
+    max-height: 82vh !important;
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    padding: 15px !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
   }
 
   .modalWide {

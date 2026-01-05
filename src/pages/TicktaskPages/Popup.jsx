@@ -81,7 +81,8 @@ function TransparentSelect({
       {open && (
         <div
           className={`${styles.selectDropdown} ${dropdownClassName}`}
-          style={{ backgroundColor: "#0a0a0a", opacity: 1 }}
+          style={{ backgroundColor: "#000000", opacity: 1 }}
+          id="select-dropdown"
         >
           {options.map((option) => (
             <button
@@ -600,13 +601,13 @@ export default function Popup({
         </div>
 
         <div className={styles.actions}>
-          {canSubmit ? (
-            <button onClick={handleSubmit} className={styles.addButton}>
-              {t("submit")}
-            </button>
-          ) : (
-            <div className={styles.addButtonPlaceholder} aria-hidden="true" />
-          )}
+          <button
+            onClick={handleSubmit}
+            className={`${styles.addButton} ${!canSubmit ? styles.disabledButton : ""}`}
+            disabled={!canSubmit}
+          >
+            {t("submit")}
+          </button>
         </div>
       </div>
     </div>

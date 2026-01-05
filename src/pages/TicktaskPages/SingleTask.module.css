@@ -100,7 +100,7 @@ li.running .countdown {
   flex: 1;
   margin-right: 16px;
   background-color: inherit;
-  color: rgb(255, 255, 255);
+  color: #d7d7d7;
   font-size: 17px;
   /* Wichtig: Höhe stabil halten, auch wenn beim Start mehr Controls erscheinen */
   min-width: 0;
@@ -140,7 +140,7 @@ li.running .countdown {
   font-size: 16px;
 
   text-align: center;
-  color: rgb(255, 255, 255);
+  color: #d7d7d7;
   display: flex;
   align-items: center;
   background-color: inherit;
@@ -454,7 +454,7 @@ li.running .countdown {
 
 /* Spezifisches Styling für frequent tasks Zeitangabe */
 .frequentTimeInfo {
-  color: rgb(255, 255, 255) !important;
+  color: #d7d7d7 !important;
   font-weight: bold !important;
 }
 

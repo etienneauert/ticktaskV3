@@ -1249,24 +1249,33 @@ export default function WeekCalendar({
                 </div>
               </div>
               <div className={popupStyles.actions}>
-                {appointmentName.trim() &&
-                selectedDay &&
-                selectedHour &&
-                selectedMinute &&
-                appointmentEndHour &&
-                appointmentEndMinute ? (
-                  <button
-                    onClick={handleSaveAppointment}
-                    className={popupStyles.addButton}
-                  >
-                    {t("save")}
-                  </button>
-                ) : (
-                  <div
-                    className={popupStyles.addButtonPlaceholder}
-                    aria-hidden="true"
-                  />
-                )}
+                <button
+                  onClick={handleSaveAppointment}
+                  className={`${popupStyles.addButton} ${
+                    !(
+                      appointmentName.trim() &&
+                      selectedDay &&
+                      selectedHour &&
+                      selectedMinute &&
+                      appointmentEndHour &&
+                      appointmentEndMinute
+                    )
+                      ? popupStyles.disabledButton
+                      : ""
+                  }`}
+                  disabled={
+                    !(
+                      appointmentName.trim() &&
+                      selectedDay &&
+                      selectedHour &&
+                      selectedMinute &&
+                      appointmentEndHour &&
+                      appointmentEndMinute
+                    )
+                  }
+                >
+                  {t("save")}
+                </button>
               </div>
             </div>
           </div>
