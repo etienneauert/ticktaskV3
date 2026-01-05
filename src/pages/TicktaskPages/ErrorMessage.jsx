@@ -25,7 +25,7 @@ export default function ErrorMessage({ message, onClose, isVisible, buttonRef })
     }, 300); // Warte auf Animation
   };
 
-  if (!isVisible && !isClosing) return null;
+  if ((!isVisible && !isClosing) || !message) return null;
 
   // Teile die Nachricht in Überschrift und Inhalt auf
   const lines = message.split("\n");
